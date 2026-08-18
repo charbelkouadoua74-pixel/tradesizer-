@@ -298,6 +298,23 @@
     color: #3f3f46;
     cursor: pointer;
   }
+
+  .admin-warning {
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 12px;
+  }
+
+  .plan-btn {
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .plan-btn.dark { background: #18181b; color: white; }
+  .plan-btn.outline { background: white; color: #18181b; border: 1px solid #d4d4d8; }
 </style>
 <script defer src="/_vercel/insights/script.js"></script>
 </head>
@@ -397,6 +414,7 @@
     <div class="field">
       <label data-i18n="balance">Solde du compte</label>
       <input type="number" id="balance" value="0" placeholder="0">
+      <p class="hint" id="errBalance" style="color:#dc2626;display:none;"></p>
     </div>
 
     <div class="field">
@@ -408,12 +426,14 @@
         <div id="riskBadge"></div>
         <div id="riskAmountBadge"></div>
       </div>
+      <p class="hint" id="errRisk" style="color:#dc2626;display:none;"></p>
     </div>
 
     <div class="field">
       <label data-i18n="quickDistance">Distance directe (optionnel — pour un calcul rapide sans prix)</label>
       <input type="number" step="0.01" id="manualDistance" value="0" placeholder="0">
       <p class="hint" data-i18n="quickDistanceHint">Si rempli, ce champ prend le dessus sur les prix ci-dessous.</p>
+      <p class="hint" id="errDistance" style="color:#dc2626;display:none;"></p>
     </div>
 
     <div class="field">
@@ -424,6 +444,7 @@
     <div class="field">
       <label data-i18n="slPrice">Prix du Stop Loss</label>
       <input type="number" step="0.01" id="slPrice" value="0" placeholder="0">
+      <p class="hint" id="errSl" style="color:#dc2626;display:none;"></p>
     </div>
 
     <div class="field" id="tpBlock">
@@ -439,6 +460,17 @@
         <input type="number" id="leverageInput" value="100" placeholder="100">
       </div>
     </div>
+
+    <div class="field" style="margin-bottom:4px;">
+      <label data-i18n="brokerMinLot">Taille minimale du broker (optionnel)</label>
+      <input type="number" step="0.01" id="brokerMinLot" value="0.01" placeholder="0.01">
+      <p class="hint" data-i18n="brokerMinLotHint">Le pas de volume minimal indiqué par ton courtier (souvent 0.01 lot).</p>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:8px;margin-bottom:16px;">
+    <button class="plan-btn dark" id="calculateBtn" style="flex:2;" data-i18n="calculateBtn">CALCULER</button>
+    <button class="plan-btn outline" id="resetBtn" style="flex:1;" data-i18n="resetBtn">RÉINITIALISER</button>
   </div>
 
   <div id="resultsArea"></div>
@@ -501,6 +533,29 @@
       unfavorable: '(défavorable)',
       placeholder: 'Renseigne le solde, le risque et la distance du SL pour voir la taille recommandée',
       riskOf: 'de risque',
+      calculateBtn: 'CALCULER',
+      resetBtn: 'RÉINITIALISER',
+      errFieldRequired: 'Ce champ est requis.',
+      errNegativeBalance: 'Le solde ne peut pas être négatif.',
+      errNegativeRisk: 'Le risque ne peut pas être négatif.',
+      errRiskTooHigh: 'Le risque ne peut pas dépasser 100%.',
+      errNegativeDistance: 'La distance ne peut pas être négative.',
+      errSameEntrySl: "Le prix du Stop Loss ne peut pas être identique au prix d'entrée.",
+      errNeedDistanceOrPrices: "Renseigne soit une distance directe, soit un prix d'entrée et un Stop Loss.",
+      errCheckFields: 'Corrige les champs en rouge ci-dessus avant de calculer.',
+      errUnexpected: 'Une erreur inattendue est survenue. Vérifie tes valeurs et réessaie.',
+      cardCapital: 'CAPITAL',
+      cardRisk: 'RISQUE',
+      cardMaxLoss: 'PERTE MAXIMALE ESTIMÉE',
+      potentialGain: 'GAIN POTENTIEL (TP)',
+      theoreticalRisk: 'Risque théorique',
+      realRiskAfterRounding: 'Risque estimé après arrondi',
+      brokerMinLot: 'Taille minimale du broker (optionnel)',
+      brokerMinLotHint: 'Le pas de volume minimal indiqué par ton courtier (souvent 0.01 lot).',
+      smallCapitalTitle: 'Petit capital détecté',
+      smallCapitalBody: 'Votre montant de risque théorique est très faible. La taille minimale de position proposée par certains courtiers peut vous empêcher de respecter exactement votre niveau de risque. Vérifiez les spécifications de votre courtier avant d\'ouvrir une position.',
+      belowMinWarning: 'La taille calculée est inférieure au minimum indiqué ({min} lot). La taille utilisée ci-dessus a été ajustée au minimum — ton risque réel sera donc plus élevé que prévu.',
+      calcDisclaimer: 'TradeSizer fournit des calculs indicatifs et ne constitue pas un conseil financier. Vérifiez toujours les spécifications de votre courtier avant de passer un ordre.',
       groupMetals: 'Métaux',
       groupMajors: 'Forex - Majeures',
       groupCrosses: 'Forex - Croisées',
@@ -568,6 +623,29 @@
       unfavorable: '(unfavorable)',
       placeholder: 'Fill in the balance, risk, and SL distance to see the recommended size',
       riskOf: 'at risk',
+      calculateBtn: 'CALCULATE',
+      resetBtn: 'RESET',
+      errFieldRequired: 'This field is required.',
+      errNegativeBalance: 'Balance cannot be negative.',
+      errNegativeRisk: 'Risk cannot be negative.',
+      errRiskTooHigh: 'Risk cannot exceed 100%.',
+      errNegativeDistance: 'Distance cannot be negative.',
+      errSameEntrySl: 'The Stop Loss price cannot be the same as the entry price.',
+      errNeedDistanceOrPrices: 'Enter either a direct distance, or an entry price and a Stop Loss.',
+      errCheckFields: 'Fix the fields in red above before calculating.',
+      errUnexpected: 'An unexpected error occurred. Check your values and try again.',
+      cardCapital: 'CAPITAL',
+      cardRisk: 'RISK',
+      cardMaxLoss: 'ESTIMATED MAX LOSS',
+      potentialGain: 'POTENTIAL GAIN (TP)',
+      theoreticalRisk: 'Theoretical risk',
+      realRiskAfterRounding: 'Estimated risk after rounding',
+      brokerMinLot: 'Broker minimum lot size (optional)',
+      brokerMinLotHint: "Your broker's minimum volume step (often 0.01 lot).",
+      smallCapitalTitle: 'Small capital detected',
+      smallCapitalBody: 'Your theoretical risk amount is very small. The minimum position size offered by some brokers may prevent you from matching your exact risk level. Check your broker\'s specifications before opening a position.',
+      belowMinWarning: 'The calculated size is below the minimum you entered ({min} lot). The size shown above was adjusted up to the minimum — your real risk will therefore be higher than planned.',
+      calcDisclaimer: 'TradeSizer provides indicative calculations and is not financial advice. Always check your broker\'s specifications before placing an order.',
       groupMetals: 'Metals',
       groupMajors: 'Forex - Majors',
       groupCrosses: 'Forex - Crosses',
@@ -628,7 +706,7 @@
     renderRiskButtons();
     renderLeverageButtons();
     renderCurrencyButtons();
-    update();
+    updateLiveBadges();
   }
 
   document.getElementById('langFr').onclick = () => { currentLang = 'fr'; applyLanguage(); };
@@ -673,7 +751,7 @@
       const btn = document.createElement('button');
       btn.className = 'toggle-btn' + (currency === c ? ' active-dark' : '');
       btn.textContent = c;
-      btn.onclick = () => { currency = c; renderCurrencyButtons(); update(); };
+      btn.onclick = () => { currency = c; renderCurrencyButtons(); updateLiveBadges(); };
       currencyButtonsEl.appendChild(btn);
     });
   }
@@ -688,7 +766,7 @@
         riskPercentInput.value = v;
         riskSlider.value = v;
         renderRiskButtons();
-        update();
+        updateLiveBadges();
       };
       riskButtonsEl.appendChild(btn);
     });
@@ -703,7 +781,7 @@
       btn.onclick = () => {
         leverageInput.value = lv;
         renderLeverageButtons();
-        update();
+        updateLiveBadges();
       };
       leverageButtonsEl.appendChild(btn);
     });
@@ -726,7 +804,7 @@
     btnStock.className = 'toggle-btn';
     instrumentBlock.style.display = 'block';
     symbolBlock.style.display = 'none';
-    update();
+    updateLiveBadges();
   };
   btnStock.onclick = () => {
     productType = 'stock';
@@ -734,16 +812,20 @@
     btnCfd.className = 'toggle-btn';
     instrumentBlock.style.display = 'none';
     symbolBlock.style.display = 'block';
-    update();
+    updateLiveBadges();
   };
 
   riskSlider.addEventListener('input', () => {
     riskPercentInput.value = riskSlider.value;
     renderRiskButtons();
-    update();
+    updateLiveBadges();
   });
 
-  function update() {
+  balanceEl.addEventListener('input', updateLiveBadges);
+  riskPercentInput.addEventListener('input', updateLiveBadges);
+
+  // ---------- Aperçu live (badges) — léger, sans erreur bloquante ----------
+  function updateLiveBadges() {
     const t = i18n[currentLang];
     const risk = parseFloat(riskPercentInput.value);
     const riskLevel = getRiskLevel(risk);
@@ -754,24 +836,89 @@
     }
 
     const bal = parseFloat(balanceEl.value);
-    let liveRiskAmount = null;
     if (!isNaN(bal) && !isNaN(risk)) {
-      liveRiskAmount = bal * (risk / 100);
+      const liveRiskAmount = bal * (risk / 100);
       riskAmountBadgeEl.innerHTML = `<span class="risk-badge" style="background-color:#fef2f2;color:#b91c1c;">~${liveRiskAmount.toFixed(2)} ${currency} ${t.riskOf}</span>`;
     } else {
       riskAmountBadgeEl.innerHTML = '';
     }
+  }
 
+  // ---------- Erreurs inline sous les champs concernés ----------
+  function clearFieldErrors() {
+    ['errBalance', 'errRisk', 'errDistance', 'errSl'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.style.display = 'none'; el.textContent = ''; }
+    });
+  }
+
+  function showFieldError(fieldErrorId, message) {
+    const el = document.getElementById(fieldErrorId);
+    if (el) { el.textContent = '⚠️ ' + message; el.style.display = 'block'; }
+  }
+
+  // ---------- CALCUL EXPLICITE (déclenché par le bouton CALCULER) ----------
+  function runCalculation() {
+    const t = i18n[currentLang];
+    clearFieldErrors();
+
+    const bal = parseFloat(balanceEl.value);
+    const risk = parseFloat(riskPercentInput.value);
     const manualD = parseFloat(manualDistanceEl.value);
     const e = parseFloat(entryPriceEl.value);
     const s = parseFloat(slPriceEl.value);
+    const tp = parseFloat(tpPriceEl.value);
     const usingManualDistance = !isNaN(manualD) && manualD > 0;
+
+    let hasError = false;
+
+    if (isNaN(bal)) {
+      showFieldError('errBalance', t.errFieldRequired);
+      hasError = true;
+    } else if (bal <= 0) {
+      showFieldError('errBalance', t.errNegativeBalance);
+      hasError = true;
+    }
+
+    if (isNaN(risk)) {
+      showFieldError('errRisk', t.errFieldRequired);
+      hasError = true;
+    } else if (risk < 0) {
+      showFieldError('errRisk', t.errNegativeRisk);
+      hasError = true;
+    } else if (risk > 100) {
+      showFieldError('errRisk', t.errRiskTooHigh);
+      hasError = true;
+    }
 
     let slDistance = 0;
     if (usingManualDistance) {
-      slDistance = manualD;
+      if (manualD < 0) {
+        showFieldError('errDistance', t.errNegativeDistance);
+        hasError = true;
+      } else {
+        slDistance = manualD;
+      }
     } else if (!isNaN(e) && !isNaN(s)) {
-      slDistance = Math.abs(e - s);
+      if (e === s && e !== 0) {
+        showFieldError('errSl', t.errSameEntrySl);
+        hasError = true;
+      } else {
+        slDistance = Math.abs(e - s);
+      }
+    } else {
+      showFieldError('errDistance', t.errNeedDistanceOrPrices);
+      hasError = true;
+    }
+
+    if (hasError) {
+      resultsArea.innerHTML = `<div class="placeholder" style="border-color:#fca5a5;color:#b91c1c;background:#fef2f2;">⚠️ ${t.errCheckFields}</div>`;
+      return;
+    }
+
+    if (slDistance <= 0) {
+      resultsArea.innerHTML = `<div class="placeholder">${t.placeholder}</div>`;
+      return;
     }
 
     let pointValue = 1;
@@ -783,66 +930,170 @@
     }
 
     let rrRatio = null;
-    const tp = parseFloat(tpPriceEl.value);
     if (!isNaN(e) && !isNaN(s) && !isNaN(tp) && e > 0) {
       const riskDist = Math.abs(e - s);
       const rewardDist = Math.abs(tp - e);
       if (riskDist > 0) rrRatio = rewardDist / riskDist;
     }
 
-    if (!isNaN(bal) && !isNaN(risk) && slDistance > 0 && bal > 0 && risk > 0) {
-      const riskAmount = bal * (risk / 100);
-      const lotSize = riskAmount / (slDistance * pointValue);
-      const lotSizeRounded = Math.floor(lotSize * 100) / 100;
+    const riskAmount = bal * (risk / 100);
+    const lotSize = riskAmount / (slDistance * pointValue);
+    const lotSizeRounded = Math.floor(lotSize * 100) / 100;
 
-      let marginRequired = null;
-      const lev = parseFloat(leverageInput.value);
-      if (!isNaN(e) && e > 0 && !isNaN(lev) && lev > 0) {
-        const notional = lotSizeRounded * unitsPerLot * e;
-        marginRequired = notional / lev;
-      }
+    // ---------- Comparaison à la taille minimale du broker ----------
+    const brokerMin = parseFloat(document.getElementById('brokerMinLot').value);
+    const hasBrokerMin = !isNaN(brokerMin) && brokerMin > 0;
+    const belowBrokerMin = hasBrokerMin && lotSizeRounded < brokerMin;
+    const usableLot = belowBrokerMin ? brokerMin : lotSizeRounded;
 
-      let rrHtml = '';
-      if (rrRatio !== null) {
-        const rrColor = rrRatio >= 1.5 ? '#4ade80' : rrRatio >= 1 ? '#facc15' : '#f87171';
-        const rrWarning = rrRatio < 1 ? ' ' + t.unfavorable : '';
-        rrHtml = `
-          <div class="result-sub full">
-            <div class="result-sub-label">${t.rrLabel}</div>
-            <div class="result-sub-value" style="color:${rrColor};">1 : ${rrRatio.toFixed(2)}${rrWarning}</div>
-          </div>`;
-      }
+    const realRiskAmount = usableLot * slDistance * pointValue;
+    const riskDiffers = Math.abs(realRiskAmount - riskAmount) > 0.01;
 
-      let marginHtml = '';
-      if (marginRequired !== null) {
-        marginHtml = `
-          <div>
-            <div class="result-sub-label">${t.marginLabel}</div>
-            <div class="result-sub-value">${marginRequired.toFixed(2)} ${currency}</div>
-          </div>`;
-      }
+    // ---------- Détection petit capital ----------
+    const isSmallCapital = bal < 100 || riskAmount < 2;
 
-      resultsArea.innerHTML = `
-        <div class="result-card">
-          <div class="result-label">${t.resultTitle} (${direction === 'buy' ? t.buy.replace('▲ ','') : t.sell.replace('▼ ','')})</div>
-          <div class="result-value">${lotSizeRounded.toFixed(2)} <span>${t.lots}</span></div>
-          <div class="result-grid">
-            <div>
-              <div class="result-sub-label">${t.riskAmount}</div>
-              <div class="result-sub-value">${riskAmount.toFixed(2)} ${currency}</div>
-            </div>
-            <div>
-              <div class="result-sub-label">${t.slDistLabel}</div>
-              <div class="result-sub-value">${slDistance.toFixed(2)} pts</div>
-            </div>
-            ${marginHtml}
-            ${rrHtml}
-          </div>
-        </div>`;
-    } else {
-      resultsArea.innerHTML = `<div class="placeholder">${t.placeholder}</div>`;
+    let marginRequired = null;
+    const lev = parseFloat(leverageInput.value);
+    if (!isNaN(e) && e > 0 && !isNaN(lev) && lev > 0) {
+      const notional = usableLot * unitsPerLot * e;
+      marginRequired = notional / lev;
     }
+
+    let potentialGainHtml = '';
+    if (!isNaN(tp) && tp > 0 && !isNaN(e) && e > 0 && tp !== e) {
+      const gainDistance = Math.abs(tp - e);
+      const potentialGain = usableLot * gainDistance * pointValue;
+      potentialGainHtml = `
+        <div>
+          <div class="result-sub-label">${t.potentialGain}</div>
+          <div class="result-sub-value" style="color:#4ade80;">+${potentialGain.toFixed(2)} ${currency}</div>
+        </div>`;
+    }
+
+    let rrHtml = '';
+    if (rrRatio !== null) {
+      const rrColor = rrRatio >= 1.5 ? '#4ade80' : rrRatio >= 1 ? '#facc15' : '#f87171';
+      const rrWarning = rrRatio < 1 ? ' ' + t.unfavorable : '';
+      rrHtml = `
+        <div class="result-sub full">
+          <div class="result-sub-label">${t.rrLabel}</div>
+          <div class="result-sub-value" style="color:${rrColor};">1 : ${rrRatio.toFixed(2)}${rrWarning}</div>
+        </div>`;
+    }
+
+    let marginHtml = '';
+    if (marginRequired !== null) {
+      marginHtml = `
+        <div>
+          <div class="result-sub-label">${t.marginLabel}</div>
+          <div class="result-sub-value">${marginRequired.toFixed(2)} ${currency}</div>
+        </div>`;
+    }
+
+    let realRiskHtml = '';
+    if (riskDiffers) {
+      realRiskHtml = `
+        <div class="full" style="grid-column:1/-1;padding-top:8px;border-top:1px dashed #3f3f46;">
+          <div class="result-sub-label">${t.theoreticalRisk}</div>
+          <div class="result-sub-value">${riskAmount.toFixed(2)} ${currency}</div>
+          <div class="result-sub-label" style="margin-top:6px;">${t.realRiskAfterRounding}</div>
+          <div class="result-sub-value" style="color:${realRiskAmount > riskAmount ? '#f87171' : '#4ade80'};">${realRiskAmount.toFixed(2)} ${currency}</div>
+        </div>`;
+    }
+
+    let warningsHtml = '';
+    if (isSmallCapital) {
+      warningsHtml += `<div class="admin-warning" style="margin-top:12px;background:#fff7ed;border:1px solid #fdba74;color:#9a3412;">⚠️ <strong>${t.smallCapitalTitle}</strong><br>${t.smallCapitalBody}</div>`;
+    }
+    if (belowBrokerMin) {
+      warningsHtml += `<div class="admin-warning" style="margin-top:12px;background:#fef2f2;border:1px solid #fca5a5;color:#b91c1c;">⚠️ ${t.belowMinWarning.replace('{min}', brokerMin)}</div>`;
+    }
+
+    const estimatedMaxLoss = usableLot * slDistance * pointValue;
+
+    resultsArea.innerHTML = `
+      <div class="result-card">
+        <div class="result-label">${t.resultTitle} (${direction === 'buy' ? t.buy.replace('▲ ','') : t.sell.replace('▼ ','')})</div>
+        <div class="result-grid" style="border-top:none;padding-top:0;margin-bottom:12px;">
+          <div>
+            <div class="result-sub-label">${t.cardCapital}</div>
+            <div class="result-sub-value">${bal.toFixed(2)} ${currency}</div>
+          </div>
+          <div>
+            <div class="result-sub-label">${t.cardRisk}</div>
+            <div class="result-sub-value">${risk}%</div>
+          </div>
+        </div>
+        <div class="result-value">${usableLot.toFixed(2)} <span>${t.lots}</span></div>
+        <div class="result-grid">
+          <div>
+            <div class="result-sub-label">${t.riskAmount}</div>
+            <div class="result-sub-value">${riskAmount.toFixed(2)} ${currency}</div>
+          </div>
+          <div>
+            <div class="result-sub-label">${t.slDistLabel}</div>
+            <div class="result-sub-value">${slDistance.toFixed(2)} pts</div>
+          </div>
+          <div>
+            <div class="result-sub-label">${t.cardMaxLoss}</div>
+            <div class="result-sub-value">${estimatedMaxLoss.toFixed(2)} ${currency}</div>
+          </div>
+          ${potentialGainHtml}
+          ${marginHtml}
+          ${rrHtml}
+          ${realRiskHtml}
+        </div>
+      </div>
+      ${warningsHtml}
+      <p class="hint" style="text-align:center;margin-top:10px;">${t.calcDisclaimer}</p>`;
   }
+
+  document.getElementById('calculateBtn').onclick = () => {
+    try {
+      runCalculation();
+    } catch (err) {
+      console.error('Erreur de calcul:', err);
+      resultsArea.innerHTML = `<div class="placeholder" style="border-color:#fca5a5;color:#b91c1c;background:#fef2f2;">⚠️ ${i18n[currentLang].errUnexpected}</div>`;
+    }
+  };
+
+  // ---------- Bouton RÉINITIALISER ----------
+  function resetCalculator() {
+    balanceEl.value = '0';
+    riskPercentInput.value = '0';
+    riskSlider.value = '0';
+    manualDistanceEl.value = '0';
+    entryPriceEl.value = '0';
+    slPriceEl.value = '0';
+    tpPriceEl.value = '0';
+    leverageInput.value = '100';
+    customSymbolEl.value = '';
+    instrumentEl.selectedIndex = 0;
+
+    direction = 'sell';
+    btnSell.className = 'toggle-btn active-sell';
+    btnBuy.className = 'toggle-btn';
+    btnBuy.textContent = i18n[currentLang].buy;
+    btnSell.textContent = i18n[currentLang].sell;
+
+    productType = 'cfd';
+    btnCfd.className = 'toggle-btn active-dark';
+    btnStock.className = 'toggle-btn';
+    instrumentBlock.style.display = 'block';
+    symbolBlock.style.display = 'none';
+
+    currency = 'USD';
+    renderCurrencyButtons();
+
+    renderRiskButtons();
+    renderLeverageButtons();
+    clearFieldErrors();
+    updateLiveBadges();
+
+    resultsArea.innerHTML = `<div class="placeholder">${i18n[currentLang].placeholder}</div>`;
+  }
+
+  document.getElementById('resetBtn').onclick = resetCalculator;
 
   leverageInput.addEventListener('input', renderLeverageButtons);
 
@@ -850,6 +1101,7 @@
   btnSell.className = 'toggle-btn active-sell';
   btnCfd.className = 'toggle-btn active-dark';
   applyLanguage();
+  resultsArea.innerHTML = `<div class="placeholder">${i18n[currentLang].placeholder}</div>`;
 </script>
 
 <div style="background:linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding:30px 20px; margin-top:50px; border-radius:20px; text-align:center; color:white; max-width:700px; margin:50px auto; border:1px solid #334155;">
