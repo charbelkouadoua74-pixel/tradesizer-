@@ -1510,14 +1510,6 @@ let calculCount = parseInt(localStorage.getItem('calculCount') || '0');
 </script>
 
 
-<!-- COMPTEUR DE VISITES - VERCEL READY -->
-<div id="visit-counter" style="background:#1e293b; border:1px solid #334155; padding:14px 20px; border-radius:14px; text-align:center; max-width:700px; margin:20px auto; color:#94a3b8; font-size:13px; display:flex; align-items:center; justify-content:center; gap:8px; font-family:Inter, sans-serif;">
-  <span>👁️</span>
-  <span id="counter-text">Visites totales :</span>
-  <span id="counter-number" style="color:#f59e0b; font-weight:800; font-size:15px;">...</span>
-  <span style="width:8px; height:8px; background:#22c55e; border-radius:50%; display:inline-block; margin-left:6px; animation:pulse 2s infinite;"></span>
-</div>
-<style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}</style>
 <div style="background:linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding:30px 20px; margin-top:50px; border-radius:20px; text-align:center; color:white; max-width:700px; margin:50px auto; border:1px solid #334155;">
 
   <h3 style="margin-bottom:10px; font-size:22px;">🚀 Commence à trader avec 10$</h3>
@@ -1534,43 +1526,6 @@ let calculCount = parseInt(localStorage.getItem('calculCount') || '0');
   </p>
 </div>
 
-
-<!-- SCRIPT COMPTEUR VERCEL -->
-<script>
-(async () => {
-  const counterTextEl = document.getElementById('counter-text');
-  const counterNumberEl = document.getElementById('counter-number');
-  try {
-    let res = await fetch('/api/visits');
-    let data;
-    if (res.ok) { data = await res.json(); } else { throw new Error('API Vercel non dispo'); }
-    const total = data.total || data.value || 0;
-    const lang = (typeof currentLang !== 'undefined' ? currentLang : 'fr');
-    const labels = { fr: 'Visites totales :', en: 'Total visits:' };
-    if (counterTextEl) counterTextEl.textContent = labels[lang] || labels.fr;
-    const formatted = new Intl.NumberFormat(lang === 'fr' ? 'fr-FR' : 'en-US').format(total);
-    if (counterNumberEl) {
-      let current = 0;
-      const step = Math.max(1, Math.floor(total / 30));
-      const timer = setInterval(() => {
-        current += step;
-        if (current >= total) { current = total; clearInterval(timer); }
-        counterNumberEl.textContent = new Intl.NumberFormat(lang === 'fr' ? 'fr-FR' : 'en-US').format(current);
-      }, 30);
-    }
-  } catch (e) {
-    try {
-      const r2 = await fetch('https://api.countapi.xyz/hit/charbel-calculateur-2024/visits');
-      const d2 = await r2.json();
-      if (counterNumberEl) counterNumberEl.textContent = new Intl.NumberFormat('fr-FR').format(d2.value);
-    } catch { if (counterNumberEl) counterNumberEl.textContent = '1 247+'; }
-  }
-  const origApply = window.applyLanguage;
-  if (typeof origApply === 'function') {
-    window.applyLanguage = function() { origApply(); const labels = { fr: 'Visites totales :', en: 'Total visits:' }; if (counterTextEl) counterTextEl.textContent = labels[currentLang] || labels.fr; }
-  }
-})();
-</script>
 
 <script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script><script>
   if ('serviceWorker' in navigator) {
