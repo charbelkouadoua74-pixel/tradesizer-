@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<script src="https://quge5.com/88/tag.min.js" data-zone="272385" async data-cfasync="false"></script>
 <style>
 @font-face {
   font-family: "Optimistic";
@@ -270,58 +269,6 @@
   .view { display: none; }
   .view.active { display: block; }
 
-  /* Journal */
-  .stat-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-  .stat-box {
-    background: white;
-    border-radius: 10px;
-    padding: 12px 8px;
-    text-align: center;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-  }
-  .stat-value { font-size: 18px; font-weight: 700; }
-  .stat-label { font-size: 10px; color: #71717a; margin-top: 2px; }
-  .journal-entry {
-    background: white;
-    border-radius: 10px;
-    padding: 12px 14px;
-    margin-bottom: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 8px;
-  }
-  .journal-entry-info { flex: 1; min-width: 0; }
-  .journal-entry-title { font-size: 14px; font-weight: 700; }
-  .journal-entry-sub { font-size: 11px; color: #71717a; margin-top: 2px; }
-  .journal-pnl { font-size: 15px; font-weight: 700; white-space: nowrap; }
-  .journal-delete {
-    background: none;
-    border: none;
-    color: #a1a1aa;
-    font-size: 18px;
-    cursor: pointer;
-    padding: 4px 8px;
-  }
-  .save-journal-btn {
-    width: 100%;
-    padding: 12px;
-    margin-top: 12px;
-    background-color: #f4f4f5;
-    border: 1px dashed #a1a1aa;
-    border-radius: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    color: #3f3f46;
-    cursor: pointer;
-  }
-
   .admin-warning {
     border-radius: 10px;
     padding: 12px;
@@ -338,8 +285,38 @@
   }
   .plan-btn.dark { background: #18181b; color: white; }
   .plan-btn.outline { background: white; color: #18181b; border: 1px solid #d4d4d8; }
+  .mode-toolbar { display:flex; gap:8px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
+  .mode-toggle { display:flex; flex:1; min-width:220px; background:white; border:1px solid #d4d4d8; border-radius:10px; padding:3px; }
+  .mode-btn, .theme-btn { flex:1; border:0; border-radius:8px; padding:9px 10px; font-weight:700; font-size:12px; cursor:pointer; background:transparent; color:#52525b; }
+  .mode-btn.active, .theme-btn.active { background:#18181b; color:white; }
+  .theme-btn { flex:0 0 auto; border:1px solid #d4d4d8; background:white; }
+  .converter-heading { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; margin-bottom:14px; }
+  .converter-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .converter-actions { display:flex; gap:8px; margin-top:4px; }
+  .converter-actions .plan-btn { flex:1; }
+  .mode-status { font-size:11px; font-weight:700; color:#0f766e; background:#ecfdf5; border-radius:999px; padding:5px 8px; white-space:nowrap; }
+  .conversion-result { margin-top:12px; font-weight:700; font-size:18px; color:#18181b; }
+  .theoretical-volume-note { text-align:center; color:#a1a1aa; font-size:12px; margin:-8px 0 14px; }
+  .history-list { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+  .history-item { background:#f8fafc; border:1px solid #e4e4e7; border-radius:10px; padding:11px 12px; display:flex; justify-content:space-between; gap:10px; align-items:center; }
+  .history-main { min-width:0; }
+  .history-title { font-size:13px; font-weight:700; color:#18181b; }
+  .history-meta { font-size:11px; color:#71717a; margin-top:3px; }
+  .history-volume { font-size:14px; font-weight:800; color:#18181b; white-space:nowrap; }
+  .history-empty { color:#a1a1aa; font-size:13px; text-align:center; padding:12px 0 2px; }
+  body.dark-mode .history-item { background:#27272a; border-color:#3f3f46; }
+  body.dark-mode .history-title, body.dark-mode .history-volume { color:#f4f4f5; }
+  body.dark-mode { background:#09090b; color:#f4f4f5; }
+  body.dark-mode .card, body.dark-mode .placeholder, body.dark-mode .mode-toggle, body.dark-mode .theme-btn, body.dark-mode input, body.dark-mode select, body.dark-mode .toggle-btn, body.dark-mode .risk-btn, body.dark-mode .lev-btn { background:#18181b; color:#f4f4f5; border-color:#3f3f46; }
+  body.dark-mode label, body.dark-mode .toggle-link { color:#d4d4d8; }
+  body.dark-mode .mode-btn { color:#d4d4d8; }
+  body.dark-mode .mode-btn.active, body.dark-mode .theme-btn.active { background:#f4f4f5; color:#18181b; }
+  body.dark-mode .plan-btn.outline { background:#18181b; color:#f4f4f5; border-color:#52525b; }
+  body.dark-mode .hint, body.dark-mode .footer-note { color:#a1a1aa; }
+  @media (max-width:520px) { .converter-grid { grid-template-columns:1fr; } .converter-actions { flex-direction:column; } }
 </style>
 <script defer src="/_vercel/insights/script.js"></script>
+<script>(function(s){s.dataset.zone='11633221',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 </head>
 <body>
 <div class="container">
@@ -352,6 +329,14 @@
       <button class="lang-btn" id="langFr">FR</button>
       <button class="lang-btn" id="langEn">EN</button>
     </div>
+  </div>
+
+  <div class="mode-toolbar" aria-label="Préférences d'affichage et de connexion">
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="offlineModeBtn" type="button">Mode Hors-ligne</button>
+      <button class="mode-btn" id="onlineModeBtn" type="button">Mode Online</button>
+    </div>
+    <button class="theme-btn" id="darkModeBtn" type="button" aria-pressed="false">Mode sombre</button>
   </div>
 
   <div id="viewCalc" class="view active">
@@ -506,17 +491,58 @@
 
   <div id="resultsArea"></div>
 
+  <div class="card converter-card" id="converterCard" style="margin-top:16px;">
+    <div class="converter-heading">
+      <div>
+        <label style="margin-bottom:4px;">Convertisseur de devises</label>
+        <p class="hint" style="margin:0;">Convertis une devise vers une autre, en manuel ou avec un taux en direct.</p>
+      </div>
+      <span class="mode-status" id="modeStatus">Hors-ligne</span>
+    </div>
+    <div class="converter-grid">
+      <div class="field">
+        <label for="convertFrom">Devise source</label>
+        <select id="convertFrom"></select>
+      </div>
+      <div class="field">
+        <label for="convertTo">Devise cible</label>
+        <select id="convertTo"></select>
+      </div>
+      <div class="field">
+        <label for="convertAmount">Montant</label>
+        <input type="number" id="convertAmount" value="1" min="0" step="0.01">
+      </div>
+      <div class="field">
+        <label for="manualRate">Taux manuel</label>
+        <input type="number" id="manualRate" value="1" min="0" step="0.000001">
+        <p class="hint">1 devise source = X devise cible.</p>
+      </div>
+    </div>
+    <div class="converter-actions">
+      <button class="plan-btn outline" id="fetchRatesBtn" type="button">Récupérer les taux en direct</button>
+      <button class="plan-btn dark" id="convertBtn" type="button">Convertir</button>
+    </div>
+    <p class="hint" id="converterStatus" role="status">Mode hors-ligne : le taux manuel est utilisé.</p>
+    <div id="conversionResult" class="conversion-result"></div>
+  </div>
+
+  <div class="card history-card" id="historyCard" style="margin-top:16px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+      <label style="margin-bottom:0;">Derniers calculs</label>
+      <button class="plan-btn outline" id="clearHistoryBtn" type="button" style="padding:7px 10px;font-size:11px;">Effacer</button>
+    </div>
+    <p class="hint">Historique local enregistré uniquement dans ce navigateur.</p>
+    <div id="historyList" class="history-list"></div>
+  </div>
+
   <div class="card" style="margin-top:16px;">
     <label data-i18n="openAccount" style="margin-bottom:10px;">Ouvrir un compte</label>
     <div style="display:flex;flex-direction:column;gap:8px;">
-      <a href="#" id="xmLink" target="_blank" rel="noopener" style="display:block;text-align:center;padding:12px;border-radius:8px;background-color:#e11d2e;color:white;font-weight:700;text-decoration:none;font-size:14px;">
-        XM — <span data-i18n="openAccountBtn">Ouvrir un compte</span>
-      </a>
       <a href="https://one.exnessonelink.com/a/67b56my4u2" id="exnessLink" target="_blank" rel="noopener" style="display:block;text-align:center;padding:12px;border-radius:8px;background-color:#ffce00;color:#18181b;font-weight:700;text-decoration:none;font-size:14px;">
         Exness — <span data-i18n="openAccountBtn">Ouvrir un compte</span>
       </a>
     </div>
-    <p class="hint" data-i18n="affiliateHint">Liens à configurer.</p>
+    <p class="hint">Lien partenaire Exness.</p>
   </div>
 
   <!-- Emplacement publicité (AdSense/autre) — nécessite un compte annonceur, non configuré -->
@@ -588,6 +614,7 @@
       belowMinWarning: "Aucun volume conforme au risque sélectionné n'est disponible avec le minimum de ce broker.",
       noCompliantVolumeTitle: 'Aucun volume conforme disponible',
       theoreticalVolume: 'Volume théorique',
+      roundedVolume: 'Volume arrondi',
       brokerMinimum: 'Minimum broker',
       riskWithMinLot: 'Risque avec le volume minimum',
       minExceedsRisk: 'Le volume minimum de ce broker implique un risque bien supérieur à celui que tu as choisi. Ne force pas une position juste parce que le broker autorise ce volume minimum.',
@@ -611,23 +638,7 @@
       levelVeryAggressive: 'Très agressif — risque de ruine élevé',
       openAccount: 'Ouvrir un compte',
       openAccountBtn: 'Ouvrir un compte',
-      affiliateHint: "Remplace les liens # dans le code par tes liens d'affiliation XM et Exness.",
-      tabCalc: 'Calculateur',
-      tabJournal: 'Journal',
-      saveToJournal: '+ Enregistrer ce calcul dans le journal',
-      statTrades: 'Trades',
-      statWinrate: 'Taux de réussite',
-      statPnl: 'P/L total',
-      addTrade: 'Ajouter un trade',
-      jInstrumentPh: 'Instrument (ex : XAUUSD)',
-      jLotsPh: 'Lots',
-      jPnlPh: 'Résultat',
-      jNotePh: 'Note (optionnel)',
-      jAddBtn: '+ Ajouter au journal',
-      journalEmpty: 'Aucun trade enregistré pour le moment.',
-      jDeleteConfirm: 'Supprimer ce trade ?',
-      tabConvert: 'Devises',
-      chartTitle: 'Évolution du P/L cumulé',
+      affiliateHint: "Lien partenaire Exness.",
       convertTitle: 'Convertisseur de devises',
       cvFetchBtn: '🌐 Récupérer les taux en direct',
       cvOffline: 'Mode hors-ligne — taux manuel utilisé ci-dessous.',
@@ -690,6 +701,7 @@
       belowMinWarning: "No volume matching the selected risk is available at this broker's minimum.",
       noCompliantVolumeTitle: 'No compliant volume available',
       theoreticalVolume: 'Theoretical volume',
+      roundedVolume: 'Rounded volume',
       brokerMinimum: 'Broker minimum',
       riskWithMinLot: 'Risk with the minimum volume',
       minExceedsRisk: "This broker's minimum volume implies a risk much higher than the one you chose. Don't force a position just because the broker allows this minimum volume.",
@@ -713,23 +725,7 @@
       levelVeryAggressive: 'Very aggressive — high risk of ruin',
       openAccount: 'Open an account',
       openAccountBtn: 'Open an account',
-      affiliateHint: "Replace the # links in the code with your XM and Exness affiliate links.",
-      tabCalc: 'Calculator',
-      tabJournal: 'Journal',
-      saveToJournal: '+ Save this calculation to the journal',
-      statTrades: 'Trades',
-      statWinrate: 'Win rate',
-      statPnl: 'Total P/L',
-      addTrade: 'Add a trade',
-      jInstrumentPh: 'Instrument (e.g. XAUUSD)',
-      jLotsPh: 'Lots',
-      jPnlPh: 'Result',
-      jNotePh: 'Note (optional)',
-      jAddBtn: '+ Add to journal',
-      journalEmpty: 'No trades logged yet.',
-      jDeleteConfirm: 'Delete this trade?',
-      tabConvert: 'Currency',
-      chartTitle: 'Cumulative P/L over time',
+      affiliateHint: "Exness partner link.",
       convertTitle: 'Currency converter',
       cvFetchBtn: '🌐 Fetch live rates',
       cvOffline: 'Offline mode — manual rate used below.',
@@ -771,7 +767,7 @@
   let direction = 'sell';
   let productType = 'cfd';
   let currency = 'USD';
-  const currencies = ['USD', 'EUR', 'GBP', 'HKD'];
+  const currencies = ['USD', 'EUR', 'GBP', 'HKD', 'XOF', 'XAF', 'NGN', 'GHS', 'ZAR', 'MAD', 'EGP', 'KES'];
   const riskOptions = ['0.5', '1', '2', '3', '5', '7'];
   const leverageOptions = ['20', '100', '200', '1000'];
 
@@ -799,6 +795,229 @@
   const btnSell = document.getElementById('btnSell');
   const btnCfd = document.getElementById('btnCfd');
   const btnStock = document.getElementById('btnStock');
+  const offlineModeBtn = document.getElementById('offlineModeBtn');
+  const onlineModeBtn = document.getElementById('onlineModeBtn');
+  const darkModeBtn = document.getElementById('darkModeBtn');
+  const modeStatusEl = document.getElementById('modeStatus');
+  const converterStatusEl = document.getElementById('converterStatus');
+  const conversionResultEl = document.getElementById('conversionResult');
+  const convertFromEl = document.getElementById('convertFrom');
+  const convertToEl = document.getElementById('convertTo');
+  const convertAmountEl = document.getElementById('convertAmount');
+  const manualRateEl = document.getElementById('manualRate');
+  const fetchRatesBtn = document.getElementById('fetchRatesBtn');
+  const convertBtn = document.getElementById('convertBtn');
+  const historyListEl = document.getElementById('historyList');
+  const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+  let onlineMode = false;
+  let liveRates = {};
+
+  function renderConverterCurrencies() {
+    const previousFrom = convertFromEl.value || 'USD';
+    const previousTo = convertToEl.value || 'EUR';
+    [convertFromEl, convertToEl].forEach(select => {
+      select.innerHTML = '';
+      currencies.forEach(code => {
+        const option = document.createElement('option');
+        option.value = code;
+        option.textContent = code;
+        select.appendChild(option);
+      });
+    });
+    convertFromEl.value = currencies.includes(previousFrom) ? previousFrom : 'USD';
+    convertToEl.value = currencies.includes(previousTo) ? previousTo : 'EUR';
+  }
+
+  function setMode(isOnline) {
+    onlineMode = Boolean(isOnline);
+    offlineModeBtn.classList.toggle('active', !onlineMode);
+    onlineModeBtn.classList.toggle('active', onlineMode);
+    modeStatusEl.textContent = onlineMode ? 'Online' : 'Hors-ligne';
+    converterStatusEl.textContent = onlineMode
+      ? 'Mode online : récupère les taux en direct avant de convertir.'
+      : 'Mode hors-ligne : le taux manuel est utilisé.';
+    if (!onlineMode) liveRates = {};
+  }
+
+  function applyDarkMode(enabled) {
+    document.body.classList.toggle('dark-mode', enabled);
+    darkModeBtn.classList.toggle('active', enabled);
+    darkModeBtn.setAttribute('aria-pressed', String(enabled));
+    darkModeBtn.textContent = enabled ? 'Mode clair' : 'Mode sombre';
+    localStorage.setItem('darkMode', enabled ? '1' : '0');
+  }
+
+  offlineModeBtn.onclick = () => setMode(false);
+  onlineModeBtn.onclick = async () => {
+    setMode(true);
+    try {
+      await updateLiveRate();
+    } catch (error) {
+      converterStatusEl.textContent = 'Connexion impossible : le taux manuel reste disponible.';
+      console.error('Erreur de taux:', error);
+    }
+  };
+  darkModeBtn.onclick = () => applyDarkMode(!document.body.classList.contains('dark-mode'));
+  applyDarkMode(localStorage.getItem('darkMode') === '1');
+  setMode(false);
+  renderConverterCurrencies();
+
+  async function fetchLiveRate(from, to) {
+    if (from === to) return 1;
+    const response = await fetch(`https://open.er-api.com/v6/latest/${encodeURIComponent(from)}`);
+    if (!response.ok) throw new Error('Taux indisponibles');
+    const data = await response.json();
+    const rate = Number(data?.rates?.[to]);
+    if (!Number.isFinite(rate) || rate <= 0) throw new Error('Taux indisponible pour cette devise');
+    return rate;
+  }
+
+  async function updateLiveRate() {
+    const from = convertFromEl.value;
+    const to = convertToEl.value;
+    converterStatusEl.textContent = 'Récupération du taux en direct…';
+    const rate = await fetchLiveRate(from, to);
+    liveRates[`${from}_${to}`] = rate;
+    manualRateEl.value = rate.toFixed(6);
+    converterStatusEl.textContent = `Taux online récupéré : 1 ${from} = ${rate.toFixed(6)} ${to}.`;
+    return rate;
+  }
+
+  fetchRatesBtn.onclick = async () => {
+    try {
+      setMode(true);
+      await updateLiveRate();
+    } catch (error) {
+      converterStatusEl.textContent = 'Connexion impossible : le taux manuel reste disponible.';
+      console.error('Erreur de taux:', error);
+    }
+  };
+
+  convertFromEl.onchange = () => { if (onlineMode) updateLiveRate().catch(() => {}); };
+  convertToEl.onchange = () => { if (onlineMode) updateLiveRate().catch(() => {}); };
+
+  function renderConversionLimitMessage() {
+    conversionResultEl.innerHTML = `
+      <div class="placeholder" style="background:#fef3c7; border:1px solid #f59e0b; color:#92400e; padding:18px; border-radius:12px; text-align:center;">
+        <strong>⚠️ Limite gratuite atteinte</strong><br><br>
+        Tu as utilisé tes 2 conversions gratuites.<br>
+        Clique sur le bouton ci-dessous pour voir une publicité et débloquer +2 conversions.
+        <br><br>
+        <button id="unlockConversionBtn" class="plan-btn dark" style="width:100%; padding:14px;">Voir la pub et continuer</button>
+      </div>`;
+    document.getElementById('unlockConversionBtn').onclick = () => {
+      conversionCount = 0;
+      localStorage.setItem('conversionCount', '0');
+      conversionResultEl.innerHTML = '<div class="placeholder" style="background:#ecfdf5; border:1px solid #10b981; color:#065f46; padding:14px; border-radius:12px;">✅ +2 conversions débloquées !</div>';
+    };
+  }
+
+  let conversionCount = parseInt(localStorage.getItem('conversionCount') || '0', 10);
+  convertBtn.onclick = async () => {
+    if (conversionCount >= 2) { renderConversionLimitMessage(); return; }
+    const from = convertFromEl.value;
+    const to = convertToEl.value;
+    const amount = Number(convertAmountEl.value);
+    if (!Number.isFinite(amount) || amount < 0) {
+      conversionResultEl.innerHTML = '<div class="placeholder" style="border-color:#fca5a5;color:#b91c1c;background:#fef2f2;">⚠️ Saisis un montant valide.</div>';
+      return;
+    }
+    try {
+      const key = `${from}_${to}`;
+      const rate = onlineMode ? (liveRates[key] || await updateLiveRate()) : Number(manualRateEl.value);
+      if (!Number.isFinite(rate) || rate < 0) throw new Error('Taux invalide');
+      const result = amount * rate;
+      conversionResultEl.innerHTML = `<div>${amount.toFixed(2)} ${from} = <strong>${result.toFixed(2)} ${to}</strong><br><span class="hint">Taux utilisé : 1 ${from} = ${rate.toFixed(6)} ${to}</span></div>`;
+      conversionCount++;
+      localStorage.setItem('conversionCount', String(conversionCount));
+    } catch (error) {
+      converterStatusEl.textContent = 'Impossible de récupérer le taux. Utilise le mode hors-ligne avec un taux manuel.';
+      conversionResultEl.innerHTML = '<div class="placeholder" style="border-color:#fca5a5;color:#b91c1c;background:#fef2f2;">⚠️ Conversion impossible. Vérifie le taux ou la connexion.</div>';
+    }
+  };
+
+  let calculationHistory = [];
+  try {
+    const savedHistory = JSON.parse(localStorage.getItem('calculationHistory') || '[]');
+    calculationHistory = Array.isArray(savedHistory) ? savedHistory.slice(0, 8) : [];
+  } catch (error) {
+    calculationHistory = [];
+  }
+
+  function renderCalculationHistory() {
+    historyListEl.innerHTML = '';
+    if (!calculationHistory.length) {
+      historyListEl.innerHTML = '<div class="history-empty">Aucun calcul enregistré pour le moment.</div>';
+      return;
+    }
+    calculationHistory.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'history-item';
+      const main = document.createElement('div');
+      main.className = 'history-main';
+      const title = document.createElement('div');
+      title.className = 'history-title';
+      title.textContent = `${item.instrument} · ${item.direction} · ${item.currency}`;
+      const meta = document.createElement('div');
+      meta.className = 'history-meta';
+      meta.textContent = `${item.date} · Solde ${item.balance} · Risque ${item.risk}% · SL ${item.distance}`;
+      const volume = document.createElement('div');
+      volume.className = 'history-volume';
+      volume.textContent = `${item.volume} ${item.unit}`;
+      main.appendChild(title);
+      main.appendChild(meta);
+      row.appendChild(main);
+      row.appendChild(volume);
+      historyListEl.appendChild(row);
+    });
+  }
+
+  function saveCalculationToHistory() {
+    const instrument = productType === 'stock' ? (customSymbolEl.value || 'Actions') : instrumentEl.value;
+    const resultCard = resultsArea.querySelector('.result-card');
+    const volumeText = resultCard?.querySelector('.result-value')?.textContent?.trim() || '';
+    const volumeMatch = volumeText.match(/([0-9]+(?:[.,][0-9]+)?)/);
+    const item = {
+      instrument,
+      direction: direction === 'buy' ? 'Achat' : 'Vente',
+      currency,
+      balance: Number(balanceEl.value).toFixed(2),
+      risk: Number(riskPercentInput.value).toFixed(2),
+      distance: Number(manualDistanceEl.value) > 0 ? Number(manualDistanceEl.value).toFixed(2) : `${entryPriceEl.value} → ${slPriceEl.value}`,
+      volume: volumeMatch ? volumeMatch[1] : '—',
+      unit: productType === 'stock' ? 'actions' : 'lots',
+      date: new Date().toLocaleString(currentLang === 'fr' ? 'fr-FR' : 'en-US', { dateStyle:'short', timeStyle:'short' })
+    };
+    calculationHistory = [item, ...calculationHistory].slice(0, 8);
+    localStorage.setItem('calculationHistory', JSON.stringify(calculationHistory));
+    renderCalculationHistory();
+  }
+
+  function requestHistorySaveAfterAd() {
+    document.getElementById('historySavePrompt')?.remove();
+    const prompt = document.createElement('div');
+    prompt.id = 'historySavePrompt';
+    prompt.className = 'placeholder';
+    prompt.style.cssText = 'margin-top:12px;background:#eff6ff;border:1px solid #60a5fa;color:#1e3a8a;padding:18px;border-radius:12px;text-align:center;';
+    prompt.innerHTML = `
+      <strong>Enregistrer ce calcul ?</strong><br><br>
+      Regarde une publicité pour sauvegarder ce calcul dans ton historique local.
+      <br><br>
+      <button id="saveHistoryAfterAdBtn" class="plan-btn dark" type="button" style="width:100%;padding:14px;">Voir la pub et enregistrer</button>
+    `;
+    resultsArea.appendChild(prompt);
+    document.getElementById('saveHistoryAfterAdBtn').onclick = () => {
+      saveCalculationToHistory();
+      prompt.innerHTML = '<strong style="color:#065f46;">✅ Calcul enregistré dans ton historique local.</strong>';
+    };
+  }
+
+  clearHistoryBtn.onclick = () => {
+    calculationHistory = [];
+    localStorage.removeItem('calculationHistory');
+    renderCalculationHistory();
+  };
+  renderCalculationHistory();
 
   function renderCurrencyButtons() {
     currencyButtonsEl.innerHTML = '';
@@ -1044,7 +1263,7 @@
     // ---------- Calcul principal : même slDistance et même pointValue partout ----------
     const riskAmount = bal * (risk / 100);
     const lotSize = riskAmount / (slDistance * pointValue);
-    const lotSizeRounded = Math.floor(lotSize * 100) / 100;
+    const lotSizeRounded = Math.round(lotSize * 100) / 100;
     const unitLabel = productType === 'stock' ? t.unitShares : t.unitLots;
 
     // ---------- Comparaison à la taille minimale du broker — JAMAIS forcée ----------
@@ -1075,6 +1294,10 @@
             <div>
               <div class="result-sub-label">${t.theoreticalVolume}</div>
               <div class="result-sub-value">${lotSize.toFixed(4)} ${unitLabel}</div>
+            </div>
+            <div>
+              <div class="result-sub-label">${t.roundedVolume}</div>
+              <div class="result-sub-value">${lotSizeRounded.toFixed(2)} ${unitLabel}</div>
             </div>
             <div>
               <div class="result-sub-label">${t.brokerMinimum}</div>
@@ -1168,6 +1391,7 @@
           </div>
         </div>
         <div class="result-value">${lotSizeRounded.toFixed(2)} <span>${unitLabel}</span></div>
+        <div class="theoretical-volume-note">${t.theoreticalVolume} : ${lotSize.toFixed(4)} ${unitLabel} · ${t.roundedVolume} : ${lotSizeRounded.toFixed(2)} ${unitLabel}</div>
         <div class="result-grid">
           <div>
             <div class="result-sub-label">${t.riskAmount}</div>
@@ -1192,16 +1416,16 @@
       <p class="hint" style="text-align:center;margin-top:10px;">${t.calcDisclaimer}</p>`;
   }
 
-// ---------- LIMITE 4 CALCULS + MULTITAG ----------
+// ---------- LIMITE 2 CALCULS + ONCLICK ----------
 let calculCount = parseInt(localStorage.getItem('calculCount') || '0');
 
-document.getElementById('calculateBtn').onclick = function () {
-  if (calculCount >= 4) {
+  document.getElementById('calculateBtn').onclick = function () {
+  if (calculCount >= 2) {
     resultsArea.innerHTML = `
       <div class="placeholder" style="background:#fef3c7; border:1px solid #f59e0b; color:#92400e; padding:22px; border-radius:14px; text-align:center;">
         <strong style="font-size:16px;">⚠️ Limite gratuite atteinte</strong><br><br>
-        Tu as utilisé tes 4 calculs gratuits.<br>
-        Clique sur le bouton ci-dessous pour voir une publicité et débloquer +4 calculs.
+        Tu as utilisé tes 2 calculs gratuits.<br>
+        Clique sur le bouton ci-dessous pour voir une publicité et débloquer +2 calculs.
         <br><br>
         <button id="unlockBtn" class="plan-btn dark" style="width:100%; margin-top:8px; padding:14px;">
           Voir la pub et continuer
@@ -1215,7 +1439,7 @@ document.getElementById('calculateBtn').onclick = function () {
 
       resultsArea.innerHTML = `
         <div class="placeholder" style="background:#ecfdf5; border:1px solid #10b981; color:#065f46; padding:18px; border-radius:12px;">
-          ✅ +4 calculs débloqués !<br>
+          ✅ +2 calculs débloqués !<br>
           Tu peux maintenant cliquer sur <strong>CALCULER</strong>.
         </div>
       `;
@@ -1225,6 +1449,7 @@ document.getElementById('calculateBtn').onclick = function () {
 
   try {
     runCalculation();
+    if (resultsArea.querySelector('.result-card')) requestHistorySaveAfterAd();
     calculCount++;
     localStorage.setItem('calculCount', calculCount);
   } catch (err) {
@@ -1302,12 +1527,6 @@ document.getElementById('calculateBtn').onclick = function () {
   <a href="https://one.exnessonelink.com/a/67b56my4u2" target="_blank"
     style="background:#f59e0b; color:black; padding:15px 28px; border-radius:12px; text-decoration:none; font-weight:bold; margin:10px; display:inline-block;">
     Ouvrir compte EXNESS →
-  </a>
-
-  <!-- REMPLACE ICI PAR TON LIEN XM -->
-  <a href="XM_LINK" target="_blank"
-    style="background:#3b82f6; color:white; padding:15px 28px; border-radius:12px; text-decoration:none; font-weight:bold; margin:10px; display:inline-block;">
-    Ouvrir compte XM →
   </a>
 
   <p style="font-size:11px; margin-top:20px; opacity:0.5;">
