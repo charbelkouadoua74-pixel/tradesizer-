@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head><style>
+<head>
+<script src="https://quge5.com/88/tag.min.js" data-zone="272385" async data-cfasync="false"></script>
+<style>
 @font-face {
   font-family: "Optimistic";
   font-style: normal;
@@ -1190,14 +1192,46 @@
       <p class="hint" style="text-align:center;margin-top:10px;">${t.calcDisclaimer}</p>`;
   }
 
-  document.getElementById('calculateBtn').onclick = () => {
-    try {
-      runCalculation();
-    } catch (err) {
-      console.error('Erreur de calcul:', err);
-      resultsArea.innerHTML = `<div class="placeholder" style="border-color:#fca5a5;color:#b91c1c;background:#fef2f2;">⚠️ ${i18n[currentLang].errUnexpected}</div>`;
-    }
-  };
+// ---------- LIMITE 4 CALCULS + MULTITAG ----------
+let calculCount = parseInt(localStorage.getItem('calculCount') || '0');
+
+document.getElementById('calculateBtn').onclick = function () {
+  if (calculCount >= 4) {
+    resultsArea.innerHTML = `
+      <div class="placeholder" style="background:#fef3c7; border:1px solid #f59e0b; color:#92400e; padding:22px; border-radius:14px; text-align:center;">
+        <strong style="font-size:16px;">⚠️ Limite gratuite atteinte</strong><br><br>
+        Tu as utilisé tes 4 calculs gratuits.<br>
+        Clique sur le bouton ci-dessous pour voir une publicité et débloquer +4 calculs.
+        <br><br>
+        <button id="unlockBtn" class="plan-btn dark" style="width:100%; margin-top:8px; padding:14px;">
+          Voir la pub et continuer
+        </button>
+      </div>
+    `;
+
+    document.getElementById('unlockBtn').onclick = function () {
+      calculCount = 0;
+      localStorage.setItem('calculCount', '0');
+
+      resultsArea.innerHTML = `
+        <div class="placeholder" style="background:#ecfdf5; border:1px solid #10b981; color:#065f46; padding:18px; border-radius:12px;">
+          ✅ +4 calculs débloqués !<br>
+          Tu peux maintenant cliquer sur <strong>CALCULER</strong>.
+        </div>
+      `;
+    };
+    return;
+  }
+
+  try {
+    runCalculation();
+    calculCount++;
+    localStorage.setItem('calculCount', calculCount);
+  } catch (err) {
+    console.error('Erreur de calcul:', err);
+    resultsArea.innerHTML = `<div class="placeholder" style="border-color:#fca5a5;color:#b91c1c;background:#fef2f2;">⚠️ Une erreur est survenue. Réessaie.</div>`;
+  }
+};
 
   // ---------- Bouton RÉINITIALISER ----------
   function resetCalculator() {
