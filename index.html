@@ -683,8 +683,8 @@
     <p class="hint" data-i18n="affiliateHint">TradeSizer peut utiliser un lien d’affiliation Exness. Lorsque vous cliquez sur ce lien, Exness peut utiliser des paramètres de suivi conformément à ses propres politiques.</p>
   </div>
 
-  <!-- Emplacement publicité (AdSense/autre) — nécessite un compte annonceur, non configuré -->
-  <!-- <div class="card" id="adSlot" style="text-align:center;color:#a1a1aa;font-size:12px;">Emplacement publicitaire</div> -->
+  <!-- Publicité réservée à la formule gratuite, après 2 calculs enregistrés et 2 conversions. -->
+  <div class="card" id="adSlot" style="display:none;text-align:center;color:#a1a1aa;font-size:12px;" aria-label="Publicité">Publicité</div>
 
   <p class="footer-note" data-i18n="footerNote"></p>
 
@@ -1053,16 +1053,15 @@
   </div>
 </div>
 
-<script src="/supabase-config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // Supabase public configuration. Never place the service-role key here.
-  const SUPABASE_URL = window.TRADESIZER_SUPABASE_CONFIG?.url || 'REMPLACE_PAR_TON_SUPABASE_URL';
-  const SUPABASE_ANON_KEY = window.TRADESIZER_SUPABASE_CONFIG?.anonKey || 'REMPLACE_PAR_TON_SUPABASE_ANON_KEY';
-  const SUPABASE_CONFIGURED = ![SUPABASE_URL, SUPABASE_ANON_KEY].some(value => String(value).includes('REMPLACE_PAR_TON'));
-  const supabaseClient = SUPABASE_CONFIGURED && window.supabase
-    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
-    : null;
+  // Publishable key uniquement : aucune secret key n’est utilisée dans le frontend.
+  const supabaseUrl = 'https://kusomucmcpssojivxsug.supabase.co';
+  const supabaseKey = 'sb_publishable_8LX1_R6IegdkhR4a3MVhng_lJaP1rDn';
+  const { createClient } = window.supabase;
+  const supabase = createClient(supabaseUrl, supabaseKey);
+  const supabaseClient = supabase;
+  const SUPABASE_CONFIGURED = true;
   const themeToggleBtn = document.getElementById('themeToggleBtn');
   function applyTheme(theme, persist = true) {
     const normalized = theme === 'dark' ? 'dark' : 'light';
@@ -2047,6 +2046,7 @@
     }
   };
 
+  let pendingCalculationSave = false;
   function addJournalEntry(entry) {
     const entries = loadJournal();
     entries.push({ id: Date.now(), date: new Date().toISOString(), ...entry });
@@ -2066,6 +2066,10 @@
     const note = document.getElementById('jNote').value.trim();
     if (!instrument || !lots) return;
     addJournalEntry({ instrument, direction: direction2, entry, sl, tp, lots, pnl: pnl || '0', time, note });
+    if (pendingCalculationSave) {
+      pendingCalculationSave = false;
+      recordFreeAdActivity('savedCalculation');
+    }
     document.getElementById('jInstrument').value = '';
     document.getElementById('jEntry').value = '';
     document.getElementById('jSl').value = '';
@@ -2078,6 +2082,7 @@
 
   document.getElementById('saveToJournalBtn').onclick = () => {
     if (!lastResult) return;
+    pendingCalculationSave = true;
     document.getElementById('jInstrument').value = lastResult.instrument;
     document.getElementById('jDirection').value = lastResult.direction;
     document.getElementById('jLots').value = lastResult.lots;
@@ -2143,6 +2148,7 @@
     'featHistory', 'featThemes', 'featSupport'
   ];
   let subStatusCache = { plan: 'free', status: 'none', verified: false, userId: null };
+  let subscriptionStatusResolved = false;
   function subscriptionIsCurrentlyActive(data) {
     if (!data || data.status !== 'active') return false;
     const end = normalizeSubscriptionDate(data.period_end);
@@ -2150,6 +2156,54 @@
   }
   function isPro() {
     return subStatusCache.verified === true && subscriptionIsCurrentlyActive(subStatusCache);
+  }
+  const FREE_AD_ACTIVITY_KEY = 'tradesizer_free_ad_activity_v1';
+  let freeAdLoaded = false;
+  function loadFreeAdActivity() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(FREE_AD_ACTIVITY_KEY) || '{}');
+      return {
+        savedCalculations: Number.isFinite(Number(raw.savedCalculations)) ? Number(raw.savedCalculations) : 0,
+        conversions: Number.isFinite(Number(raw.conversions)) ? Number(raw.conversions) : 0,
+        lastConversionSignature: typeof raw.lastConversionSignature === 'string' ? raw.lastConversionSignature : ''
+      };
+    } catch (error) {
+      return { savedCalculations: 0, conversions: 0, lastConversionSignature: '' };
+    }
+  }
+  function saveFreeAdActivity(activity) {
+    try { localStorage.setItem(FREE_AD_ACTIVITY_KEY, JSON.stringify(activity)); } catch (error) { /* stockage local indisponible */ }
+  }
+  function freeAdThresholdReached() {
+    const activity = loadFreeAdActivity();
+    return activity.savedCalculations >= 2 && activity.conversions >= 2;
+  }
+  function recordFreeAdActivity(type, signature = '') {
+    if (isPro()) return;
+    const activity = loadFreeAdActivity();
+    if (type === 'savedCalculation') activity.savedCalculations += 1;
+    if (type === 'conversion' && signature && activity.lastConversionSignature !== signature) {
+      activity.conversions += 1;
+      activity.lastConversionSignature = signature;
+    }
+    saveFreeAdActivity(activity);
+    updateFreeAd();
+  }
+  function updateFreeAd() {
+    const adSlot = document.getElementById('adSlot');
+    if (!adSlot) return;
+    if (!subscriptionStatusResolved || isPro() || !freeAdThresholdReached()) {
+      adSlot.style.display = 'none';
+      return;
+    }
+    adSlot.style.display = 'block';
+    if (freeAdLoaded || adSlot.querySelector('script[data-tradesizer-free-ad="true"]')) return;
+    const script = document.createElement('script');
+    script.dataset.zone = '11633221';
+    script.dataset.tradesizerFreeAd = 'true';
+    script.src = 'https://al5sm.com/tag.min.js';
+    adSlot.replaceChildren(script);
+    freeAdLoaded = true;
   }
   function updateProBadge() {
     document.getElementById('proBadge').style.display = isPro() ? 'inline-block' : 'none';
@@ -2185,8 +2239,10 @@
   async function fetchSubscriptionStatus() {
     if (!currentSupabaseUser || !supabaseClient) {
       subStatusCache = { plan: 'free', status: 'none', verified: false, userId: null, backendNotConfigured: !supabaseClient };
+      subscriptionStatusResolved = true;
       updateProBadge();
       renderProPage();
+      updateFreeAd();
       return false;
     }
     try {
@@ -2199,14 +2255,18 @@
       subStatusCache = data
         ? { ...data, userId: currentSupabaseUser.id, verified: true }
         : { plan: 'free', status: 'none', verified: true, userId: currentSupabaseUser.id };
+      subscriptionStatusResolved = true;
       updateProBadge();
       renderProPage();
+      updateFreeAd();
       return isPro();
     } catch (error) {
       console.error('Supabase subscription lookup failed:', error);
       subStatusCache = { plan: 'free', status: 'none', verified: false, userId: currentSupabaseUser.id, offlineError: true };
+      subscriptionStatusResolved = true;
       updateProBadge();
       renderProPage();
+      updateFreeAd();
       return false;
     }
   }
@@ -2264,13 +2324,16 @@
   document.getElementById('planQuarterlyBtn').onclick = () => requestSubscription('quarterly');
   document.getElementById('planAnnualBtn').onclick = () => requestSubscription('annual');
   async function handleSupabaseSession(session) {
+    subscriptionStatusResolved = false;
     currentSupabaseUser = session?.user || null;
     renderAccountState();
     if (currentSupabaseUser) await fetchSubscriptionStatus();
     else {
       subStatusCache = { plan: 'free', status: 'none', verified: false, userId: null };
+      subscriptionStatusResolved = true;
       updateProBadge();
       renderProPage();
+      updateFreeAd();
     }
   }
   if (supabaseClient) {
@@ -2449,7 +2512,7 @@
   const cvStatus = document.getElementById('cvStatus');
   const cvFetchBtn = document.getElementById('cvFetchBtn');
 
-  function computeConversion() {
+  function computeConversion(countAsAction = false) {
     const amount = parseFloat(cvAmount.value) || 0;
     const from = cvFrom.value;
     const to = cvTo.value;
@@ -2479,6 +2542,10 @@
       return;
     }
     cvResult.value = (amount * rate).toFixed(2) + ' ' + to;
+    if (countAsAction) {
+      const signature = [amount, from, to, rate, rateSource].join('|');
+      recordFreeAdActivity('conversion', signature);
+    }
     if (rateSource === 'manual') {
       cvStatus.textContent = i18n[currentLang].cvOffline;
       cvStatus.style.color = '#b45309';
@@ -2501,7 +2568,7 @@
       if (liveRates.rates[cvTo.value]) {
         cvManualRate.value = liveRates.rates[cvTo.value];
       }
-      computeConversion();
+      computeConversion(true);
     } catch (e) {
       liveRates = null;
       cvStatus.textContent = t.cvError;
@@ -2511,8 +2578,8 @@
 
   cvFetchBtn.onclick = fetchLiveRates;
   [cvAmount, cvFrom, cvTo, cvManualRate].forEach(el => {
-    el.addEventListener('input', () => { liveRates = null; computeConversion(); });
-    el.addEventListener('change', () => { liveRates = null; computeConversion(); });
+    el.addEventListener('input', () => { liveRates = null; computeConversion(false); });
+    el.addEventListener('change', () => { liveRates = null; computeConversion(true); });
   });
   computeConversion();
 
