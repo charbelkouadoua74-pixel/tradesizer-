@@ -1,49 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head><style>
-@font-face {
-  font-family: "Optimistic";
-  font-style: normal;
-  font-weight: 400 600;
-  font-display: swap;
-  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Optimistic Mono";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
-}
-:where(html) {
-  font-family: "Optimistic", system-ui, sans-serif;
-}
-:where(code, pre, kbd, samp) {
-  font-family: "Optimistic Mono", ui-monospace, monospace;
-}
-</style>
-<style>
-@font-face {
-  font-family: "Optimistic";
-  font-style: normal;
-  font-weight: 400 600;
-  font-display: swap;
-  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Optimistic Mono";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
-}
-:where(html) {
-  font-family: "Optimistic", system-ui, sans-serif;
-}
-:where(code, pre, kbd, samp) {
-  font-family: "Optimistic Mono", ui-monospace, monospace;
-}
-</style>
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Calculateur de position / Position Calculator</title>
@@ -290,74 +247,280 @@
   .view { display: none; }
   .view.active { display: block; }
 
-  .admin-warning {
-    border-radius: 10px;
-    padding: 12px;
-    font-size: 12px;
+  /* Journal */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
   }
-
-  .plan-btn {
-    padding: 12px;
-    border-radius: 8px;
+  .stat-box {
+    background: white;
+    border-radius: 10px;
+    padding: 12px 8px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .stat-value { font-size: 18px; font-weight: 700; }
+  .stat-label { font-size: 10px; color: #71717a; margin-top: 2px; }
+  .journal-entry {
+    background: white;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .journal-entry-info { flex: 1; min-width: 0; }
+  .journal-entry-title { font-size: 14px; font-weight: 700; }
+  .journal-entry-sub { font-size: 11px; color: #71717a; margin-top: 2px; }
+  .journal-pnl { font-size: 15px; font-weight: 700; white-space: nowrap; }
+  .journal-delete {
+    background: none;
     border: none;
-    font-weight: 700;
-    font-size: 14px;
+    color: #a1a1aa;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+  .save-journal-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 12px;
+    background-color: #f4f4f5;
+    border: 1px dashed #a1a1aa;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #3f3f46;
     cursor: pointer;
   }
+
+  /* --- Système d'abonnement --- */
+  .pro-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #78350f;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 6px;
+    margin-left: 8px;
+    letter-spacing: 0.5px;
+    vertical-align: middle;
+  }
+  .plan-card {
+    background: white;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 14px;
+    border: 2px solid #e4e4e7;
+    position: relative;
+  }
+  .plan-card.featured { border-color: #18181b; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .plan-badge-corner {
+    position: absolute; top: -10px; right: 16px; background: #18181b; color: white;
+    font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 6px;
+  }
+  .plan-name { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+  .plan-price { font-size: 28px; font-weight: 800; margin-bottom: 2px; }
+  .plan-price span { font-size: 13px; font-weight: 500; color: #71717a; }
+  .plan-sub { font-size: 12px; color: #71717a; margin-bottom: 14px; }
+  .plan-features { list-style: none; padding: 0; margin: 0 0 16px 0; }
+  .plan-features li { font-size: 13px; padding: 5px 0; display: flex; align-items: center; gap: 8px; }
+  .plan-btn { width: 100%; padding: 12px; border-radius: 8px; border: none; font-weight: 700; font-size: 14px; cursor: pointer; }
   .plan-btn.dark { background: #18181b; color: white; }
   .plan-btn.outline { background: white; color: #18181b; border: 1px solid #d4d4d8; }
-  .mode-toolbar { display:flex; gap:8px; align-items:center; margin-bottom:16px; flex-wrap:wrap; }
-  .mode-toggle { display:flex; flex:1; min-width:220px; background:white; border:1px solid #d4d4d8; border-radius:10px; padding:3px; }
-  .mode-btn, .theme-btn { flex:1; border:0; border-radius:8px; padding:9px 10px; font-weight:700; font-size:12px; cursor:pointer; background:transparent; color:#52525b; }
-  .mode-btn.active, .theme-btn.active { background:#18181b; color:white; }
-  .theme-btn { flex:0 0 auto; border:1px solid #d4d4d8; background:white; }
-  .converter-heading { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; margin-bottom:14px; }
-  .converter-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-  .converter-actions { display:flex; gap:8px; margin-top:4px; }
-  .converter-actions .plan-btn { flex:1; }
-  .mode-status { font-size:11px; font-weight:700; color:#0f766e; background:#ecfdf5; border-radius:999px; padding:5px 8px; white-space:nowrap; }
-  .conversion-result { margin-top:12px; font-weight:700; font-size:18px; color:#18181b; }
-  .theoretical-volume-note { text-align:center; color:#a1a1aa; font-size:12px; margin:-8px 0 14px; }
-  .history-list { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
-  .history-item { background:#f8fafc; border:1px solid #e4e4e7; border-radius:10px; padding:11px 12px; display:flex; justify-content:space-between; gap:10px; align-items:center; }
-  .history-main { min-width:0; }
-  .history-title { font-size:13px; font-weight:700; color:#18181b; }
-  .history-meta { font-size:11px; color:#71717a; margin-top:3px; }
-  .history-volume { font-size:14px; font-weight:800; color:#18181b; white-space:nowrap; }
-  .history-empty { color:#a1a1aa; font-size:13px; text-align:center; padding:12px 0 2px; }
-  body.dark-mode .history-item { background:#27272a; border-color:#3f3f46; }
-  body.dark-mode .history-title, body.dark-mode .history-volume { color:#f4f4f5; }
-  body.dark-mode { background:#09090b; color:#f4f4f5; }
-  body.dark-mode .card, body.dark-mode .placeholder, body.dark-mode .mode-toggle, body.dark-mode .theme-btn, body.dark-mode input, body.dark-mode select, body.dark-mode .toggle-btn, body.dark-mode .risk-btn, body.dark-mode .lev-btn { background:#18181b; color:#f4f4f5; border-color:#3f3f46; }
-  body.dark-mode label, body.dark-mode .toggle-link { color:#d4d4d8; }
-  body.dark-mode .mode-btn { color:#d4d4d8; }
-  body.dark-mode .mode-btn.active, body.dark-mode .theme-btn.active { background:#f4f4f5; color:#18181b; }
-  body.dark-mode .plan-btn.outline { background:#18181b; color:#f4f4f5; border-color:#52525b; }
-  body.dark-mode .hint, body.dark-mode .footer-note { color:#a1a1aa; }
-  @media (max-width:520px) { .converter-grid { grid-template-columns:1fr; } .converter-actions { flex-direction:column; } }
+
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    z-index: 1000; align-items: flex-end; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-sheet {
+    background: white; border-radius: 20px 20px 0 0; padding: 24px 20px 30px;
+    max-width: 480px; width: 100%; animation: slideUp 0.25s ease-out; position: relative;
+  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal-close {
+    background: none; border: none; font-size: 20px; color: #a1a1aa;
+    position: absolute; top: 16px; right: 20px; cursor: pointer;
+  }
+
+  .compare-table { width: 100%; border-collapse: collapse; font-size: 12px; background: white; border-radius: 12px; overflow: hidden; }
+  .compare-table th, .compare-table td { padding: 10px 6px; text-align: center; border-bottom: 1px solid #f4f4f5; }
+  .compare-table th:first-child, .compare-table td:first-child { text-align: left; padding-left: 12px; }
+  .compare-table th { background: #f4f4f5; font-size: 11px; }
+  .compare-yes { color: #16a34a; font-weight: 700; }
+  .compare-no { color: #d4d4d8; }
+
+  .admin-stat { background: white; border-radius: 10px; padding: 14px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .admin-stat .val { font-size: 22px; font-weight: 800; }
+  .admin-stat .lbl { font-size: 11px; color: #71717a; margin-top: 2px; }
+  .sub-admin-warning {
+    background: #fff7ed; border: 1px solid #fdba74; color: #9a3412;
+    border-radius: 10px; padding: 12px; font-size: 12px; margin-bottom: 16px;
+  }
+  .playstore-banner {
+    background: linear-gradient(135deg,#0f172a,#1e293b); color: white; border-radius: 14px;
+    padding: 16px; text-align: center; margin: 16px auto; max-width: 480px;
+  }
+
+  /* Export PDF : zone imprimable, cachée à l'écran, visible seulement à l'impression */
+  #printArea { display: none; }
+  @media print {
+    body * { visibility: hidden; }
+    #printArea, #printArea * { visibility: visible; }
+    #printArea { display: block; position: absolute; top: 0; left: 0; width: 100%; padding: 20px; }
+    #printArea table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    #printArea th, #printArea td { border: 1px solid #ccc; padding: 4px 6px; text-align: left; }
+  }
+  /* ================= RESPONSIVE + THEMES ================= */
+  :root {
+    color-scheme: light;
+    --page-bg: #fafafa;
+    --surface: #ffffff;
+    --surface-muted: #f4f4f5;
+    --text: #18181b;
+    --text-muted: #71717a;
+    --text-soft: #52525b;
+    --border: #d4d4d8;
+    --accent: #18181b;
+    --shadow: 0 1px 3px rgba(0,0,0,.08);
+  }
+  html[data-theme="dark"] {
+    color-scheme: dark;
+    --page-bg: #0f172a;
+    --surface: #172033;
+    --surface-muted: #223047;
+    --text: #f8fafc;
+    --text-muted: #cbd5e1;
+    --text-soft: #e2e8f0;
+    --border: #334155;
+    --accent: #e2e8f0;
+    --shadow: 0 8px 24px rgba(2,6,23,.28);
+  }
+  html[data-theme="dark"] body { background-color: var(--page-bg); color: var(--text); }
+  body { overflow-x: hidden; background-color: var(--page-bg); color: var(--text); transition: background-color .18s ease, color .18s ease; }
+  .container { width: min(100%, 1440px); max-width: 1440px; padding: clamp(12px, 2.5vw, 32px); }
+  .card, .tabbar, .stat-box, .journal-entry, .placeholder, .plan-card { background-color: var(--surface); color: var(--text); border-color: var(--border); box-shadow: var(--shadow); }
+  label, .subtitle, .hint, .stat-label, .toggle-link, .result-sub-label { color: var(--text-muted); }
+  input, select, .toggle-btn, .risk-btn, .lev-btn, .lang-btn { background-color: var(--surface); color: var(--text); border-color: var(--border); }
+  input::placeholder { color: var(--text-muted); opacity: .8; }
+  .tab-btn { color: var(--text-muted); min-height: 42px; }
+  .tab-btn.active, .toggle-btn.active-dark, .risk-btn.active, .lev-btn.active { background-color: var(--accent); color: var(--page-bg); }
+  .lang-btn.active, .theme-btn { background-color: var(--accent); color: var(--page-bg); }
+  .theme-btn { border: 0; border-left: 1px solid var(--border); padding: 6px 10px; min-height: 34px; cursor: pointer; font-weight: 700; }
+  .result-card { background-color: #18181b; }
+  html[data-theme="dark"] .result-card { background-color: #020617; border: 1px solid #334155; }
+  html[data-theme="dark"] .result-label, html[data-theme="dark"] .result-value span, html[data-theme="dark"] .result-sub-label { color: #cbd5e1; }
+  html[data-theme="dark"] [style*="background:#f4f4f5"], html[data-theme="dark"] [style*="background-color:#f4f4f5"], html[data-theme="dark"] [style*="background: white"], html[data-theme="dark"] [style*="background-color: white"] { background: var(--surface-muted) !important; color: var(--text) !important; }
+  .top-row { align-items: center; }
+  .top-row > div:first-child { min-width: 0; }
+  h1 { overflow-wrap: anywhere; }
+  .tabbar { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
+  .field-row { min-width: 0; }
+  .field-row > * { min-width: 0; }
+  button, input, select { min-height: 42px; }
+  button, .tab-btn, .lang-btn, .theme-btn { -webkit-tap-highlight-color: transparent; }
+  #viewCalc, #viewJournal, #viewConvert, #viewPro, #viewCompare, #viewSettings { min-width: 0; }
+  #viewCalc > * { min-width: 0; }
+  .journal-entry { flex-wrap: wrap; }
+  .journal-entry-info { min-width: 0; overflow-wrap: anywhere; }
+  .journal-pnl { white-space: nowrap; }
+  @media (min-width: 700px) {
+    .tabbar { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .field-row { gap: 12px; }
+    .stat-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .journal-entry { padding: 14px 16px; }
+  }
+  @media (min-width: 960px) {
+    .top-row { margin-bottom: 24px; }
+    .top-row h1 { font-size: clamp(22px, 2vw, 30px); }
+    .subtitle { font-size: 14px; }
+    #viewCalc.active { display: grid; grid-template-columns: minmax(320px, .86fr) minmax(420px, 1.14fr); gap: 18px 22px; align-items: start; }
+    #viewCalc.active > .toggle-row, #viewCalc.active > .card:first-of-type, #viewCalc.active > .save-journal-btn, #viewCalc.active > .footer-note { grid-column: 1; }
+    #viewCalc.active > #resultsArea { grid-column: 2; grid-row: 1 / span 6; min-width: 0; }
+    #viewCalc.active > #chartCard { grid-column: 2; }
+    #viewCalc.active > .card[style*="margin-top:16px"] { grid-column: 1 / -1; }
+    #viewCalc.active > #resultsArea + .save-journal-btn { grid-column: 2; }
+    #viewJournal.active, #viewPro.active, #viewCompare.active, #viewSettings.active { max-width: 1240px; margin: 0 auto; }
+    #viewJournal .stat-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    #viewJournal #journalList { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    #viewJournal #journalList .journal-entry { margin-bottom: 0; }
+    #viewPro.active { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: start; }
+    #viewPro.active > :first-child, #viewPro.active > #subscriptionStatusBanner, #viewPro.active > #subStatusBanner, #viewPro.active > .hint[style*="text-align:center"] { grid-column: 1 / -1; }
+    #viewPro.active .plan-card { height: 100%; }
+  }
+  @media (min-width: 1440px) {
+    #viewJournal #journalList { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (max-width: 520px) {
+    .container { padding: 12px; }
+    .top-row { gap: 8px; }
+    h1 { font-size: 19px; }
+    .subtitle { font-size: 12px; line-height: 1.4; }
+    .lang-switch { flex-shrink: 0; }
+    .lang-btn { padding: 6px 8px; }
+    .theme-btn { padding-inline: 8px; }
+    .card { padding: 15px; border-radius: 10px; }
+    .field-row, .toggle-row { flex-direction: column; }
+    .field-row > *, .toggle-row > * { width: 100%; max-width: none !important; }
+    /* La grille des devises reste en deux colonnes sur mobile, comme dans la maquette de référence. */
+    .grid2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .tabbar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .tab-btn { font-size: 12px; padding: 9px 6px; }
+    .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .result-value { font-size: 30px; }
+    .plan-card { padding: 15px; }
+    .journal-entry { align-items: flex-start; }
+    .journal-pnl { margin-left: auto; }
+  }
+  @media (max-width: 370px) {
+    .container { padding: 9px; }
+    .top-row { align-items: flex-start; }
+    h1 { font-size: 17px; }
+    .subtitle { font-size: 11px; }
+    .lang-btn { padding-inline: 6px; font-size: 11px; }
+    .theme-btn { font-size: 11px; padding-inline: 6px; }
+    .tab-btn { font-size: 11px; }
+  }
 </style>
+<script>
+  (() => {
+    const saved = localStorage.getItem('tradesizer_theme');
+    const preferred = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.dataset.theme = preferred;
+  })();
+</script>
 <script defer src="/_vercel/insights/script.js"></script>
-<!-- OLD MONETAG REMOVED FOR UX -->
 </head>
 <body>
 <div class="container">
   <div class="top-row">
     <div>
-      <h1 data-i18n="title">Calculateur de taille de position</h1>
+      <h1 data-i18n="title" style="display:inline;">Calculateur de taille de position</h1><span id="proBadge" class="pro-badge" style="display:none;">PRO</span>
       <p class="subtitle" data-i18n="subtitle">Détermine ta taille de lot selon ton risque — 100% hors-ligne</p>
     </div>
     <div class="lang-switch">
       <button class="lang-btn" id="langFr">FR</button>
       <button class="lang-btn" id="langEn">EN</button>
+      <button class="theme-btn" id="themeToggleBtn" type="button" aria-label="Changer de thème" title="Changer de thème">☾</button>
     </div>
   </div>
 
-  <div class="mode-toolbar" aria-label="Préférences d'affichage et de connexion">
-    <div class="mode-toggle">
-      <button class="mode-btn active" id="offlineModeBtn" type="button">Mode Hors-ligne</button>
-      <button class="mode-btn" id="onlineModeBtn" type="button">Mode Online</button>
-    </div>
-    <button class="theme-btn" id="darkModeBtn" type="button" aria-pressed="false">Mode sombre</button>
+  <div class="tabbar" style="flex-wrap:wrap;gap:4px;">
+    <button class="tab-btn active" id="tabCalcBtn" data-i18n="tabCalc">Calculateur</button>
+    <button class="tab-btn" id="tabJournalBtn" data-i18n="tabJournal">Journal</button>
+    <button class="tab-btn" id="tabConvertBtn" data-i18n="tabConvert">Devises</button>
+    <button class="tab-btn" id="tabProBtn" data-i18n="tabPro">💎 Pro</button>
+    <button class="tab-btn" id="tabCompareBtn" data-i18n="tabCompare">Comparer</button>
+    <button class="tab-btn" id="tabSettingsBtn" data-i18n="tabSettings">⚙ Réglages</button>
+    <button class="tab-btn utility-tab" id="tabStatsBtn" type="button">Statistiques</button>
+    <button class="tab-btn utility-tab" id="tabAccountBtn" type="button">Compte</button>
   </div>
 
   <div id="viewCalc" class="view active">
@@ -386,24 +549,24 @@
           <option value="XAGUSD" data-value="50" data-units="5000">XAGUSD (Argent / Silver)</option>
         </optgroup>
         <optgroup label="Forex - Majeures" data-i18n-label="groupMajors">
-          <option value="EURUSD" data-value="10" data-units="100000" data-forex="1" data-pipsize="0.0001">EURUSD</option>
-          <option value="GBPUSD" data-value="10" data-units="100000" data-forex="1" data-pipsize="0.0001">GBPUSD</option>
-          <option value="USDJPY" data-value="9" data-units="100000" data-forex="1" data-pipsize="0.01">USDJPY</option>
-          <option value="USDCHF" data-value="10" data-units="100000" data-forex="1" data-pipsize="0.0001">USDCHF</option>
-          <option value="USDCAD" data-value="10" data-units="100000" data-forex="1" data-pipsize="0.0001">USDCAD</option>
-          <option value="AUDUSD" data-value="10" data-units="100000" data-forex="1" data-pipsize="0.0001">AUDUSD</option>
-          <option value="NZDUSD" data-value="10" data-units="100000" data-forex="1" data-pipsize="0.0001">NZDUSD</option>
+          <option value="EURUSD" data-value="10" data-units="100000">EURUSD</option>
+          <option value="GBPUSD" data-value="10" data-units="100000">GBPUSD</option>
+          <option value="USDJPY" data-value="1000" data-units="100000">USDJPY</option>
+          <option value="USDCHF" data-value="10" data-units="100000">USDCHF</option>
+          <option value="USDCAD" data-value="10" data-units="100000">USDCAD</option>
+          <option value="AUDUSD" data-value="10" data-units="100000">AUDUSD</option>
+          <option value="NZDUSD" data-value="10" data-units="100000">NZDUSD</option>
         </optgroup>
         <optgroup label="Forex - Croisées" data-i18n-label="groupCrosses">
-          <option value="EURGBP" data-value="10" data-units="100000" data-forex="1" data-pipsize="0.0001">EURGBP</option>
-          <option value="EURJPY" data-value="9" data-units="100000" data-forex="1" data-pipsize="0.01">EURJPY</option>
-          <option value="EURCHF" data-value="10" data-units="100000" data-forex="1" data-pipsize="0.0001">EURCHF</option>
-          <option value="EURAUD" data-value="10" data-units="100000" data-forex="1" data-pipsize="0.0001">EURAUD</option>
-          <option value="GBPJPY" data-value="9" data-units="100000" data-forex="1" data-pipsize="0.01">GBPJPY</option>
-          <option value="GBPCHF" data-value="10" data-units="100000" data-forex="1" data-pipsize="0.0001">GBPCHF</option>
-          <option value="AUDJPY" data-value="9" data-units="100000" data-forex="1" data-pipsize="0.01">AUDJPY</option>
-          <option value="CADJPY" data-value="9" data-units="100000" data-forex="1" data-pipsize="0.01">CADJPY</option>
-          <option value="NZDJPY" data-value="9" data-units="100000" data-forex="1" data-pipsize="0.01">NZDJPY</option>
+          <option value="EURGBP" data-value="10" data-units="100000">EURGBP</option>
+          <option value="EURJPY" data-value="1000" data-units="100000">EURJPY</option>
+          <option value="EURCHF" data-value="10" data-units="100000">EURCHF</option>
+          <option value="EURAUD" data-value="10" data-units="100000">EURAUD</option>
+          <option value="GBPJPY" data-value="1000" data-units="100000">GBPJPY</option>
+          <option value="GBPCHF" data-value="10" data-units="100000">GBPCHF</option>
+          <option value="AUDJPY" data-value="1000" data-units="100000">AUDJPY</option>
+          <option value="CADJPY" data-value="1000" data-units="100000">CADJPY</option>
+          <option value="NZDJPY" data-value="1000" data-units="100000">NZDJPY</option>
         </optgroup>
         <optgroup label="Crypto" data-i18n-label="groupCrypto">
           <option value="BTCUSD" data-value="1" data-units="1">BTCUSD (Bitcoin)</option>
@@ -427,14 +590,6 @@
           <option value="UKOIL" data-value="1000" data-units="1000">UKOIL (Pétrole Brent / Oil)</option>
         </optgroup>
       </select>
-      <p class="hint" id="pipSpecNote" style="display:none;" data-i18n="pipSpecNote"></p>
-    </div>
-
-    <div class="field">
-      <label data-i18n="customPointValue">Valeur du pip/point par lot (optionnel — remplace la valeur par défaut)</label>
-      <input type="number" step="0.0001" id="customPointValue" placeholder="">
-      <p class="hint" id="defaultPointValueHint"></p>
-      <p class="hint" data-i18n="pointValueNote">Consulte les spécifications de ton broker pour connaître la valeur exacte.</p>
     </div>
 
     <div class="field" id="symbolBlock" style="display:none;">
@@ -501,7 +656,15 @@
     <div class="field" style="margin-bottom:4px;">
       <label data-i18n="brokerMinLot">Taille minimale du broker (optionnel)</label>
       <input type="number" step="0.01" id="brokerMinLot" value="0.01" placeholder="0.01">
-      <p class="hint" data-i18n="brokerMinLotHint">Le pas de volume minimal indiqué par ton courtier (souvent 0.01 lot).</p>
+      <p class="hint" data-i18n="brokerMinLotHint">Minimum de lot indiqué par ton courtier.</p>
+    </div>
+    <div class="field" style="margin-bottom:4px;">
+      <label data-i18n="brokerLotStep">Pas de lot du broker (optionnel)</label>
+      <input type="number" step="0.001" id="brokerLotStep" value="0.01" placeholder="0.01">
+    </div>
+    <div class="field" style="margin-bottom:4px;">
+      <label data-i18n="brokerMaxLot">Taille maximale du broker (optionnel)</label>
+      <input type="number" step="0.01" id="brokerMaxLot" value="0" placeholder="0 = aucune limite">
     </div>
   </div>
 
@@ -511,59 +674,13 @@
   </div>
 
   <div id="resultsArea"></div>
-
-  <div class="card converter-card" id="converterCard" style="margin-top:16px;">
-    <div class="converter-heading">
-      <div>
-        <label style="margin-bottom:4px;">Convertisseur de devises</label>
-        <p class="hint" style="margin:0;">Convertis une devise vers une autre, en manuel ou avec un taux en direct.</p>
-      </div>
-      <span class="mode-status" id="modeStatus">Hors-ligne</span>
-    </div>
-    <div class="converter-grid">
-      <div class="field">
-        <label for="convertFrom">Devise source</label>
-        <select id="convertFrom"></select>
-      </div>
-      <div class="field">
-        <label for="convertTo">Devise cible</label>
-        <select id="convertTo"></select>
-      </div>
-      <div class="field">
-        <label for="convertAmount">Montant</label>
-        <input type="number" id="convertAmount" value="1" min="0" step="0.01">
-      </div>
-      <div class="field">
-        <label for="manualRate">Taux manuel</label>
-        <input type="number" id="manualRate" value="1" min="0" step="0.000001">
-        <p class="hint">1 devise source = X devise cible.</p>
-      </div>
-    </div>
-    <div class="converter-actions">
-      <button class="plan-btn outline" id="fetchRatesBtn" type="button">Récupérer les taux en direct</button>
-      <button class="plan-btn dark" id="convertBtn" type="button">Convertir</button>
-    </div>
-    <p class="hint" id="converterStatus" role="status">Mode hors-ligne : le taux manuel est utilisé.</p>
-    <div id="conversionResult" class="conversion-result"></div>
-  </div>
-
-  <div class="card history-card" id="historyCard" style="margin-top:16px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
-      <label style="margin-bottom:0;">Derniers calculs</label>
-      <button class="plan-btn outline" id="clearHistoryBtn" type="button" style="padding:7px 10px;font-size:11px;">Effacer</button>
-    </div>
-    <p class="hint">Historique local enregistré uniquement dans ce navigateur.</p>
-    <div id="historyList" class="history-list"></div>
-  </div>
+  <button class="save-journal-btn" id="saveToJournalBtn" data-i18n="saveToJournal">+ Enregistrer ce calcul dans le journal</button>
 
   <div class="card" style="margin-top:16px;">
-    <label data-i18n="openAccount" style="margin-bottom:10px;">Ouvrir un compte</label>
-    <div style="display:flex;flex-direction:column;gap:8px;">
-      <a href="https://one.exnessonelink.com/a/67b56my4u2" id="exnessLink" target="_blank" rel="noopener" style="display:block;text-align:center;padding:12px;border-radius:8px;background-color:#ffce00;color:#18181b;font-weight:700;text-decoration:none;font-size:14px;">
-        Exness — <span data-i18n="openAccountBtn">Ouvrir un compte</span>
-      </a>
-    </div>
-    <p class="hint">Lien partenaire Exness.</p>
+    <label data-i18n="openAccount" style="margin-bottom:10px;">Compte Trading</label>
+    <p class="hint" style="margin-bottom:10px;" data-i18n="affiliateDescription">TradeSizer vous permet de calculer votre risque et votre taille de position avant de trader.</p>
+    <a href="https://one.exnessonelink.com/a/67b56my4u2" id="exnessLink" target="_blank" rel="noopener" style="display:block;text-align:center;padding:12px;border-radius:8px;background-color:#ffce00;color:#18181b;font-weight:700;text-decoration:none;font-size:14px;" data-i18n="exnessBtn">Ouvrir un compte Exness</a>
+    <p class="hint" data-i18n="affiliateHint">TradeSizer peut utiliser un lien d’affiliation Exness. Lorsque vous cliquez sur ce lien, Exness peut utiliser des paramètres de suivi conformément à ses propres politiques.</p>
   </div>
 
   <!-- Emplacement publicité (AdSense/autre) — nécessite un compte annonceur, non configuré -->
@@ -573,10 +690,397 @@
 
   </div><!-- /viewCalc -->
 
-    Outil informatif, pas un conseil financier. Vérifie toujours la valeur du pip, le contrat et la marge exacts de ton broker pour chaque instrument. Fonctionne entièrement hors-ligne, aucune donnée n'est envoyée nulle part.
+  <div id="viewJournal" class="view">
+    <div class="stat-grid" style="grid-template-columns:1fr 1fr;">
+      <div class="stat-box">
+        <div class="stat-value" id="statTotal">0</div>
+        <div class="stat-label" data-i18n="statTrades">Trades</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="statWinrate">0%</div>
+        <div class="stat-label" data-i18n="statWinrate">Taux de réussite</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="statPnl">0.00</div>
+        <div class="stat-label" data-i18n="statPnl">P/L total</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value" id="statStreaks">0 / 0</div>
+        <div class="stat-label" data-i18n="statStreaks">Meilleure / pire série</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <label data-i18n="addTrade" style="margin-bottom:10px;">Ajouter un trade</label>
+      <div class="field-row" style="margin-bottom:10px;">
+        <input type="text" id="jInstrument" placeholder="XAUUSD" data-i18n-placeholder="jInstrumentPh">
+        <select id="jDirection" style="max-width:110px;">
+          <option value="buy" data-i18n="buy">▲ Achat</option>
+          <option value="sell" data-i18n="sell" selected>▼ Vente</option>
+        </select>
+      </div>
+      <div class="field-row" style="margin-bottom:10px;">
+        <input type="number" step="0.01" id="jEntry" placeholder="0.00" data-i18n-placeholder="jEntryPh">
+        <input type="number" step="0.01" id="jSl" placeholder="0.00" data-i18n-placeholder="jSlPh">
+      </div>
+      <div class="field-row" style="margin-bottom:10px;">
+        <input type="number" step="0.01" id="jTp" placeholder="0.00" data-i18n-placeholder="jTpPh">
+        <input type="number" step="0.01" id="jLots" placeholder="0.00" data-i18n-placeholder="jLotsPh">
+      </div>
+      <div class="field-row" style="margin-bottom:10px;">
+        <input type="number" step="0.01" id="jPnl" placeholder="0.00" data-i18n-placeholder="jPnlPh">
+        <input type="time" id="jTime">
+      </div>
+      <input type="text" id="jNote" placeholder="Note (optionnel)" data-i18n-placeholder="jNotePh" style="margin-bottom:10px;">
+      <button class="toggle-btn active-dark" id="jAddBtn" data-i18n="jAddBtn" style="width:100%;">+ Ajouter au journal</button>
+    </div>
+
+    <div class="card" id="chartCard" style="display:none;">
+      <label data-i18n="chartTitle" style="margin-bottom:10px;">Évolution du P/L cumulé</label>
+      <canvas id="pnlChart" width="400" height="180" style="width:100%;height:180px;"></canvas>
+    </div>
+
+    <div class="card">
+      <label style="margin-bottom:10px;" data-i18n="exportTitle">Exporter le journal (Pro)</label>
+      <div style="display:flex;gap:8px;">
+        <button class="toggle-btn" id="exportCsvBtn" style="flex:1;" data-i18n="exportExcelBtn">📊 Export Excel (CSV)</button>
+        <button class="toggle-btn" id="exportPdfBtn" style="flex:1;" data-i18n="exportPdfBtn">📄 Export PDF</button>
+      </div>
+    </div>
+
+    <div id="journalList"></div>
+    <div class="placeholder" id="journalEmpty" data-i18n="journalEmpty">Aucun trade enregistré pour le moment.</div>
+  </div><!-- /viewJournal -->
+
+  <div id="viewConvert" class="view">
+    <div class="card">
+      <label data-i18n="convertTitle" style="margin-bottom:10px;">Convertisseur de devises</label>
+
+      <div class="field-row" style="margin-bottom:10px;">
+        <input type="number" id="cvAmount" value="100" step="0.01">
+        <select id="cvFrom">
+          <option value="USD">USD — Dollar américain</option>
+          <option value="EUR">EUR — Euro</option>
+          <option value="GBP">GBP — Livre sterling</option>
+          <option value="JPY">JPY — Yen japonais</option>
+          <option value="HKD">HKD — Dollar de Hong Kong</option>
+          <option value="CHF">CHF — Franc suisse</option>
+          <option value="CAD">CAD — Dollar canadien</option>
+          <option value="AUD">AUD — Dollar australien</option>
+          <option value="XOF">XOF — Franc CFA BCEAO</option>
+          <option value="XAF">XAF — Franc CFA BEAC</option>
+          <option value="NGN">NGN — Naira nigérian</option>
+          <option value="GHS">GHS — Cedi ghanéen</option>
+          <option value="KES">KES — Shilling kényan</option>
+          <option value="TZS">TZS — Shilling tanzanien</option>
+          <option value="UGX">UGX — Shilling ougandais</option>
+          <option value="ZAR">ZAR — Rand sud-africain</option>
+          <option value="EGP">EGP — Livre égyptienne</option>
+          <option value="MAD">MAD — Dirham marocain</option>
+          <option value="DZD">DZD — Dinar algérien</option>
+          <option value="TND">TND — Dinar tunisien</option>
+          <option value="ZMW">ZMW — Kwacha zambien</option>
+          <option value="ZWL">ZWL — Dollar du Zimbabwe</option>
+          <option value="RWF">RWF — Franc rwandais</option>
+          <option value="ETB">ETB — Birr éthiopien</option>
+          <option value="MUR">MUR — Roupie mauricienne</option>
+        </select>
+      </div>
+
+      <div style="text-align:center;font-size:20px;margin-bottom:10px;color:#a1a1aa;">↓</div>
+
+      <div class="field-row" style="margin-bottom:10px;">
+        <input type="text" id="cvResult" readonly style="background:#f4f4f5;font-weight:700;">
+        <select id="cvTo">
+          <option value="USD">USD — Dollar américain</option>
+          <option value="EUR">EUR — Euro</option>
+          <option value="GBP">GBP — Livre sterling</option>
+          <option value="JPY">JPY — Yen japonais</option>
+          <option value="HKD">HKD — Dollar de Hong Kong</option>
+          <option value="CHF">CHF — Franc suisse</option>
+          <option value="CAD">CAD — Dollar canadien</option>
+          <option value="AUD">AUD — Dollar australien</option>
+          <option value="XOF">XOF — Franc CFA BCEAO</option>
+          <option value="XAF">XAF — Franc CFA BEAC</option>
+          <option value="NGN">NGN — Naira nigérian</option>
+          <option value="GHS">GHS — Cedi ghanéen</option>
+          <option value="KES">KES — Shilling kényan</option>
+          <option value="TZS">TZS — Shilling tanzanien</option>
+          <option value="UGX">UGX — Shilling ougandais</option>
+          <option value="ZAR">ZAR — Rand sud-africain</option>
+          <option value="EGP">EGP — Livre égyptienne</option>
+          <option value="MAD">MAD — Dirham marocain</option>
+          <option value="DZD">DZD — Dinar algérien</option>
+          <option value="TND">TND — Dinar tunisien</option>
+          <option value="ZMW">ZMW — Kwacha zambien</option>
+          <option value="ZWL">ZWL — Dollar du Zimbabwe</option>
+          <option value="RWF">RWF — Franc rwandais</option>
+          <option value="ETB">ETB — Birr éthiopien</option>
+          <option value="MUR">MUR — Roupie mauricienne</option>
+        </select>
+      </div>
+
+      <button class="toggle-btn active-dark" id="cvFetchBtn" style="width:100%;margin-bottom:8px;" data-i18n="cvFetchBtn">🌐 Récupérer les taux en direct</button>
+      <p class="hint" id="cvStatus" data-i18n="cvOffline">Mode hors-ligne — taux manuel utilisé ci-dessous.</p>
+
+      <div class="field" style="margin-top:12px;">
+        <label data-i18n="cvManualRate">Taux manuel (1 devise source = X devise cible)</label>
+        <input type="number" id="cvManualRate" step="0.0001" value="" placeholder="Ex. 600">
+      </div>
+    </div>
+  </div><!-- /viewConvert -->
+
+  <div id="viewPro" class="view">
+    <div style="text-align:center;margin-bottom:16px;">
+      <h2 style="font-size:22px;margin:0 0 4px 0;" data-i18n="proPageTitle">💎 TRADE SIZER PRO</h2>
+      <p style="font-size:13px;color:#71717a;margin:0;" data-i18n="proPageSubtitle">Passez au niveau supérieur dans votre gestion du risque.</p>
+    </div>
+
+    <div id="subStatusBanner"></div>
+
+    <div class="card" id="trialBanner" style="display:none;background:#f0fdf4;border:1px solid #86efac;">
+      <p style="margin:0;font-size:13px;color:#166534;" id="trialBannerText"></p>
+    </div>
+
+    <div class="plan-card">
+      <div class="plan-name" data-i18n="planFreeName">Gratuit</div>
+      <div class="plan-price">0 <span data-i18n="planPerMonth">/ mois</span></div>
+      <div class="plan-sub" data-i18n="planFreeSub">L'essentiel pour calculer ta taille de position</div>
+      <ul class="plan-features">
+        <li>✅ <span data-i18n="featCalc">Calculateur de position complet</span></li>
+        <li>✅ <span data-i18n="featConvert">Convertisseur de devises</span></li>
+        <li style="color:#a1a1aa;">❌ <span data-i18n="featJournalUnlimited">Journal de trading illimité</span></li>
+        <li style="color:#a1a1aa;">❌ <span data-i18n="featCloud">Synchronisation Cloud</span></li>
+      </ul>
+      <button class="plan-btn outline" id="planFreeBtn" data-i18n="planCurrentBtn">Plan actuel</button>
+    </div>
+
+    <div class="card" id="accountCard" style="margin-bottom:16px;">
+      <label style="margin-bottom:8px;">Compte TradeSizer</label>
+      <p class="hint" id="authStatusText" style="margin-bottom:10px;">Connecte-toi pour vérifier ton abonnement et utiliser Pro sur le site et l’APK.</p>
+      <div id="authForm">
+        <input type="email" id="authEmail" placeholder="Email" autocomplete="email" style="margin-bottom:8px;">
+        <input type="password" id="authPassword" placeholder="Mot de passe (6 caractères minimum)" autocomplete="new-password" style="margin-bottom:8px;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="toggle-btn active-dark" id="registerBtn" style="flex:1;">Créer mon compte</button>
+          <button class="toggle-btn" id="loginBtn" style="flex:1;">Se connecter</button>
+        </div>
+        <button class="toggle-btn" id="resetPasswordBtn" style="width:100%;margin-top:8px;">Réinitialiser mon mot de passe</button>
+      </div>
+      <div id="authUserPanel" style="display:none;">
+        <p class="hint" id="authUserEmail" style="margin-bottom:10px;"></p>
+        <button class="toggle-btn" id="logoutBtn" style="width:100%;">Se déconnecter</button>
+      </div>
+    </div>
+    <div class="card" id="subscriptionStatusCard" style="margin-bottom:16px;">
+      <label style="margin-bottom:8px;">État de l’abonnement</label>
+      <p class="hint" id="subscriptionStatusHint" style="margin-bottom:10px;">Le statut est vérifié pour le compte Supabase connecté.</p>
+      <button class="toggle-btn active-dark" id="checkSubscriptionBtn" style="width:100%;">Vérifier mon abonnement</button>
+    </div>
+    <div class="plan-card featured">
+      <div class="plan-badge-corner" data-i18n="planPopular">POPULAIRE</div>
+      <div class="plan-name">Pro Mensuel</div>
+      <div class="plan-price">6 000 <span>XOF / mois</span></div>
+      <div class="plan-sub" data-i18n="fedapayPaymentSub">Paiement sécurisé par Fedapay</div>
+      <ul class="plan-features" id="premiumFeaturesList"></ul>
+      <button class="plan-btn dark" id="planMonthlyBtn">Payer 6 000 XOF</button>
+    </div>
+    <div class="plan-card">
+      <div class="plan-badge-corner" style="background:#2563eb;">ÉCONOMIQUE</div>
+      <div class="plan-name">Pro Trimestriel</div>
+      <div class="plan-price">15 000 <span>XOF / trimestre</span></div>
+      <div class="plan-sub">
+        <span data-i18n="fedapayPaymentSub">Paiement sécurisé par Fedapay</span><br>
+        <span data-i18n="planQuarterlySavings">Économie : 3 000 FCFA</span>
+      </div>
+      <ul class="plan-features" id="premiumFeaturesListQuarterly"></ul>
+      <button class="plan-btn outline" id="planQuarterlyBtn">Payer 15 000 XOF</button>
+    </div>
+    <div class="plan-card">
+      <div class="plan-badge-corner" style="background:#16a34a;" data-i18n="planSave">MEILLEURE VALEUR</div>
+      <div class="plan-name" data-i18n="planAnnualName">Pro Annuel</div>
+      <div class="plan-price">60 000 <span>XOF / an</span></div>
+      <div class="plan-sub">
+        <span data-i18n="planAnnualSavings">Économie : 12 000 FCFA</span>
+      </div>
+      <ul class="plan-features" id="premiumFeaturesListAnnual"></ul>
+      <button class="plan-btn outline" id="planAnnualBtn">Payer 60 000 XOF</button>
+    </div>
+    <div class="card" id="manageSubCard" style="display:none;">
+      <label style="margin-bottom:10px;" data-i18n="manageSubTitle">Mon abonnement</label>
+      <p class="hint" id="subStatusText" style="margin-bottom:10px;"></p>
+      <button class="toggle-btn" id="restorePurchaseBtn" style="width:100%;" data-i18n="restoreBtn">Revérifier mon email</button>
+    </div>
+    <p class="hint" style="text-align:center;margin-top:12px;" data-i18n="paymentNote">
+      Les liens Fedapay sont des espaces réservés : remplace-les dans la configuration JavaScript du fichier.
+    </p>
+  </div><!-- /viewPro -->
+
+  <div id="viewCompare" class="view">
+    <div class="card" style="padding:0;overflow-x:auto;">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th data-i18n="compareFeature">Fonctionnalité</th>
+            <th data-i18n="compareFree">Gratuit</th>
+            <th data-i18n="comparePro">Pro</th>
+          </tr>
+        </thead>
+        <tbody id="compareTableBody"></tbody>
+      </table>
+    </div>
+  </div><!-- /viewCompare -->
+
+  <div id="viewSettings" class="view">
+
+    <div class="card">
+      <label style="margin-bottom:10px;" data-i18n="riskWarningTitle">⚠️ Avertissement sur les risques</label>
+      <p class="hint" style="line-height:1.6;" data-i18n="riskWarningBody">
+        Le trading comporte des risques importants de perte en capital. Les pertes peuvent dépasser le montant investi selon l'instrument et le levier utilisés. Aucun outil, y compris TradeSizer, ne garantit des profits. Les performances passées ne préjugent pas des performances futures. TradeSizer est un outil éducatif et de calcul — ce n'est pas un conseiller financier, et rien dans cette application ne constitue un conseil en investissement. N'investis que ce que tu peux te permettre de perdre.
+      </p>
+    </div>
+
+    <div class="card" id="coachCard">
+      <label style="margin-bottom:10px;" data-i18n="coachTitle">🤖 IA Coach</label>
+      <p class="hint" style="margin-bottom:10px;" data-i18n="coachBody">
+        L’IA Coach sera disponible prochainement. Aucune analyse IA n’est exécutée dans cette version.
+      </p>
+      <p class="hint" style="font-weight:700;color:#b91c1c;margin-bottom:10px;" data-i18n="coachDisclaimer">
+        Les informations fournies sont éducatives et ne constituent pas un conseil financier. L'IA Coach n'émet jamais d'ordre du type "achète maintenant" ou "vends maintenant", et ne garantit aucun résultat.
+      </p>
+      <button class="toggle-btn active-dark" id="openCoachBtn" style="width:100%;" data-i18n="coachOpenBtn">IA Coach — Bientôt disponible</button>
+    </div>
+
+    <div class="card">
+      <label style="margin-bottom:10px;" data-i18n="cloudSyncTitle">☁️ Synchronisation Cloud</label>
+      <p class="hint" style="margin-bottom:10px;" data-i18n="cloudSyncBody">La synchronisation Cloud sera disponible prochainement.</p>
+      <button class="toggle-btn" id="cloudSyncBtn" style="width:100%;" data-i18n="cloudSyncBtn">Synchronisation Cloud — Bientôt disponible</button>
+    </div>
+
+    <div class="card" id="contactCard">
+      <label style="margin-bottom:10px;" data-i18n="contactTitle">Contact / Support</label>
+      <p class="hint" style="margin-bottom:10px;" data-i18n="contactBody">Pour toute question ou demande d’aide, contacte l’équipe TradeSizer.</p>
+      <a class="toggle-btn" href="mailto:tradesizer34568@gmail.com" data-i18n="contactLink">Nous contacter</a>
+      <p class="hint" style="margin:10px 0 0 0;"><a href="mailto:tradesizer34568@gmail.com" style="color:inherit;font-weight:700;">tradesizer34568@gmail.com</a></p>
+    </div>
+    <div class="card">
+      <label style="margin-bottom:10px;" data-i18n="legalTitle">Informations légales</label>
+      <button class="toggle-btn" id="openPrivacyBtn" style="width:100%;margin-bottom:8px;text-align:left;" data-i18n="privacyBtn">Politique de confidentialité</button>
+      <button class="toggle-btn" id="openTermsBtn" style="width:100%;margin-bottom:8px;text-align:left;" data-i18n="termsBtn">Conditions d'utilisation</button>
+    </div>
+
+    <div class="card">
+      <label style="margin-bottom:10px;color:#b91c1c;" data-i18n="dangerZoneTitle">Zone sensible</label>
+      <p class="hint" style="margin-bottom:10px;" data-i18n="deleteDataBody">
+        Supprime définitivement ton journal et tes préférences enregistrées sur cet appareil. Cette action est irréversible.
+      </p>
+      <button class="toggle-btn" id="deleteDataBtn" style="width:100%;color:#dc2626;border-color:#fca5a5;margin-bottom:12px;" data-i18n="deleteDataBtn">Supprimer mes données locales</button>
+
+      <p class="hint" style="margin-bottom:10px;" data-i18n="deleteAccountBody">
+        Supprime ton compte et toutes les données associées stockées sur nos serveurs (une fois la synchronisation Cloud active).
+      </p>
+      <button class="toggle-btn" id="deleteAccountBtn" style="width:100%;color:#dc2626;border-color:#fca5a5;" data-i18n="deleteAccountBtn">Supprimer mon compte</button>
+      <p class="hint" style="margin-top:10px;" data-i18n="deleteAccountNote">
+        La suppression complète d'un compte (une fois la synchronisation Cloud disponible) se fera depuis cette même section, après vérification de ton identité par le backend.
+      </p>
+    </div>
+  </div><!-- /viewSettings -->
+
+  <!-- Modal Politique de confidentialité / Conditions -->
+  <div class="modal-overlay" id="legalModal">
+    <div class="modal-sheet" style="max-height:80vh;overflow-y:auto;">
+      <button class="modal-close" id="legalModalClose">✕</button>
+      <h3 id="legalModalTitle" style="margin-top:0;"></h3>
+      <div id="legalModalBody" style="font-size:13px;line-height:1.6;color:#3f3f46;white-space:pre-line;"></div>
+    </div>
+  </div>
+
+  <!-- Modal IA Coach -->
+  <div class="modal-overlay" id="coachModal">
+    <div class="modal-sheet">
+      <button class="modal-close" id="coachModalClose">✕</button>
+      <h3 style="margin-top:0;" data-i18n="coachTitle">🤖 IA Coach</h3>
+      <p class="hint" style="font-weight:700;color:#b91c1c;" data-i18n="coachDisclaimer"></p>
+      <div id="coachContent"></div>
+    </div>
+  </div>
+
+  <!-- Zone imprimable pour l'export PDF (window.print → "Enregistrer en PDF") -->
+  <div id="printArea"></div>
+
+</div>
+
+
+<div style="background:linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding:30px 20px; margin-top:50px; border-radius:20px; text-align:center; color:white; max-width:700px; margin:50px auto; border:1px solid #334155;">
+
+  <h3 style="margin-bottom:10px; font-size:22px;">🚀 Commence à trader avec 10$</h3>
+  <p style="opacity:0.8; margin-bottom:25px; font-size:14px;">TradeSizer vous aide à calculer votre risque et votre taille de position avant de trader.</p>
+
+  <!-- REMPLACE ICI PAR TON LIEN EXNESS -->
+  <a href="https://one.exnessonelink.com/a/67b56my4u2" target="_blank"
+    style="background:#f59e0b; color:black; padding:15px 28px; border-radius:12px; text-decoration:none; font-weight:bold; margin:10px; display:inline-block;">
+    Ouvrir un compte Exness →
+  </a>
+
+
+  <p style="font-size:11px; margin-top:20px; opacity:0.5;">
+    Avertissement : Le trading comporte des risques élevés de perte. Ce calculateur est un outil éducatif. Nous ne donnons pas de conseils financiers. N'investissez que ce que vous pouvez vous permettre de perdre.
   </p>
 </div>
 
+<div class="contact-footer" style="max-width:700px;margin:18px auto 0;padding:18px 20px;text-align:center;border:1px solid #334155;border-radius:16px;background:#111827;color:white;">
+  <strong data-i18n="contactTitle">Contact / Support</strong>
+  <div style="margin-top:6px;"><a href="mailto:tradesizer34568@gmail.com" style="color:white;font-weight:700;text-decoration:underline;">tradesizer34568@gmail.com</a></div>
+  <a href="mailto:tradesizer34568@gmail.com" style="display:inline-block;margin-top:10px;color:#cbd5e1;text-decoration:none;" data-i18n="contactLink">Nous contacter</a>
+</div>
+<!-- Modal d'upsell : affichée quand une fonctionnalité Premium verrouillée est utilisée -->
+<div class="modal-overlay" id="upsellModal">
+  <div class="modal-sheet">
+    <button class="modal-close" id="upsellClose">✕</button>
+    <div style="text-align:center;margin-bottom:16px;">
+      <div style="font-size:36px;margin-bottom:8px;">🔒</div>
+      <h3 style="margin:0 0 6px 0;font-size:18px;" id="upsellTitle" data-i18n="upsellTitle">Fonctionnalité Premium</h3>
+      <p style="margin:0;font-size:13px;color:#71717a;" id="upsellText" data-i18n="upsellText">Cette fonctionnalité fait partie de l'offre Pro.</p>
+    </div>
+    <ul class="plan-features" style="margin-bottom:16px;">
+      <li>✅ <span data-i18n="featJournalUnlimited">Journal de trading illimité</span></li>
+      <li style="color:#a1a1aa;">— <span data-i18n="featCoach">IA Coach — Bientôt disponible</span></li>
+      <li style="color:#a1a1aa;">— <span data-i18n="featCloud">Synchronisation Cloud — Bientôt disponible</span></li>
+      <li>✅ <span data-i18n="featExports">Export PDF / Excel</span></li>
+    </ul>
+    <button class="plan-btn dark" id="upsellCta" data-i18n="upsellCta" style="margin-bottom:8px;">Voir les offres Pro</button>
+    <button class="plan-btn outline" id="upsellDismiss" data-i18n="upsellDismiss">Plus tard</button>
+  </div>
+</div>
+
+<script src="/supabase-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // Supabase public configuration. Never place the service-role key here.
+  const SUPABASE_URL = window.TRADESIZER_SUPABASE_CONFIG?.url || 'REMPLACE_PAR_TON_SUPABASE_URL';
+  const SUPABASE_ANON_KEY = window.TRADESIZER_SUPABASE_CONFIG?.anonKey || 'REMPLACE_PAR_TON_SUPABASE_ANON_KEY';
+  const SUPABASE_CONFIGURED = ![SUPABASE_URL, SUPABASE_ANON_KEY].some(value => String(value).includes('REMPLACE_PAR_TON'));
+  const supabaseClient = SUPABASE_CONFIGURED && window.supabase
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    : null;
+  const themeToggleBtn = document.getElementById('themeToggleBtn');
+  function applyTheme(theme, persist = true) {
+    const normalized = theme === 'dark' ? 'dark' : 'light';
+    document.documentElement.dataset.theme = normalized;
+    if (persist) localStorage.setItem('tradesizer_theme', normalized);
+    if (themeToggleBtn) {
+      themeToggleBtn.textContent = normalized === 'dark' ? '☀' : '☾';
+      themeToggleBtn.setAttribute('aria-label', normalized === 'dark' ? 'Activer le thème clair' : 'Activer le thème sombre');
+      themeToggleBtn.title = normalized === 'dark' ? 'Activer le thème clair' : 'Activer le thème sombre';
+    }
+  }
+  applyTheme(document.documentElement.dataset.theme || 'light', false);
+  themeToggleBtn?.addEventListener('click', () => {
+    applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+  });
+  let currentSupabaseUser = null;
+  let supabaseAuthSubscription = null;
+</script>
 <script>
   // ---------- i18n ----------
   const i18n = {
@@ -606,47 +1110,11 @@
       lots: 'lots',
       riskAmount: 'Montant risqué',
       slDistLabel: 'Distance SL',
-      marginLabel: 'Marge requise (estimation)',
+      marginLabel: 'Marge requise (~)',
       rrLabel: 'Ratio risque/récompense',
       unfavorable: '(défavorable)',
       placeholder: 'Renseigne le solde, le risque et la distance du SL pour voir la taille recommandée',
       riskOf: 'de risque',
-      calculateBtn: 'CALCULER',
-      resetBtn: 'RÉINITIALISER',
-      errFieldRequired: 'Ce champ est requis.',
-      errNegativeBalance: 'Le solde ne peut pas être négatif.',
-      errNegativeRisk: 'Le risque ne peut pas être négatif.',
-      errRiskTooHigh: 'Le risque ne peut pas dépasser 100%.',
-      errNegativeDistance: 'La distance ne peut pas être négative.',
-      errSameEntrySl: "Le prix du Stop Loss ne peut pas être identique au prix d'entrée.",
-      errNeedDistanceOrPrices: "Renseigne soit une distance directe, soit un prix d'entrée et un Stop Loss.",
-      errCheckFields: 'Corrige les champs en rouge ci-dessus avant de calculer.',
-      errUnexpected: 'Une erreur inattendue est survenue. Vérifie tes valeurs et réessaie.',
-      cardCapital: 'CAPITAL',
-      cardRisk: 'RISQUE',
-      cardMaxLoss: 'PERTE MAXIMALE ESTIMÉE',
-      potentialGain: 'GAIN POTENTIEL (TP)',
-      theoreticalRisk: 'Risque théorique',
-      realRiskAfterRounding: 'Risque estimé après arrondi',
-      brokerMinLot: 'Taille minimale du broker (optionnel)',
-      brokerMinLotHint: 'Le pas de volume minimal indiqué par ton courtier (souvent 0.01 lot).',
-      smallCapitalTitle: 'Petit capital détecté',
-      smallCapitalBody: "Avec un petit capital, le volume minimum du broker peut être trop important pour respecter le risque choisi. Ne force pas une position simplement parce que le broker autorise un volume minimum.",
-      belowMinWarning: "Aucun volume conforme au risque sélectionné n'est disponible avec le minimum de ce broker.",
-      noCompliantVolumeTitle: 'Aucun volume conforme disponible',
-      theoreticalVolume: 'Volume théorique',
-      roundedVolume: 'Volume arrondi',
-      brokerMinimum: 'Minimum broker',
-      riskWithMinLot: 'Risque avec le volume minimum',
-      minExceedsRisk: 'Le volume minimum de ce broker implique un risque bien supérieur à celui que tu as choisi. Ne force pas une position juste parce que le broker autorise ce volume minimum.',
-      brokerSpecsVary: "Les spécifications peuvent varier selon le broker. Vérifie la valeur du pip/tick et la taille du contrat avant d'utiliser le résultat sur un compte réel.",
-      defaultPipValueHint: 'Valeur par défaut intégrée : {val} par pip par lot standard — vérifie auprès de ton broker.',
-      defaultPointValueHint: 'Valeur par défaut intégrée : {val} par point par lot standard — les contrats varient selon le broker.',
-      marginEstimateNote: 'La marge réelle dépend des conditions et spécifications de ton broker.',
-      unitLots: 'lots',
-      unitShares: 'actions',
-      pips: 'pips',
-      calcDisclaimer: 'TradeSizer fournit des calculs indicatifs et ne constitue pas un conseil financier. Vérifiez toujours les spécifications de votre courtier avant de passer un ordre.',
       groupMetals: 'Métaux',
       groupMajors: 'Forex - Majeures',
       groupCrosses: 'Forex - Croisées',
@@ -659,12 +1127,167 @@
       levelVeryAggressive: 'Très agressif — risque de ruine élevé',
       openAccount: 'Ouvrir un compte',
       openAccountBtn: 'Ouvrir un compte',
-      affiliateHint: "Lien partenaire Exness.",
+      affiliateHint: 'TradeSizer peut utiliser un lien d’affiliation Exness. Lorsque vous cliquez sur ce lien, Exness peut utiliser des paramètres de suivi conformément à ses propres politiques.',
+      affiliateDescription: 'TradeSizer vous permet de calculer votre risque et votre taille de position avant de trader.',
+      exnessBtn: 'Ouvrir un compte Exness',
+      tabCalc: 'Calculateur',
+      tabJournal: 'Journal',
+      saveToJournal: '+ Enregistrer ce calcul dans le journal',
+      statTrades: 'Trades',
+      statWinrate: 'Taux de réussite',
+      statPnl: 'P/L total',
+      addTrade: 'Ajouter un trade',
+      jInstrumentPh: 'Instrument (ex : XAUUSD)',
+      jLotsPh: 'Lots',
+      jPnlPh: 'Résultat',
+      jNotePh: 'Note (optionnel)',
+      jEntryPh: "Prix d'entrée",
+      jSlPh: 'Stop Loss',
+      jTpPh: 'Take Profit',
+      statStreaks: 'Meilleure / pire série',
+      jAddBtn: '+ Ajouter au journal',
+      journalEmpty: 'Aucun trade enregistré pour le moment.',
+      jDeleteConfirm: 'Supprimer ce trade ?',
+      tabPro: '💎 Pro',
+      tabCompare: 'Comparer',
+      tabAdmin: '⚙ Admin',
+      planFreeName: 'Gratuit',
+      planPerMonth: '/ mois',
+      planFreeSub: "L'essentiel pour calculer ta taille de position",
+      featCalc: 'Calculateur de position complet',
+      featConvert: 'Convertisseur de devises',
+      featJournalUnlimited: 'Journal de trading illimité',
+      featCoach: 'IA Coach — Bientôt disponible',
+      featCloud: 'Synchronisation Cloud',
+      featExports: 'Export PDF / Excel',
+      featStats: 'Statistiques avancées',
+      featBackup: 'Sauvegarde Cloud',
+      featGoals: 'Objectifs personnalisés',
+      featReports: 'Rapports mensuels',
+      featHistory: 'Historique illimité',
+      featThemes: 'Thèmes Premium',
+      featSupport: 'Assistance prioritaire',
+      planCurrentBtn: 'Plan actuel',
+      planPopular: 'POPULAIRE',
+      planMonthlyName: 'Pro Mensuel',
+      planTrialSub: 'Paiement sécurisé via FedaPay',
+      planStartTrialBtn: 'Choisir une offre Pro',
+      planSave: 'MEILLEURE VALEUR',
+      planAnnualName: 'Pro Annuel',
+      planQuarterlySavings: 'Économie : 3 000 FCFA',
+      planAnnualSavings: 'Économie : 12 000 FCFA',
+      planAnnualEquiv: 'Équivaut à environ 5 000 XOF/mois',
+      planTermsNote: 'Paiement effectué via Fedapay. L’activation est vérifiée par email.',
+      proPageTitle: '💎 TRADE SIZER PRO',
+      proPageSubtitle: 'Passez au niveau supérieur dans votre gestion du risque.',
+      manageSubTitle: 'Gérer mon abonnement',
+      restoreBtn: 'Restaurer mes achats',
+      cancelBtn: "Annuler l'abonnement",
+      paymentNote: 'Paiement sécurisé via Fedapay — activation vérifiée par l’Edge Function Supabase.',
+      subscriptionEmailLabel: 'Email utilisé pour le paiement Fedapay',
+      subscriptionEmailHint: 'Le statut est vérifié pour le compte Supabase connecté.',
+      checkSubscriptionBtn: 'Vérifier mon abonnement',
+      fedapayPaymentSub: 'Paiement sécurisé par Fedapay',
+      compareFeature: 'Fonctionnalité',
+      compareFree: 'Gratuit',
+      comparePro: 'Pro',
+      upsellTitle: 'Fonctionnalité Premium',
+      upsellText: "Cette fonctionnalité fait partie de l'offre Pro.",
+      upsellCta: 'Voir les offres Pro',
+      upsellDismiss: 'Plus tard',
+      adminWarning: 'ℹ️ Les abonnements sont vérifiés via Supabase et FedaPay.',
+      adminSubsLbl: 'Abonnés actifs',
+      adminMRRLbl: 'Revenus mensuels (XOF)',
+      adminARRLbl: 'Revenus annuels (XOF)',
+      subActiveText: 'Abonnement actif : ',
+      subCanceledText: 'Abonnement annulé — actif jusqu\'au ',
+      restoredMsg: 'Vérification terminée.',
+      canceledMsg: "Saisis ton email puis vérifie ton abonnement.",
+      billingNotImplemented: 'Configuration Supabase/FedaPay nécessaire pour activer l’abonnement.',
+      verifyError: "Impossible de vérifier l'achat pour le moment. Vérifie ta connexion et réessaie.",
+      needsInternet: 'Connexion Internet nécessaire pour cette fonctionnalité.',
+      errNegativeBalance: 'Le solde ne peut pas être négatif.',
+      errNegativeRisk: 'Le risque ne peut pas être négatif.',
+      errRiskTooHigh: 'Le risque ne peut pas dépasser 100%.',
+      errNegativeDistance: 'La distance ne peut pas être négative.',
+      errSameEntrySl: "Le prix du Stop Loss ne peut pas être identique au prix d'entrée.",
+      calculateBtn: 'CALCULER',
+      resetBtn: 'RÉINITIALISER',
+      errFieldRequired: 'Ce champ est requis.',
+      errNeedDistanceOrPrices: "Renseigne soit une distance directe, soit un prix d'entrée et un Stop Loss.",
+      errCheckFields: 'Corrige les champs en rouge ci-dessus avant de calculer.',
+      errUnexpected: "Une erreur inattendue est survenue. Vérifie tes valeurs et réessaie.",
+      potentialGain: 'GAIN POTENTIEL (TP)',
+      brokerMinLot: 'Taille minimale du broker (optionnel)',
+      brokerMinLotHint: 'Minimum de lot indiqué par ton courtier.',
+      brokerLotStep: 'Pas de lot du broker (optionnel)',
+      brokerMaxLot: 'Taille maximale du broker (optionnel)',
+      contactTitle: 'Contact / Support',
+      contactBody: 'Pour toute question ou demande d’aide, contacte l’équipe TradeSizer.',
+      contactLink: 'Nous contacter',
+      pipValueLabel: 'Valeur du pip/point par lot',
+      distanceUnitLabel: 'Unité de distance',
+      estimatedLabel: 'Valeur indicative — vérifie les spécifications de ton broker.',
+      manualRateUsed: 'Taux de conversion manuel utilisé — vérifie ce taux avant de passer un ordre.',
+      conversionNeeded: 'Conversion nécessaire : renseigne un taux fiable dans le convertisseur pour calculer dans cette devise.',
+      marginEstimated: 'Marge estimée',
+      minBrokerAlert: '⚠️ Le minimum du broker dépasse le risque souhaité.',
+      realRiskAlert: '⚠️ Risque réel supérieur au risque souhaité.',
+      theoreticalRiskLabel: 'Risque souhaité',
+      calculatedSizeLabel: 'Taille calculée',
+      brokerMinimumLabel: 'Minimum broker',
+      realRiskLabel: 'Risque réel avec le minimum',
+      cardCapital: 'CAPITAL',
+      cardRisk: 'RISQUE',
+      cardMaxLoss: 'PERTE MAXIMALE ESTIMÉE',
+      exportTitle: 'Exporter le journal (Pro)',
+      exportExcelBtn: '📊 Export Excel (CSV)',
+      exportPdfBtn: '📄 Export PDF',
+      exportEmptyError: "Aucun trade dans le journal — rien à exporter.",
+      exportFailedError: "L'export a échoué. Réessaie.",
+      cloudSyncTitle: '☁️ Synchronisation Cloud',
+      cloudSyncBody: 'La synchronisation Cloud sera disponible prochainement.',
+      cloudSyncBtn: 'Synchronisation Cloud — Bientôt disponible',
+      cloudSyncUnavailable: 'Synchronisation Cloud non disponible dans cette version.',
+      deleteAccountBody: 'Supprime ton compte et toutes les données associées stockées sur nos serveurs (une fois la synchronisation Cloud active).',
+      deleteAccountBtn: 'Supprimer mon compte',
+      deleteAccountConfirm: 'Supprimer définitivement ton compte et toutes les données associées ? Cette action est irréversible.',
+      deleteAccountUnavailable: "La suppression de compte nécessite un backend connecté — indisponible dans cette version. Tu peux en attendant supprimer tes données locales ci-dessus.",
+      verificationUnavailable: "Vérification de l'abonnement indisponible (backend non configuré). Tu restes en plan Gratuit.",
+      subExpiredText: 'Ton abonnement a expiré.',
+      theoreticalRisk: 'Risque théorique',
+      realRiskAfterRounding: 'Risque estimé après arrondi',
+      smallCapitalTitle: 'Petit capital détecté',
+      smallCapitalBody: 'Votre montant de risque théorique est très faible. La taille minimale de position proposée par certains courtiers peut vous empêcher de respecter exactement votre niveau de risque. Vérifiez les spécifications de votre courtier avant d\'ouvrir une position.',
+      belowMinWarning: 'La taille calculée est inférieure au minimum indiqué ({min} lot). La taille utilisée ci-dessus a été ajustée au minimum — ton risque réel sera donc plus élevé que prévu.',
+      calcDisclaimer: 'TradeSizer fournit des calculs indicatifs et ne constitue pas un conseil financier. Vérifiez toujours les spécifications de votre courtier avant de passer un ordre.',
+      tabSettings: '⚙ Réglages',
+      riskWarningTitle: '⚠️ Avertissement sur les risques',
+      riskWarningBody: "Le trading comporte des risques importants de perte en capital. Les pertes peuvent dépasser le montant investi selon l'instrument et le levier utilisés. Aucun outil, y compris TradeSizer, ne garantit des profits. Les performances passées ne préjugent pas des performances futures. TradeSizer est un outil éducatif et de calcul — ce n'est pas un conseiller financier, et rien dans cette application ne constitue un conseil en investissement. N'investis que ce que tu peux te permettre de perdre.",
+      coachTitle: '🤖 IA Coach',
+      coachBody: "L’IA Coach sera disponible prochainement. Aucune analyse IA n’est exécutée dans cette version.",
+      coachDisclaimer: 'Les informations fournies sont éducatives et ne constituent pas un conseil financier. L\'IA Coach n\'émet jamais d\'ordre du type "achète maintenant" ou "vends maintenant", et ne garantit aucun résultat.',
+      coachOpenBtn: 'IA Coach — Bientôt disponible',
+      coachNotConnected: "L'IA Coach n'est pas encore connectée à un vrai modèle sur ce build — voir le code source pour brancher ton backend.",
+      legalTitle: 'Informations légales',
+      privacyBtn: 'Politique de confidentialité',
+      termsBtn: "Conditions d'utilisation",
+      dangerZoneTitle: 'Zone sensible',
+      deleteDataBody: 'Supprime définitivement ton journal et tes préférences enregistrées sur cet appareil. Cette action est irréversible.',
+      deleteDataBtn: 'Supprimer mes données locales',
+      deleteAccountNote: 'La suppression complète d\'un compte (une fois la synchronisation Cloud disponible) se fera depuis cette même section, après vérification de ton identité par le backend.',
+      deleteDataConfirm: 'Supprimer définitivement toutes tes données locales (journal inclus) ? Cette action est irréversible.',
+      deleteDataDone: 'Données locales supprimées.',
+      privacyText: "POLITIQUE DE CONFIDENTIALITÉ\n\n1. Données du compte : TradeSizer peut utiliser votre adresse email et votre identifiant utilisateur Supabase Auth pour créer et sécuriser votre compte. Les informations nécessaires à l’authentification et à la vérification de l’abonnement peuvent être traitées par Supabase Auth et PostgreSQL.\n\n2. Données du journal : les trades saisis, statistiques et préférences peuvent être enregistrés localement sur votre appareil.\n\n3. Stockage local : lorsque la synchronisation Cloud n’est pas disponible, le journal reste local sur cet appareil. TradeSizer ne prétend pas synchroniser actuellement les données entre appareils.\n\n4. Supabase : Supabase Auth et PostgreSQL peuvent être utilisés pour le compte et la vérification de l’abonnement.\n\n5. FedaPay : les paiements sont traités par FedaPay. TradeSizer ne stocke pas les informations sensibles de paiement.\n\n6. Abonnement : la vérification peut utiliser l’identifiant utilisateur Supabase Auth, l’email, le plan, le statut, les dates de début et d’expiration ainsi que l’identifiant de transaction lorsque nécessaire.\n\n7. Affiliation : TradeSizer peut utiliser un lien d’affiliation Exness. Lorsque vous cliquez sur ce lien, Exness peut utiliser des paramètres de suivi afin d’attribuer l’inscription ou l’activité à notre lien partenaire, conformément à ses propres politiques. TradeSizer ne prétend pas recevoir les informations personnelles qu’Exness ne lui transmet pas réellement.\n\n8. IA Coach : l’IA Coach est actuellement indiquée comme fonctionnalité à venir et n’est pas encore disponible dans cette version. Elle ne collecte ni n’analyse actuellement vos données.\n\n9. Synchronisation Cloud : la synchronisation Cloud est indiquée comme bientôt disponible et n’est pas actuellement active entre appareils.\n\n10. Suppression : la suppression des données locales efface le journal et les préférences de cet appareil. La suppression du compte Supabase et des données serveur nécessite les mécanismes d’identité et de backend prévus ; aucune suppression serveur non implémentée n’est promise.\n\n11. Contact : pour toute question concernant TradeSizer, son abonnement ou la confidentialité des données, contactez-nous à tradesizer34568@gmail.com.",
+      termsText: "CONDITIONS D’UTILISATION\n\n1. Objet : TradeSizer est un outil éducatif et de calcul. TradeSizer n’est pas un courtier, n’est pas un conseiller financier, ne gère pas les fonds des utilisateurs et ne garantit aucun bénéfice.\n\n2. Limites des calculs : les résultats sont indicatifs et peuvent différer des conditions réelles d’un broker en raison du spread, des commissions, du swap, de la taille du contrat, de la valeur du pip ou du point, du levier, des règles du broker, des arrondis et des taux de conversion. L’utilisateur doit vérifier les spécifications de son broker avant de passer un ordre. TradeSizer ne garantit pas qu’un calcul sera accepté ou exécuté par un broker.\n\n3. Risque : le trading comporte des risques importants de perte en capital. Aucun outil ne garantit des profits. Les performances passées ne garantissent pas les performances futures. L’utilisateur reste seul responsable de ses décisions de trading.\n\n4. Abonnement Pro : les offres sont mensuelles à 6 000 FCFA, trimestrielles à 15 000 FCFA et annuelles à 60 000 FCFA. Le paiement est traité par FedaPay. L’activation intervient uniquement après confirmation du paiement par le système serveur.\n\n5. Fonctionnalités Premium : selon le plan actif, l’abonnement peut débloquer le journal illimité, les exports et les autres fonctionnalités Pro affichées dans l’application. À l’expiration, les fonctionnalités Premium sont verrouillées et les limites du plan gratuit s’appliquent ; les données locales existantes ne sont pas automatiquement supprimées.\n\n6. Prolongation : aucun renouvellement automatique n’est promis dans cette version. Pour prolonger l’abonnement, l’utilisateur doit effectuer un nouveau paiement lorsque cette option est proposée.\n\n7. Affiliation et partenaires : la version actuelle affiche uniquement Exness comme partenaire affilié. Des liens partenaires peuvent utiliser des paramètres de suivi selon les politiques du partenaire.\n\n8. Modifications : TradeSizer peut modifier ses fonctionnalités ou ces conditions. Les changements importants seront signalés de manière claire lorsque cela est nécessaire.\n\n9. Contact : pour toute question concernant TradeSizer, son abonnement ou la confidentialité des données, contactez-nous à tradesizer34568@gmail.com.",
+      tabConvert: 'Devises',
+      chartTitle: 'Évolution du P/L cumulé',
       convertTitle: 'Convertisseur de devises',
       cvFetchBtn: '🌐 Récupérer les taux en direct',
       cvOffline: 'Mode hors-ligne — taux manuel utilisé ci-dessous.',
       cvOnline: 'Taux en direct récupérés avec succès.',
       cvError: 'Connexion impossible — utilise le taux manuel ci-dessous.',
+      cvUnavailableOffline: 'Taux de conversion indisponible hors connexion. Utilise un taux manuel pour effectuer la conversion.',
       cvManualRate: 'Taux manuel (1 devise source = X devise cible)',
     },
     en: {
@@ -693,47 +1316,11 @@
       lots: 'lots',
       riskAmount: 'Amount at risk',
       slDistLabel: 'SL distance',
-      marginLabel: 'Required margin (estimate)',
+      marginLabel: 'Required margin (~)',
       rrLabel: 'Risk/reward ratio',
       unfavorable: '(unfavorable)',
       placeholder: 'Fill in the balance, risk, and SL distance to see the recommended size',
       riskOf: 'at risk',
-      calculateBtn: 'CALCULATE',
-      resetBtn: 'RESET',
-      errFieldRequired: 'This field is required.',
-      errNegativeBalance: 'Balance cannot be negative.',
-      errNegativeRisk: 'Risk cannot be negative.',
-      errRiskTooHigh: 'Risk cannot exceed 100%.',
-      errNegativeDistance: 'Distance cannot be negative.',
-      errSameEntrySl: 'The Stop Loss price cannot be the same as the entry price.',
-      errNeedDistanceOrPrices: 'Enter either a direct distance, or an entry price and a Stop Loss.',
-      errCheckFields: 'Fix the fields in red above before calculating.',
-      errUnexpected: 'An unexpected error occurred. Check your values and try again.',
-      cardCapital: 'CAPITAL',
-      cardRisk: 'RISK',
-      cardMaxLoss: 'ESTIMATED MAX LOSS',
-      potentialGain: 'POTENTIAL GAIN (TP)',
-      theoreticalRisk: 'Theoretical risk',
-      realRiskAfterRounding: 'Estimated risk after rounding',
-      brokerMinLot: 'Broker minimum lot size (optional)',
-      brokerMinLotHint: "Your broker's minimum volume step (often 0.01 lot).",
-      smallCapitalTitle: 'Small capital detected',
-      smallCapitalBody: "With a small capital, the broker's minimum volume may be too large to respect your chosen risk. Don't force a position just because the broker allows a minimum volume.",
-      belowMinWarning: "No volume matching the selected risk is available at this broker's minimum.",
-      noCompliantVolumeTitle: 'No compliant volume available',
-      theoreticalVolume: 'Theoretical volume',
-      roundedVolume: 'Rounded volume',
-      brokerMinimum: 'Broker minimum',
-      riskWithMinLot: 'Risk with the minimum volume',
-      minExceedsRisk: "This broker's minimum volume implies a risk much higher than the one you chose. Don't force a position just because the broker allows this minimum volume.",
-      brokerSpecsVary: "Specifications can vary by broker. Check the pip/tick value and contract size before using this result on a live account.",
-      defaultPipValueHint: 'Built-in default: {val} per pip per standard lot — verify with your broker.',
-      defaultPointValueHint: 'Built-in default: {val} per point per standard lot — contracts vary by broker.',
-      marginEstimateNote: "Actual margin depends on your broker's conditions and specifications.",
-      unitLots: 'lots',
-      unitShares: 'shares',
-      pips: 'pips',
-      calcDisclaimer: 'TradeSizer provides indicative calculations and is not financial advice. Always check your broker\'s specifications before placing an order.',
       groupMetals: 'Metals',
       groupMajors: 'Forex - Majors',
       groupCrosses: 'Forex - Crosses',
@@ -746,12 +1333,162 @@
       levelVeryAggressive: 'Very aggressive — high risk of ruin',
       openAccount: 'Open an account',
       openAccountBtn: 'Open an account',
-      affiliateHint: "Exness partner link.",
+      affiliateHint: 'TradeSizer may use an Exness affiliate link. When you click it, Exness may use tracking parameters under its own policies.',
+      affiliateDescription: 'TradeSizer helps you calculate your risk and position size before trading.',
+      exnessBtn: 'Open an Exness account',
+      tabCalc: 'Calculator',
+      tabJournal: 'Journal',
+      saveToJournal: '+ Save this calculation to the journal',
+      statTrades: 'Trades',
+      statWinrate: 'Win rate',
+      statPnl: 'Total P/L',
+      addTrade: 'Add a trade',
+      jInstrumentPh: 'Instrument (e.g. XAUUSD)',
+      jLotsPh: 'Lots',
+      jPnlPh: 'Result',
+      jNotePh: 'Note (optional)',
+      jEntryPh: 'Entry price',
+      jSlPh: 'Stop Loss',
+      jTpPh: 'Take Profit',
+      statStreaks: 'Best / worst streak',
+      jAddBtn: '+ Add to journal',
+      journalEmpty: 'No trades logged yet.',
+      jDeleteConfirm: 'Delete this trade?',
+      tabPro: '💎 Pro',
+      tabCompare: 'Compare',
+      tabAdmin: '⚙ Admin',
+      planFreeName: 'Free',
+      planPerMonth: '/ month',
+      planFreeSub: 'The essentials to size your positions',
+      featCalc: 'Full position calculator',
+      featConvert: 'Currency converter',
+      featJournalUnlimited: 'Unlimited trading journal',
+      featCoach: 'AI Coach — Coming soon',
+      featCloud: 'Cloud sync — Coming soon',
+      featExports: 'PDF / Excel export',
+      featStats: 'Advanced statistics',
+      featBackup: 'Cloud backup',
+      featGoals: 'Custom goals',
+      featReports: 'Monthly reports',
+      featHistory: 'Unlimited history',
+      featThemes: 'Premium themes',
+      featSupport: 'Priority support',
+      planCurrentBtn: 'Current plan',
+      planPopular: 'POPULAR',
+      planMonthlyName: 'Pro Monthly',
+      planTrialSub: 'Paiement sécurisé via FedaPay',
+      planStartTrialBtn: 'View Pro plans',
+      planSave: 'BEST VALUE',
+      planAnnualName: 'Pro Annual',
+      planQuarterlySavings: 'Savings: 3,000 XOF',
+      planAnnualSavings: 'Savings: 12,000 XOF',
+      planAnnualEquiv: 'About 5,000 XOF/month',
+      planTermsNote: 'Auto-renews. Cancel anytime.',
+      proPageTitle: '💎 TRADE SIZER PRO',
+      proPageSubtitle: 'Take your risk management to the next level.',
+      manageSubTitle: 'Manage my subscription',
+      restoreBtn: 'Restore purchases',
+      cancelBtn: 'Cancel subscription',
+      paymentNote: 'Secure payment via FedaPay. Activation occurs only after server confirmation.',
+      compareFeature: 'Feature',
+      compareFree: 'Free',
+      comparePro: 'Pro',
+      upsellTitle: 'Premium feature',
+      upsellText: 'This feature is part of the Pro plan.',
+      upsellCta: 'View Pro plans',
+      upsellDismiss: 'Later',
+      adminWarning: '⚠️ Supabase Auth is used for authenticated accounts and verified subscriptions.',
+      adminSubsLbl: 'Active subscribers',
+      adminMRRLbl: 'Monthly revenue',
+      adminARRLbl: 'Annual revenue',
+      subActiveText: 'Active subscription: ',
+      subCanceledText: 'Subscription canceled — active until ',
+      restoredMsg: 'Purchases restored.',
+      canceledMsg: 'Vérifie ton abonnement depuis ton compte TradeSizer.',
+      verifyError: 'Could not verify the purchase right now. Check your connection and try again.',
+      needsInternet: 'Internet connection required for this feature.',
+      errNegativeBalance: 'Balance cannot be negative.',
+      errNegativeRisk: 'Risk cannot be negative.',
+      errRiskTooHigh: 'Risk cannot exceed 100%.',
+      errNegativeDistance: 'Distance cannot be negative.',
+      errSameEntrySl: 'The Stop Loss price cannot be the same as the entry price.',
+      calculateBtn: 'CALCULATE',
+      resetBtn: 'RESET',
+      errFieldRequired: 'This field is required.',
+      errNeedDistanceOrPrices: 'Enter either a direct distance, or an entry price and a Stop Loss.',
+      errCheckFields: 'Fix the fields in red above before calculating.',
+      errUnexpected: 'An unexpected error occurred. Check your values and try again.',
+      potentialGain: 'POTENTIAL GAIN (TP)',
+      brokerMinLot: 'Broker minimum lot size (optional)',
+      brokerMinLotHint: 'Minimum lot size supplied by your broker.',
+      brokerLotStep: 'Broker lot step (optional)',
+      brokerMaxLot: 'Broker maximum lot size (optional)',
+      contactTitle: 'Contact / Support',
+      contactBody: 'For questions or support, contact the TradeSizer team.',
+      contactLink: 'Contact us',
+      pipValueLabel: 'Pip/point value per lot',
+      distanceUnitLabel: 'Distance unit',
+      estimatedLabel: 'Indicative value — verify your broker specifications.',
+      manualRateUsed: 'Manual conversion rate used — verify this rate before placing an order.',
+      conversionNeeded: 'Conversion required: enter a reliable rate in the converter to calculate in this account currency.',
+      marginEstimated: 'Estimated margin',
+      minBrokerAlert: '⚠️ The broker minimum exceeds the desired risk.',
+      realRiskAlert: '⚠️ Real risk is higher than the desired risk.',
+      theoreticalRiskLabel: 'Desired risk',
+      calculatedSizeLabel: 'Calculated size',
+      brokerMinimumLabel: 'Broker minimum',
+      realRiskLabel: 'Real risk with minimum',
+      cardCapital: 'CAPITAL',
+      cardRisk: 'RISK',
+      cardMaxLoss: 'ESTIMATED MAX LOSS',
+      exportTitle: 'Export the journal (Pro)',
+      exportExcelBtn: '📊 Export Excel (CSV)',
+      exportPdfBtn: '📄 Export PDF',
+      exportEmptyError: 'No trades in the journal — nothing to export.',
+      exportFailedError: 'Export failed. Please try again.',
+      cloudSyncTitle: '☁️ Cloud sync',
+      cloudSyncBody: 'Find your journal on all your devices once connected.',
+      cloudSyncBtn: 'Cloud sync — Coming soon',
+      cloudSyncUnavailable: 'Cloud sync is not available in this version.',
+      deleteAccountBody: 'Delete your account and all associated data stored on our servers (once Cloud sync is active).',
+      deleteAccountBtn: 'Delete my account',
+      deleteAccountConfirm: 'Permanently delete your account and all associated data? This cannot be undone.',
+      deleteAccountUnavailable: 'Account deletion requires a connected backend — unavailable in this version. You can delete your local data above in the meantime.',
+      verificationUnavailable: 'Subscription verification unavailable (backend not configured). You remain on the Free plan.',
+      subExpiredText: 'Your subscription has expired.',
+      theoreticalRisk: 'Theoretical risk',
+      realRiskAfterRounding: 'Estimated risk after rounding',
+      smallCapitalTitle: 'Small capital detected',
+      smallCapitalBody: 'Your theoretical risk amount is very small. The minimum position size offered by some brokers may prevent you from matching your exact risk level. Check your broker\'s specifications before opening a position.',
+      belowMinWarning: 'The calculated size is below the minimum you entered ({min} lot). The size shown above was adjusted up to the minimum — your real risk will therefore be higher than planned.',
+      calcDisclaimer: 'TradeSizer provides indicative calculations and is not financial advice. Always check your broker\'s specifications before placing an order.',
+      tabSettings: '⚙ Settings',
+      riskWarningTitle: '⚠️ Risk warning',
+      riskWarningBody: "Trading carries a significant risk of capital loss. Losses may exceed the amount invested depending on the instrument and leverage used. No tool, including TradeSizer, guarantees profits. Past performance does not predict future results. TradeSizer is an educational and calculation tool — it is not a financial advisor, and nothing in this app constitutes investment advice. Only invest what you can afford to lose.",
+      coachTitle: '🤖 AI Coach',
+      coachBody: "An educational assistant to help you review your trades and spot patterns in your journal. It analyzes your data but never tells you what to trade.",
+      coachDisclaimer: 'The information provided is educational and does not constitute financial advice. AI Coach never issues orders like "buy now" or "sell now", and guarantees no outcome.',
+      coachOpenBtn: 'AI Coach — Coming soon',
+      coachNotConnected: 'AI Coach is not yet connected to a real model in this build — see the source code to wire your backend.',
+      legalTitle: 'Legal information',
+      privacyBtn: 'Privacy policy',
+      termsBtn: 'Terms of use',
+      dangerZoneTitle: 'Danger zone',
+      deleteDataBody: 'Permanently delete your journal and saved preferences on this device. This action cannot be undone.',
+      deleteDataBtn: 'Delete my local data',
+      deleteAccountNote: 'Full account deletion (once Cloud sync is available) will happen from this same section, after identity verification by the backend.',
+      deleteDataConfirm: 'Permanently delete all local data (including your journal)? This cannot be undone.',
+      deleteDataDone: 'Local data deleted.',
+      privacyText: "PRIVACY POLICY\n\n1. Account data: TradeSizer may use your email address and Supabase Auth user ID to create and secure your account. Information required for authentication and subscription verification may be processed through Supabase Auth and PostgreSQL.\n\n2. Journal data: trades, statistics and preferences may be stored locally on your device.\n\n3. Local storage: when Cloud sync is unavailable, the journal remains local on this device. TradeSizer does not claim that data is currently synchronized between devices.\n\n4. Supabase: Supabase Auth and PostgreSQL may be used for the account and subscription verification.\n\n5. FedaPay: payments are processed by FedaPay. TradeSizer does not store sensitive payment information.\n\n6. Subscription: verification may use the Supabase Auth user ID, email, plan, status, start and expiration dates, and transaction ID when necessary.\n\n7. Affiliate: TradeSizer may use an Exness affiliate link. When you click it, Exness may use tracking parameters to attribute registration or activity to our partner link under its own policies. TradeSizer does not claim to receive personal information that Exness does not actually provide to it.\n\n8. AI Coach: AI Coach is currently marked as a coming-soon feature and is not available in this version. It does not currently collect or analyze your data.\n\n9. Cloud sync: Cloud sync is marked as coming soon and is not currently active between devices.\n\n10. Deletion: deleting local data removes the journal and preferences from this device. Deleting a Supabase account and server data requires the configured identity and backend mechanisms; no unimplemented server deletion is promised.\n\n11. Contact: for questions about TradeSizer, subscriptions or data privacy, contact tradesizer34568@gmail.com.",
+      termsText: "TERMS OF USE\n\n1. Purpose: TradeSizer is an educational and calculation tool. It is not a broker, is not a financial adviser, does not manage user funds and does not guarantee profits.\n\n2. Calculation limits: results are indicative and may differ from actual broker conditions because of spread, commissions, swap, contract size, pip or point value, leverage, broker rules, rounding and conversion rates. Users must verify their broker’s specifications before placing an order. TradeSizer does not guarantee that a calculation will be accepted or executed by a broker.\n\n3. Risk: trading carries significant risk of capital loss. No tool guarantees profits. Past performance does not guarantee future results. Users remain solely responsible for their trading decisions.\n\n4. Pro subscription: plans are monthly at 6,000 FCFA, quarterly at 15,000 FCFA and annually at 60,000 FCFA. Payments are processed by FedaPay. Activation occurs only after payment confirmation by the server system.\n\n5. Premium features: depending on the active plan, the subscription may unlock unlimited journal access, exports and other Pro features shown in the application. When the subscription expires, Premium features are locked and free-plan limits apply; existing local data is not automatically deleted.\n\n6. Extension: this version does not promise automatic renewal. To extend the subscription, the user must make a new payment when that option is available.\n\n7. Affiliates and partners: the current version displays only Exness as an affiliate partner. Partner links may use tracking parameters under the partner’s policies.\n\n8. Changes: TradeSizer may change its features or these terms. Material changes will be communicated clearly when necessary.\n\n9. Contact: for questions about TradeSizer, subscriptions or data privacy, contact tradesizer34568@gmail.com.",
+      tabConvert: 'Currency',
+      chartTitle: 'Cumulative P/L over time',
       convertTitle: 'Currency converter',
       cvFetchBtn: '🌐 Fetch live rates',
       cvOffline: 'Offline mode — manual rate used below.',
       cvOnline: 'Live rates fetched successfully.',
       cvError: 'Could not connect — use the manual rate below.',
+      cvUnavailableOffline: 'Exchange rate unavailable offline. Use a manual rate to perform the conversion.',
       cvManualRate: 'Manual rate (1 source currency = X target currency)',
     }
   };
@@ -779,6 +1516,10 @@
     renderLeverageButtons();
     renderCurrencyButtons();
     updateLiveBadges();
+    if (typeof renderJournal === 'function') renderJournal();
+    if (typeof updateProBadge === 'function') updateProBadge();
+    if (typeof renderProPage === 'function' && viewPro && viewPro.classList.contains('active')) renderProPage();
+    if (typeof renderComparePage === 'function' && viewCompare && viewCompare.classList.contains('active')) renderComparePage();
   }
 
   document.getElementById('langFr').onclick = () => { currentLang = 'fr'; applyLanguage(); };
@@ -788,7 +1529,34 @@
   let direction = 'sell';
   let productType = 'cfd';
   let currency = 'USD';
-  const currencies = ['USD', 'EUR', 'GBP', 'HKD', 'XOF', 'XAF', 'NGN', 'GHS', 'ZAR', 'MAD', 'EGP', 'KES'];
+  const currencies = ['USD', 'EUR', 'GBP', 'JPY', 'HKD', 'CHF', 'CAD', 'AUD', 'XOF', 'XAF', 'NGN', 'GHS', 'KES', 'TZS', 'UGX', 'ZAR', 'EGP', 'MAD', 'DZD', 'TND', 'ZMW', 'ZWL', 'RWF', 'ETB', 'MUR'];
+  const currencyLabels = {
+    USD: { fr: 'USD — Dollar américain', en: 'USD — US Dollar' },
+    EUR: { fr: 'EUR — Euro', en: 'EUR — Euro' },
+    GBP: { fr: 'GBP — Livre sterling', en: 'GBP — Pound sterling' },
+    JPY: { fr: 'JPY — Yen japonais', en: 'JPY — Japanese yen' },
+    HKD: { fr: 'HKD — Dollar de Hong Kong', en: 'HKD — Hong Kong dollar' },
+    CHF: { fr: 'CHF — Franc suisse', en: 'CHF — Swiss franc' },
+    CAD: { fr: 'CAD — Dollar canadien', en: 'CAD — Canadian dollar' },
+    AUD: { fr: 'AUD — Dollar australien', en: 'AUD — Australian dollar' },
+    XOF: { fr: 'XOF — Franc CFA BCEAO', en: 'XOF — West African CFA franc (BCEAO)' },
+    XAF: { fr: 'XAF — Franc CFA BEAC', en: 'XAF — Central African CFA franc (BEAC)' },
+    NGN: { fr: 'NGN — Naira nigérian', en: 'NGN — Nigerian naira' },
+    GHS: { fr: 'GHS — Cedi ghanéen', en: 'GHS — Ghanaian cedi' },
+    KES: { fr: 'KES — Shilling kényan', en: 'KES — Kenyan shilling' },
+    TZS: { fr: 'TZS — Shilling tanzanien', en: 'TZS — Tanzanian shilling' },
+    UGX: { fr: 'UGX — Shilling ougandais', en: 'UGX — Ugandan shilling' },
+    ZAR: { fr: 'ZAR — Rand sud-africain', en: 'ZAR — South African rand' },
+    EGP: { fr: 'EGP — Livre égyptienne', en: 'EGP — Egyptian pound' },
+    MAD: { fr: 'MAD — Dirham marocain', en: 'MAD — Moroccan dirham' },
+    DZD: { fr: 'DZD — Dinar algérien', en: 'DZD — Algerian dinar' },
+    TND: { fr: 'TND — Dinar tunisien', en: 'TND — Tunisian dinar' },
+    ZMW: { fr: 'ZMW — Kwacha zambien', en: 'ZMW — Zambian kwacha' },
+    ZWL: { fr: 'ZWL — Dollar du Zimbabwe', en: 'ZWL — Zimbabwean dollar' },
+    RWF: { fr: 'RWF — Franc rwandais', en: 'RWF — Rwandan franc' },
+    ETB: { fr: 'ETB — Birr éthiopien', en: 'ETB — Ethiopian birr' },
+    MUR: { fr: 'MUR — Roupie mauricienne', en: 'MUR — Mauritian rupee' }
+  };
   const riskOptions = ['0.5', '1', '2', '3', '5', '7'];
   const leverageOptions = ['20', '100', '200', '1000'];
 
@@ -816,236 +1584,13 @@
   const btnSell = document.getElementById('btnSell');
   const btnCfd = document.getElementById('btnCfd');
   const btnStock = document.getElementById('btnStock');
-  const offlineModeBtn = document.getElementById('offlineModeBtn');
-  const onlineModeBtn = document.getElementById('onlineModeBtn');
-  const darkModeBtn = document.getElementById('darkModeBtn');
-  const modeStatusEl = document.getElementById('modeStatus');
-  const converterStatusEl = document.getElementById('converterStatus');
-  const conversionResultEl = document.getElementById('conversionResult');
-  const convertFromEl = document.getElementById('convertFrom');
-  const convertToEl = document.getElementById('convertTo');
-  const convertAmountEl = document.getElementById('convertAmount');
-  const manualRateEl = document.getElementById('manualRate');
-  const fetchRatesBtn = document.getElementById('fetchRatesBtn');
-  const convertBtn = document.getElementById('convertBtn');
-  const historyListEl = document.getElementById('historyList');
-  const clearHistoryBtn = document.getElementById('clearHistoryBtn');
-  let onlineMode = false;
-  let liveRates = {};
-
-  function renderConverterCurrencies() {
-    const previousFrom = convertFromEl.value || 'USD';
-    const previousTo = convertToEl.value || 'EUR';
-    [convertFromEl, convertToEl].forEach(select => {
-      select.innerHTML = '';
-      currencies.forEach(code => {
-        const option = document.createElement('option');
-        option.value = code;
-        option.textContent = code;
-        select.appendChild(option);
-      });
-    });
-    convertFromEl.value = currencies.includes(previousFrom) ? previousFrom : 'USD';
-    convertToEl.value = currencies.includes(previousTo) ? previousTo : 'EUR';
-  }
-
-  function setMode(isOnline) {
-    onlineMode = Boolean(isOnline);
-    offlineModeBtn.classList.toggle('active', !onlineMode);
-    onlineModeBtn.classList.toggle('active', onlineMode);
-    modeStatusEl.textContent = onlineMode ? 'Online' : 'Hors-ligne';
-    converterStatusEl.textContent = onlineMode
-      ? 'Mode online : récupère les taux en direct avant de convertir.'
-      : 'Mode hors-ligne : le taux manuel est utilisé.';
-    if (!onlineMode) liveRates = {};
-  }
-
-  function applyDarkMode(enabled) {
-    document.body.classList.toggle('dark-mode', enabled);
-    darkModeBtn.classList.toggle('active', enabled);
-    darkModeBtn.setAttribute('aria-pressed', String(enabled));
-    darkModeBtn.textContent = enabled ? 'Mode clair' : 'Mode sombre';
-    localStorage.setItem('darkMode', enabled ? '1' : '0');
-  }
-
-  offlineModeBtn.onclick = () => setMode(false);
-  onlineModeBtn.onclick = async () => {
-    setMode(true);
-    try {
-      await updateLiveRate();
-    } catch (error) {
-      converterStatusEl.textContent = 'Connexion impossible : le taux manuel reste disponible.';
-      console.error('Erreur de taux:', error);
-    }
-  };
-  darkModeBtn.onclick = () => applyDarkMode(!document.body.classList.contains('dark-mode'));
-  applyDarkMode(localStorage.getItem('darkMode') === '1');
-  setMode(false);
-  renderConverterCurrencies();
-
-  async function fetchLiveRate(from, to) {
-    if (from === to) return 1;
-    const response = await fetch(`https://open.er-api.com/v6/latest/${encodeURIComponent(from)}`);
-    if (!response.ok) throw new Error('Taux indisponibles');
-    const data = await response.json();
-    const rate = Number(data?.rates?.[to]);
-    if (!Number.isFinite(rate) || rate <= 0) throw new Error('Taux indisponible pour cette devise');
-    return rate;
-  }
-
-  async function updateLiveRate() {
-    const from = convertFromEl.value;
-    const to = convertToEl.value;
-    converterStatusEl.textContent = 'Récupération du taux en direct…';
-    const rate = await fetchLiveRate(from, to);
-    liveRates[`${from}_${to}`] = rate;
-    manualRateEl.value = rate.toFixed(6);
-    converterStatusEl.textContent = `Taux online récupéré : 1 ${from} = ${rate.toFixed(6)} ${to}.`;
-    return rate;
-  }
-
-  fetchRatesBtn.onclick = async () => {
-    try {
-      setMode(true);
-      await updateLiveRate();
-    } catch (error) {
-      converterStatusEl.textContent = 'Connexion impossible : le taux manuel reste disponible.';
-      console.error('Erreur de taux:', error);
-    }
-  };
-
-  convertFromEl.onchange = () => { if (onlineMode) updateLiveRate().catch(() => {}); };
-  convertToEl.onchange = () => { if (onlineMode) updateLiveRate().catch(() => {}); };
-
-  function renderConversionLimitMessage() {
-    conversionResultEl.innerHTML = `
-      <div class="placeholder" style="background:#fef3c7; border:1px solid #f59e0b; color:#92400e; padding:18px; border-radius:12px; text-align:center;">
-        <strong>⚠️ Limite gratuite atteinte</strong><br><br>
-        Tu as utilisé tes 2 conversions gratuites.<br>
-        Clique sur le bouton ci-dessous pour voir une publicité et débloquer +2 conversions.
-        <br><br>
-        <button id="unlockConversionBtn" class="plan-btn dark" style="width:100%; padding:14px;">Voir la pub et continuer</button>
-      </div>`;
-    document.getElementById('unlockConversionBtn').onclick = () => {
-      conversionCount = 0;
-      localStorage.setItem('conversionCount', '0');
-      conversionResultEl.innerHTML = '<div class="placeholder" style="background:#ecfdf5; border:1px solid #10b981; color:#065f46; padding:14px; border-radius:12px;">✅ +2 conversions débloquées !</div>';
-    };
-  }
-
-  let conversionCount = parseInt(localStorage.getItem('conversionCount') || '0', 10);
-  convertBtn.onclick = async () => {
-    if (conversionCount >= 2) { renderConversionLimitMessage(); return; }
-    const from = convertFromEl.value;
-    const to = convertToEl.value;
-    const amount = Number(convertAmountEl.value);
-    if (!Number.isFinite(amount) || amount < 0) {
-      conversionResultEl.innerHTML = '<div class="placeholder" style="border-color:#fca5a5;color:#b91c1c;background:#fef2f2;">⚠️ Saisis un montant valide.</div>';
-      return;
-    }
-    try {
-      const key = `${from}_${to}`;
-      const rate = onlineMode ? (liveRates[key] || await updateLiveRate()) : Number(manualRateEl.value);
-      if (!Number.isFinite(rate) || rate < 0) throw new Error('Taux invalide');
-      const result = amount * rate;
-      conversionResultEl.innerHTML = `<div>${amount.toFixed(2)} ${from} = <strong>${result.toFixed(2)} ${to}</strong><br><span class="hint">Taux utilisé : 1 ${from} = ${rate.toFixed(6)} ${to}</span></div>`;
-      conversionCount++;
-      localStorage.setItem('conversionCount', String(conversionCount));
-    } catch (error) {
-      converterStatusEl.textContent = 'Impossible de récupérer le taux. Utilise le mode hors-ligne avec un taux manuel.';
-      conversionResultEl.innerHTML = '<div class="placeholder" style="border-color:#fca5a5;color:#b91c1c;background:#fef2f2;">⚠️ Conversion impossible. Vérifie le taux ou la connexion.</div>';
-    }
-  };
-
-  let calculationHistory = [];
-  try {
-    const savedHistory = JSON.parse(localStorage.getItem('calculationHistory') || '[]');
-    calculationHistory = Array.isArray(savedHistory) ? savedHistory.slice(0, 8) : [];
-  } catch (error) {
-    calculationHistory = [];
-  }
-
-  function renderCalculationHistory() {
-    historyListEl.innerHTML = '';
-    if (!calculationHistory.length) {
-      historyListEl.innerHTML = '<div class="history-empty">Aucun calcul enregistré pour le moment.</div>';
-      return;
-    }
-    calculationHistory.forEach(item => {
-      const row = document.createElement('div');
-      row.className = 'history-item';
-      const main = document.createElement('div');
-      main.className = 'history-main';
-      const title = document.createElement('div');
-      title.className = 'history-title';
-      title.textContent = `${item.instrument} · ${item.direction} · ${item.currency}`;
-      const meta = document.createElement('div');
-      meta.className = 'history-meta';
-      meta.textContent = `${item.date} · Solde ${item.balance} · Risque ${item.risk}% · SL ${item.distance}`;
-      const volume = document.createElement('div');
-      volume.className = 'history-volume';
-      volume.textContent = `${item.volume} ${item.unit}`;
-      main.appendChild(title);
-      main.appendChild(meta);
-      row.appendChild(main);
-      row.appendChild(volume);
-      historyListEl.appendChild(row);
-    });
-  }
-
-  function saveCalculationToHistory() {
-    const instrument = productType === 'stock' ? (customSymbolEl.value || 'Actions') : instrumentEl.value;
-    const resultCard = resultsArea.querySelector('.result-card');
-    const volumeText = resultCard?.querySelector('.result-value')?.textContent?.trim() || '';
-    const volumeMatch = volumeText.match(/([0-9]+(?:[.,][0-9]+)?)/);
-    const item = {
-      instrument,
-      direction: direction === 'buy' ? 'Achat' : 'Vente',
-      currency,
-      balance: Number(balanceEl.value).toFixed(2),
-      risk: Number(riskPercentInput.value).toFixed(2),
-      distance: Number(manualDistanceEl.value) > 0 ? Number(manualDistanceEl.value).toFixed(2) : `${entryPriceEl.value} → ${slPriceEl.value}`,
-      volume: volumeMatch ? volumeMatch[1] : '—',
-      unit: productType === 'stock' ? 'actions' : 'lots',
-      date: new Date().toLocaleString(currentLang === 'fr' ? 'fr-FR' : 'en-US', { dateStyle:'short', timeStyle:'short' })
-    };
-    calculationHistory = [item, ...calculationHistory].slice(0, 8);
-    localStorage.setItem('calculationHistory', JSON.stringify(calculationHistory));
-    renderCalculationHistory();
-  }
-
-  function requestHistorySaveAfterAd() {
-    document.getElementById('historySavePrompt')?.remove();
-    const prompt = document.createElement('div');
-    prompt.id = 'historySavePrompt';
-    prompt.className = 'placeholder';
-    prompt.style.cssText = 'margin-top:12px;background:#eff6ff;border:1px solid #60a5fa;color:#1e3a8a;padding:18px;border-radius:12px;text-align:center;';
-    prompt.innerHTML = `
-      <strong>Enregistrer ce calcul ?</strong><br><br>
-      Regarde une publicité pour sauvegarder ce calcul dans ton historique local.
-      <br><br>
-      <button id="saveHistoryAfterAdBtn" class="plan-btn dark" type="button" style="width:100%;padding:14px;">Voir la pub et enregistrer</button>
-    `;
-    resultsArea.appendChild(prompt);
-    document.getElementById('saveHistoryAfterAdBtn').onclick = () => {
-      saveCalculationToHistory();
-      prompt.innerHTML = '<strong style="color:#065f46;">✅ Calcul enregistré dans ton historique local.</strong>';
-    };
-  }
-
-  clearHistoryBtn.onclick = () => {
-    calculationHistory = [];
-    localStorage.removeItem('calculationHistory');
-    renderCalculationHistory();
-  };
-  renderCalculationHistory();
 
   function renderCurrencyButtons() {
     currencyButtonsEl.innerHTML = '';
     currencies.forEach(c => {
       const btn = document.createElement('button');
       btn.className = 'toggle-btn' + (currency === c ? ' active-dark' : '');
-      btn.textContent = c;
+      btn.textContent = currencyLabels[c]?.[currentLang] || c;
       btn.onclick = () => { currency = c; renderCurrencyButtons(); updateLiveBadges(); };
       currencyButtonsEl.appendChild(btn);
     });
@@ -1100,7 +1645,6 @@
     instrumentBlock.style.display = 'block';
     symbolBlock.style.display = 'none';
     updateLiveBadges();
-    updateInstrumentSpecNote();
   };
   btnStock.onclick = () => {
     productType = 'stock';
@@ -1109,7 +1653,6 @@
     instrumentBlock.style.display = 'none';
     symbolBlock.style.display = 'block';
     updateLiveBadges();
-    updateInstrumentSpecNote();
   };
 
   riskSlider.addEventListener('input', () => {
@@ -1117,34 +1660,6 @@
     renderRiskButtons();
     updateLiveBadges();
   });
-
-  balanceEl.addEventListener('input', updateLiveBadges);
-  riskPercentInput.addEventListener('input', updateLiveBadges);
-
-  // ---------- Indication dynamique pip/point selon l'instrument ----------
-  function updateInstrumentSpecNote() {
-    const t = i18n[currentLang];
-    const pipNoteEl = document.getElementById('pipSpecNote');
-    const hintEl = document.getElementById('defaultPointValueHint');
-
-    if (productType !== 'cfd') {
-      pipNoteEl.style.display = 'none';
-      hintEl.textContent = '';
-      return;
-    }
-
-    const opt = instrumentEl.options[instrumentEl.selectedIndex];
-    const isForexInstr = opt.getAttribute('data-forex') === '1';
-    const defaultVal = opt.getAttribute('data-value');
-
-    pipNoteEl.style.display = 'block';
-    pipNoteEl.textContent = '⚠️ ' + t.brokerSpecsVary;
-
-    hintEl.textContent = isForexInstr
-      ? t.defaultPipValueHint.replace('{val}', defaultVal)
-      : t.defaultPointValueHint.replace('{val}', defaultVal);
-  }
-  instrumentEl.addEventListener('change', updateInstrumentSpecNote);
 
   // ---------- Aperçu live (badges) — léger, sans erreur bloquante ----------
   function updateLiveBadges() {
@@ -1183,7 +1698,6 @@
   function runCalculation() {
     const t = i18n[currentLang];
     clearFieldErrors();
-
     const bal = parseFloat(balanceEl.value);
     const risk = parseFloat(riskPercentInput.value);
     const manualD = parseFloat(manualDistanceEl.value);
@@ -1193,291 +1707,128 @@
     const usingManualDistance = !isNaN(manualD) && manualD > 0;
 
     let hasError = false;
-
-    if (isNaN(bal)) {
-      showFieldError('errBalance', t.errFieldRequired);
-      hasError = true;
-    } else if (bal <= 0) {
-      showFieldError('errBalance', t.errNegativeBalance);
-      hasError = true;
-    }
-
-    if (isNaN(risk)) {
-      showFieldError('errRisk', t.errFieldRequired);
-      hasError = true;
-    } else if (risk < 0) {
-      showFieldError('errRisk', t.errNegativeRisk);
-      hasError = true;
-    } else if (risk > 100) {
-      showFieldError('errRisk', t.errRiskTooHigh);
-      hasError = true;
-    }
-
-    // ---------- Infos instrument (pip vs point) — déterminées AVANT le calcul de distance ----------
-    let pointValue = 1;
-    let unitsPerLot = 1;
-    let isForexInstr = false;
-    let pipSize = 1;
-    let distanceUnitLabel = t.slDistLabel;
-    if (productType === 'cfd') {
-      const selectedOption = instrumentEl.options[instrumentEl.selectedIndex];
-      const defaultPointValue = parseFloat(selectedOption.getAttribute('data-value'));
-      unitsPerLot = parseFloat(selectedOption.getAttribute('data-units'));
-      isForexInstr = selectedOption.getAttribute('data-forex') === '1';
-      pipSize = parseFloat(selectedOption.getAttribute('data-pipsize')) || 1;
-
-      // Valeur du pip/point personnalisée si renseignée, sinon valeur intégrée par défaut
-      const customVal = parseFloat(document.getElementById('customPointValue').value);
-      pointValue = (!isNaN(customVal) && customVal > 0) ? customVal : defaultPointValue;
-    } else {
-      // Actions : distance en $ bruts, valeur = 1 par action
-      pointValue = 1;
-      unitsPerLot = 1;
-    }
-
-    // ---------- Distance du Stop Loss : convertie correctement selon l'instrument ----------
-    let slDistance = 0;
-    if (usingManualDistance) {
-      if (manualD < 0) {
-        showFieldError('errDistance', t.errNegativeDistance);
-        hasError = true;
-      } else {
-        // Saisie manuelle = déjà dans l'unité naturelle (pips pour le forex, points/prix sinon)
-        slDistance = manualD;
-      }
-    } else if (!isNaN(e) && !isNaN(s)) {
-      if (e === s && e !== 0) {
-        showFieldError('errSl', t.errSameEntrySl);
-        hasError = true;
-      } else {
-        const rawDiff = Math.abs(e - s);
-        // Forex : convertir la différence de prix en pips (ex: 0.00500 EURUSD = 50 pips)
-        // Autres instruments (métaux, indices, crypto, actions) : la différence de prix EST la distance
-        slDistance = isForexInstr ? rawDiff / pipSize : rawDiff;
-      }
-    } else {
-      showFieldError('errDistance', t.errNeedDistanceOrPrices);
-      hasError = true;
-    }
-
+    if (isNaN(bal) || bal <= 0) { showFieldError('errBalance', isNaN(bal) ? t.errFieldRequired : t.errNegativeBalance); hasError = true; }
+    if (isNaN(risk) || risk < 0 || risk > 100) { showFieldError('errRisk', isNaN(risk) ? t.errFieldRequired : (risk > 100 ? t.errRiskTooHigh : t.errNegativeRisk)); hasError = true; }
+    if (!usingManualDistance && (!isNaN(e) && !isNaN(s) && e === s && e !== 0)) { showFieldError('errSl', t.errSameEntrySl); hasError = true; }
+    if (!usingManualDistance && (isNaN(e) || isNaN(s))) { showFieldError('errDistance', t.errNeedDistanceOrPrices); hasError = true; }
     if (hasError) {
+      lastResult = null;
       resultsArea.innerHTML = `<div class="placeholder" style="border-color:#fca5a5;color:#b91c1c;background:#fef2f2;">⚠️ ${t.errCheckFields}</div>`;
       return;
     }
 
-    if (slDistance <= 0) {
+    const option = productType === 'cfd' ? instrumentEl.options[instrumentEl.selectedIndex] : null;
+    const symbol = productType === 'stock' ? (customSymbolEl.value || 'CUSTOM') : option.value;
+    const quoteCurrency = productType === 'cfd' && symbol.length >= 6 && /^[A-Z]{6}$/.test(symbol) ? symbol.slice(3, 6) : 'USD';
+    const forexSymbols = new Set(['EURUSD','GBPUSD','USDJPY','USDCHF','USDCAD','AUDUSD','NZDUSD','EURGBP','EURJPY','EURCHF','EURAUD','GBPJPY','GBPCHF','AUDJPY','CADJPY','NZDJPY']);
+    const forex = productType === 'cfd' && forexSymbols.has(symbol);
+    const pipSize = forex ? (symbol.endsWith('JPY') ? 0.01 : 0.0001) : null;
+    const pointSize = forex ? pipSize : (['XAUUSD','XAGUSD','USOIL','UKOIL'].includes(symbol) ? 0.01 : 1);
+    const contractSize = productType === 'stock' ? 1 : (parseFloat(option.getAttribute('data-units')) || 1);
+    const isBrokerEstimated = productType === 'stock' || !forex;
+
+    let priceDistance = 0;
+    let distanceDisplay = 0;
+    let distanceUnit = forex ? 'pips' : (['XAUUSD','XAGUSD'].includes(symbol) ? 'USD/once' : (['USOIL','UKOIL'].includes(symbol) ? 'USD/unité' : 'points'));
+    if (usingManualDistance) {
+      distanceDisplay = manualD;
+      priceDistance = forex ? manualD * pipSize : manualD;
+    } else {
+      priceDistance = Math.abs(e - s);
+      distanceDisplay = forex ? priceDistance / pipSize : priceDistance;
+    }
+    if (!(priceDistance > 0)) {
       resultsArea.innerHTML = `<div class="placeholder">${t.placeholder}</div>`;
+      lastResult = null;
       return;
     }
 
-    distanceUnitLabel = isForexInstr ? t.pips : 'pts';
-
-    // Le ratio risque/rendement est une simple proportion de prix — il ne
-    // dépend d'aucune conversion pip/point, donc reste correct tel quel.
-    let rrRatio = null;
-    if (!isNaN(e) && !isNaN(s) && !isNaN(tp) && e > 0) {
-      const riskDist = Math.abs(e - s);
-      const rewardDist = Math.abs(tp - e);
-      if (riskDist > 0) rrRatio = rewardDist / riskDist;
-    }
-
-    // ---------- Calcul principal : même slDistance et même pointValue partout ----------
-    const riskAmount = bal * (risk / 100);
-    const lotSize = riskAmount / (slDistance * pointValue);
-    const lotSizeRounded = Math.round(lotSize * 100) / 100;
-    const unitLabel = productType === 'stock' ? t.unitShares : t.unitLots;
-
-    // ---------- Comparaison à la taille minimale du broker — JAMAIS forcée ----------
-    const brokerMin = parseFloat(document.getElementById('brokerMinLot').value);
-    const hasBrokerMin = !isNaN(brokerMin) && brokerMin > 0;
-    const belowBrokerMin = hasBrokerMin && lotSizeRounded < brokerMin;
-
-    // ---------- Détection petit capital ----------
-    const isSmallCapital = bal < 100 || riskAmount < 2;
-
-    // ---------- Cas : aucun volume conforme au minimum broker ----------
-    if (belowBrokerMin) {
-      const riskWithMin = brokerMin * slDistance * pointValue;
-      const minExceedsRisk = riskWithMin > riskAmount * 1.5; // nettement au-dessus du risque choisi
-
-      let warningsHtml2 = '';
-      if (isSmallCapital) {
-        warningsHtml2 += `<div class="admin-warning" style="margin-top:12px;background:#fff7ed;border:1px solid #fdba74;color:#9a3412;">⚠️ <strong>${t.smallCapitalTitle}</strong><br>${t.smallCapitalBody}</div>`;
+    // Quote-currency loss for one lot: contract size × price movement.
+    const quoteLossPerLot = priceDistance * contractSize;
+    const pointValuePerLot = pointSize * contractSize;
+    const getRate = (from, to) => {
+      if (from === to) return 1;
+      const rates = typeof liveRates !== 'undefined' ? liveRates : null;
+      if (rates && rates.base === from && rates.rates && rates.rates[to]) return rates.rates[to];
+      if (rates && rates.rates && rates.rates[from] && rates.rates[to]) return rates.rates[to] / rates.rates[from];
+      const fromEl = document.getElementById('cvFrom');
+      const toEl = document.getElementById('cvTo');
+      const manualRateEl = document.getElementById('cvManualRate');
+      if (fromEl && toEl && manualRateEl && fromEl.value === from && toEl.value === to) {
+        const manualRate = parseFloat(manualRateEl.value);
+        if (manualRate > 0) return manualRate;
       }
-      if (minExceedsRisk) {
-        warningsHtml2 += `<div class="admin-warning" style="margin-top:12px;background:#fef2f2;border:1px solid #fca5a5;color:#b91c1c;">⚠️ ${t.minExceedsRisk}</div>`;
-      }
-
-      resultsArea.innerHTML = `
-        <div class="result-card" style="background:#7f1d1d;">
-          <div class="result-label" style="color:#fca5a5;">⚠️ ${t.noCompliantVolumeTitle}</div>
-          <div class="result-grid" style="border-top:none;padding-top:0;margin-top:12px;">
-            <div>
-              <div class="result-sub-label">${t.theoreticalVolume}</div>
-              <div class="result-sub-value">${lotSize.toFixed(4)} ${unitLabel}</div>
-            </div>
-            <div>
-              <div class="result-sub-label">${t.roundedVolume}</div>
-              <div class="result-sub-value">${lotSizeRounded.toFixed(2)} ${unitLabel}</div>
-            </div>
-            <div>
-              <div class="result-sub-label">${t.brokerMinimum}</div>
-              <div class="result-sub-value">${brokerMin} ${unitLabel}</div>
-            </div>
-            <div class="full" style="grid-column:1/-1;padding-top:8px;border-top:1px dashed #3f3f46;">
-              <div class="result-sub-label">${t.riskAmount} (${t.theoreticalVolume.toLowerCase()})</div>
-              <div class="result-sub-value">${riskAmount.toFixed(2)} ${currency}</div>
-              <div class="result-sub-label" style="margin-top:6px;">${t.riskWithMinLot}</div>
-              <div class="result-sub-value" style="color:#f87171;">${riskWithMin.toFixed(2)} ${currency}</div>
-            </div>
-          </div>
-        </div>
-        ${warningsHtml2}
-        <p class="hint" style="text-align:center;margin-top:10px;">${t.calcDisclaimer}</p>`;
-      return;
-    }
-
-    // ---------- Cas normal : un volume conforme existe ----------
-    const realRiskAmount = lotSizeRounded * slDistance * pointValue;
-    const riskDiffers = Math.abs(realRiskAmount - riskAmount) > 0.01;
-
-    let marginRequired = null;
-    const lev = parseFloat(leverageInput.value);
-    if (!isNaN(e) && e > 0 && !isNaN(lev) && lev > 0) {
-      const notional = lotSizeRounded * unitsPerLot * e;
-      marginRequired = notional / lev;
-    }
-
-    let potentialGainHtml = '';
-    if (!isNaN(tp) && tp > 0 && !isNaN(e) && e > 0 && tp !== e) {
-      const rawGainDiff = Math.abs(tp - e);
-      const gainDistance = isForexInstr ? rawGainDiff / pipSize : rawGainDiff;
-      const potentialGain = lotSizeRounded * gainDistance * pointValue;
-      potentialGainHtml = `
-        <div>
-          <div class="result-sub-label">${t.potentialGain}</div>
-          <div class="result-sub-value" style="color:#4ade80;">+${potentialGain.toFixed(2)} ${currency}</div>
-        </div>`;
-    }
-
-    let rrHtml = '';
-    if (rrRatio !== null) {
-      const rrColor = rrRatio >= 1.5 ? '#4ade80' : rrRatio >= 1 ? '#facc15' : '#f87171';
-      const rrWarning = rrRatio < 1 ? ' ' + t.unfavorable : '';
-      rrHtml = `
-        <div class="result-sub full">
-          <div class="result-sub-label">${t.rrLabel}</div>
-          <div class="result-sub-value" style="color:${rrColor};">1 : ${rrRatio.toFixed(2)}${rrWarning}</div>
-        </div>`;
-    }
-
-    let marginHtml = '';
-    if (marginRequired !== null) {
-      marginHtml = `
-        <div>
-          <div class="result-sub-label">${t.marginLabel}</div>
-          <div class="result-sub-value">${marginRequired.toFixed(2)} ${currency}</div>
-        </div>`;
-    }
-
-    let realRiskHtml = '';
-    if (riskDiffers) {
-      realRiskHtml = `
-        <div class="full" style="grid-column:1/-1;padding-top:8px;border-top:1px dashed #3f3f46;">
-          <div class="result-sub-label">${t.theoreticalRisk}</div>
-          <div class="result-sub-value">${riskAmount.toFixed(2)} ${currency}</div>
-          <div class="result-sub-label" style="margin-top:6px;">${t.realRiskAfterRounding}</div>
-          <div class="result-sub-value" style="color:${realRiskAmount > riskAmount ? '#f87171' : '#4ade80'};">${realRiskAmount.toFixed(2)} ${currency}</div>
-        </div>`;
-    }
-
-    let warningsHtml = '';
-    if (isSmallCapital) {
-      warningsHtml += `<div class="admin-warning" style="margin-top:12px;background:#fff7ed;border:1px solid #fdba74;color:#9a3412;">⚠️ <strong>${t.smallCapitalTitle}</strong><br>${t.smallCapitalBody}</div>`;
-    }
-
-    const estimatedMaxLoss = lotSizeRounded * slDistance * pointValue;
-
-    resultsArea.innerHTML = `
-      <div class="result-card">
-        <div class="result-label">${t.resultTitle} (${direction === 'buy' ? t.buy.replace('▲ ','') : t.sell.replace('▼ ','')})</div>
-        <div class="result-grid" style="border-top:none;padding-top:0;margin-bottom:12px;">
-          <div>
-            <div class="result-sub-label">${t.cardCapital}</div>
-            <div class="result-sub-value">${bal.toFixed(2)} ${currency}</div>
-          </div>
-          <div>
-            <div class="result-sub-label">${t.cardRisk}</div>
-            <div class="result-sub-value">${risk}%</div>
-          </div>
-        </div>
-        <div class="result-value">${lotSizeRounded.toFixed(2)} <span>${unitLabel}</span></div>
-        <div class="theoretical-volume-note">${t.theoreticalVolume} : ${lotSize.toFixed(4)} ${unitLabel} · ${t.roundedVolume} : ${lotSizeRounded.toFixed(2)} ${unitLabel}</div>
-        <div class="result-grid">
-          <div>
-            <div class="result-sub-label">${t.riskAmount}</div>
-            <div class="result-sub-value">${riskAmount.toFixed(2)} ${currency}</div>
-          </div>
-          <div>
-            <div class="result-sub-label">${distanceUnitLabel}</div>
-            <div class="result-sub-value">${slDistance.toFixed(1)} ${isForexInstr ? t.pips : 'pts'}</div>
-          </div>
-          <div>
-            <div class="result-sub-label">${t.cardMaxLoss}</div>
-            <div class="result-sub-value">${estimatedMaxLoss.toFixed(2)} ${currency}</div>
-          </div>
-          ${potentialGainHtml}
-          ${marginHtml}
-          ${rrHtml}
-          ${realRiskHtml}
-        </div>
-      </div>
-      ${warningsHtml}
-      ${marginRequired !== null ? `<p class="hint" style="text-align:center;margin-top:6px;">${t.marginEstimateNote}</p>` : ''}
-      <p class="hint" style="text-align:center;margin-top:10px;">${t.calcDisclaimer}</p>`;
-  }
-
-// ---------- LIMITE 2 CALCULS + ONCLICK ----------
-let calculCount = parseInt(localStorage.getItem('calculCount') || '0');
-
-  document.getElementById('calculateBtn').onclick = function () {
-  if (calculCount >= 2) {
-    resultsArea.innerHTML = `
-      <div class="placeholder" style="background:#fef3c7; border:1px solid #f59e0b; color:#92400e; padding:22px; border-radius:14px; text-align:center;">
-        <strong style="font-size:16px;">⚠️ Limite gratuite atteinte</strong><br><br>
-        Tu as utilisé tes 2 calculs gratuits.<br>
-        Clique sur le bouton ci-dessous pour voir une publicité et débloquer +2 calculs.
-        <br><br>
-        <button id="unlockBtn" class="plan-btn dark" style="width:100%; margin-top:8px; padding:14px;">
-          Voir la pub et continuer
-        </button>
-      </div>
-    `;
-
-    document.getElementById('unlockBtn').onclick = function () {
-      calculCount = 0;
-      localStorage.setItem('calculCount', '0');
-
-      resultsArea.innerHTML = `
-        <div class="placeholder" style="background:#ecfdf5; border:1px solid #10b981; color:#065f46; padding:18px; border-radius:12px;">
-          ✅ +2 calculs débloqués !<br>
-          Tu peux maintenant cliquer sur <strong>CALCULER</strong>.
-        </div>
-      `;
+      return null;
     };
-    return;
+    const quoteToAccount = getRate(quoteCurrency, currency);
+    if (quoteToAccount === null) {
+      resultsArea.innerHTML = `<div class="placeholder" style="border-color:#facc15;color:#854d0e;background:#fefce8;">⚠️ ${t.conversionNeeded}<br><small>${quoteCurrency} → ${currency}</small></div>`;
+      lastResult = null;
+      return;
+    }
+    const riskAmount = bal * (risk / 100);
+    const riskPerLotAccount = quoteLossPerLot * quoteToAccount;
+    const theoreticalLot = riskPerLotAccount > 0 ? riskAmount / riskPerLotAccount : 0;
+    const brokerMin = parseFloat(document.getElementById('brokerMinLot').value);
+    const brokerStep = parseFloat(document.getElementById('brokerLotStep').value);
+    const brokerMax = parseFloat(document.getElementById('brokerMaxLot').value);
+    const minLot = !isNaN(brokerMin) && brokerMin > 0 ? brokerMin : 0;
+    const lotStep = !isNaN(brokerStep) && brokerStep > 0 ? brokerStep : 0.01;
+    const maxLot = !isNaN(brokerMax) && brokerMax > 0 ? brokerMax : Infinity;
+    const floorToStep = (value, step) => Math.floor((value + 1e-12) / step) * step;
+    const calculatedLot = floorToStep(theoreticalLot, lotStep);
+    const belowBrokerMin = minLot > 0 && calculatedLot < minLot;
+    const usableLot = Math.min(maxLot, belowBrokerMin ? minLot : calculatedLot);
+    const realRiskAmount = usableLot * riskPerLotAccount;
+    const riskDiffers = Math.abs(realRiskAmount - riskAmount) > 0.01;
+    const isSmallCapital = bal < 100 || riskAmount < 2;
+    const leverage = parseFloat(leverageInput.value);
+    const marginRequired = !isNaN(e) && e > 0 && leverage > 0 ? (usableLot * contractSize * e) / leverage * quoteToAccount : null;
+    const potentialGain = !isNaN(tp) && tp > 0 && !isNaN(e) && e > 0 && tp !== e ? usableLot * Math.abs(tp - e) * contractSize * quoteToAccount : null;
+    const rrRatio = !isNaN(e) && !isNaN(s) && !isNaN(tp) && e > 0 && Math.abs(e - s) > 0 ? Math.abs(tp - e) / Math.abs(e - s) : null;
+    const conversionIsManual = quoteCurrency !== currency && !(typeof liveRates !== 'undefined' && liveRates);
+
+    lastResult = { instrument: symbol, direction, lots: usableLot };
+    let warningsHtml = '';
+    if (isSmallCapital) warningsHtml += `<div class="admin-warning" style="margin-top:12px;background:#fff7ed;border:1px solid #fdba74;color:#9a3412;">⚠️ <strong>${t.smallCapitalTitle}</strong><br>${t.smallCapitalBody}</div>`;
+    if (belowBrokerMin) warningsHtml += `<div class="admin-warning" style="margin-top:12px;background:#fef2f2;border:1px solid #fca5a5;color:#b91c1c;">${t.minBrokerAlert}<br><strong>${t.theoreticalRiskLabel} :</strong> ${riskAmount.toFixed(2)} ${currency}<br><strong>${t.calculatedSizeLabel} :</strong> ${calculatedLot.toFixed(3)} lot<br><strong>${t.brokerMinimumLabel} :</strong> ${minLot.toFixed(3)} lot<br><strong>${t.realRiskLabel} :</strong> ${realRiskAmount.toFixed(2)} ${currency}</div>`;
+    if (realRiskAmount > riskAmount + 0.01) warningsHtml += `<div class="admin-warning" style="margin-top:12px;background:#fff7ed;border:1px solid #fdba74;color:#9a3412;">${t.realRiskAlert}</div>`;
+    if (conversionIsManual) warningsHtml += `<div class="admin-warning" style="margin-top:12px;background:#fefce8;border:1px solid #fde68a;color:#854d0e;">${t.manualRateUsed}</div>`;
+    if (isBrokerEstimated) warningsHtml += `<div class="admin-warning" style="margin-top:12px;background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;">${t.estimatedLabel}</div>`;
+
+    const potentialGainHtml = potentialGain !== null ? `<div><div class="result-sub-label">${t.potentialGain}</div><div class="result-sub-value" style="color:#4ade80;">+${potentialGain.toFixed(2)} ${currency}</div></div>` : '';
+    const rrHtml = rrRatio !== null ? `<div class="result-sub full"><div class="result-sub-label">${t.rrLabel}</div><div class="result-sub-value" style="color:${rrRatio >= 1.5 ? '#4ade80' : rrRatio >= 1 ? '#facc15' : '#f87171'};">1 : ${rrRatio.toFixed(2)}${rrRatio < 1 ? ' ' + t.unfavorable : ''}</div></div>` : '';
+    const marginHtml = marginRequired !== null ? `<div><div class="result-sub-label">${t.marginEstimated}</div><div class="result-sub-value">${marginRequired.toFixed(2)} ${currency}</div></div>` : '';
+    const realRiskHtml = riskDiffers ? `<div class="full" style="grid-column:1/-1;padding-top:8px;border-top:1px dashed #3f3f46;"><div class="result-sub-label">${t.theoreticalRisk}</div><div class="result-sub-value">${riskAmount.toFixed(2)} ${currency}</div><div class="result-sub-label" style="margin-top:6px;">${t.realRiskAfterRounding}</div><div class="result-sub-value" style="color:${realRiskAmount > riskAmount ? '#f87171' : '#4ade80'};">${realRiskAmount.toFixed(2)} ${currency}</div></div>` : '';
+    const estimatedMaxLoss = realRiskAmount;
+    const exactnessLabel = isBrokerEstimated ? t.estimatedLabel : t.pipValueLabel;
+
+    resultsArea.innerHTML = `<div class="result-card">
+      <div class="result-label">${t.resultTitle} (${direction === 'buy' ? t.buy.replace('▲ ','') : t.sell.replace('▼ ','')})</div>
+      <div class="result-grid" style="border-top:none;padding-top:0;margin-bottom:12px;"><div><div class="result-sub-label">${t.cardCapital}</div><div class="result-sub-value">${bal.toFixed(2)} ${currency}</div></div><div><div class="result-sub-label">${t.cardRisk}</div><div class="result-sub-value">${risk}%</div></div></div>
+      <div class="result-value">${usableLot.toFixed(3)} <span>${t.lots}</span></div>
+      <div class="result-grid">
+        <div><div class="result-sub-label">${t.riskAmount}</div><div class="result-sub-value">${riskAmount.toFixed(2)} ${currency}</div></div>
+        <div><div class="result-sub-label">${t.slDistLabel}</div><div class="result-sub-value">${distanceDisplay.toFixed(2)} ${distanceUnit}</div></div>
+        <div><div class="result-sub-label">${t.pipValueLabel}</div><div class="result-sub-value">${pointValuePerLot.toFixed(2)} ${quoteCurrency} / ${forex ? 'pip' : 'point'} / lot</div></div>
+        <div><div class="result-sub-label">${t.cardMaxLoss}</div><div class="result-sub-value">${estimatedMaxLoss.toFixed(2)} ${currency}</div></div>
+        ${potentialGainHtml}${marginHtml}${rrHtml}${realRiskHtml}
+      </div>
+      <p class="hint" style="margin:12px 0 0 0;">${exactnessLabel}</p>
+    </div>${warningsHtml}<p class="hint" style="text-align:center;margin-top:10px;">${t.calcDisclaimer}</p>`;
   }
 
-  try {
-    runCalculation();
-    if (resultsArea.querySelector('.result-card')) requestHistorySaveAfterAd();
-    calculCount++;
-    localStorage.setItem('calculCount', calculCount);
-  } catch (err) {
-    console.error('Erreur de calcul:', err);
-    resultsArea.innerHTML = `<div class="placeholder" style="border-color:#fca5a5;color:#b91c1c;background:#fef2f2;">⚠️ Une erreur est survenue. Réessaie.</div>`;
-  }
-};
+  // Le bouton CALCULER déclenche explicitement le calcul complet.
+  // On enveloppe dans un try/catch UNIQUEMENT pour éviter qu'une erreur
+  // imprévue casse l'app — mais on affiche l'erreur, on ne la masque pas.
+  document.getElementById('calculateBtn').onclick = () => {
+    try {
+      runCalculation();
+    } catch (err) {
+      console.error('Erreur de calcul:', err);
+      resultsArea.innerHTML = `<div class="placeholder" style="border-color:#fca5a5;color:#b91c1c;background:#fef2f2;">⚠️ ${i18n[currentLang].errUnexpected}</div>`;
+    }
+  };
 
   // ---------- Bouton RÉINITIALISER ----------
   function resetCalculator() {
@@ -1490,7 +1841,8 @@ let calculCount = parseInt(localStorage.getItem('calculCount') || '0');
     tpPriceEl.value = '0';
     leverageInput.value = '100';
     document.getElementById('brokerMinLot').value = '0.01';
-    document.getElementById('customPointValue').value = '';
+    document.getElementById('brokerLotStep').value = '0.01';
+    document.getElementById('brokerMaxLot').value = '0';
     customSymbolEl.value = '';
     instrumentEl.selectedIndex = 0;
 
@@ -1513,13 +1865,724 @@ let calculCount = parseInt(localStorage.getItem('calculCount') || '0');
     renderLeverageButtons();
     clearFieldErrors();
     updateLiveBadges();
-    updateInstrumentSpecNote();
 
+    lastResult = null;
     resultsArea.innerHTML = `<div class="placeholder">${i18n[currentLang].placeholder}</div>`;
   }
 
   document.getElementById('resetBtn').onclick = resetCalculator;
 
+
+  // ---------- Journal ----------
+  let lastResult = null;
+  const JOURNAL_KEY = 'tradesizer_journal_v1';
+
+  function loadJournal() {
+    try {
+      const raw = localStorage.getItem(JOURNAL_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveJournalData(entries) {
+    try {
+      localStorage.setItem(JOURNAL_KEY, JSON.stringify(entries));
+    } catch (e) {
+      console.error('Journal storage error', e);
+    }
+  }
+
+  function renderJournal() {
+    const t = i18n[currentLang];
+    const entries = loadJournal();
+    const journalListEl = document.getElementById('journalList');
+    const journalEmptyEl = document.getElementById('journalEmpty');
+
+    const total = entries.length;
+    const wins = entries.filter(e => parseFloat(e.pnl) > 0).length;
+    const winrate = total > 0 ? Math.round((wins / total) * 100) : 0;
+    const totalPnl = entries.reduce((sum, e) => sum + (parseFloat(e.pnl) || 0), 0);
+
+    // Meilleure et pire série (streaks) — dans l'ordre chronologique
+    let bestStreak = 0, worstStreak = 0, curWin = 0, curLoss = 0;
+    entries.forEach(e => {
+      const pnlVal = parseFloat(e.pnl) || 0;
+      if (pnlVal > 0) { curWin++; curLoss = 0; bestStreak = Math.max(bestStreak, curWin); }
+      else if (pnlVal < 0) { curLoss++; curWin = 0; worstStreak = Math.max(worstStreak, curLoss); }
+      else { curWin = 0; curLoss = 0; }
+    });
+
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statWinrate').textContent = winrate + '%';
+    const pnlEl = document.getElementById('statPnl');
+    pnlEl.textContent = totalPnl.toFixed(2);
+    pnlEl.style.color = totalPnl > 0 ? '#16a34a' : (totalPnl < 0 ? '#dc2626' : '#18181b');
+    document.getElementById('statStreaks').textContent = bestStreak + ' / ' + worstStreak;
+
+    if (total === 0) {
+      journalListEl.innerHTML = '';
+      journalEmptyEl.style.display = 'block';
+      document.getElementById('chartCard').style.display = 'none';
+      return;
+    }
+    journalEmptyEl.style.display = 'none';
+    if (typeof renderChart === 'function') renderChart();
+
+    journalListEl.innerHTML = entries.slice().reverse().map(e => {
+      const pnlVal = parseFloat(e.pnl) || 0;
+      const pnlColor = pnlVal > 0 ? '#16a34a' : (pnlVal < 0 ? '#dc2626' : '#52525b');
+      const dirLabel = e.direction === 'buy' ? t.buy : t.sell;
+      const d = new Date(e.date);
+      const dateStr = d.toLocaleDateString(currentLang === 'fr' ? 'fr-FR' : 'en-US');
+      const timeStr = e.time || d.toLocaleTimeString(currentLang === 'fr' ? 'fr-FR' : 'en-US', { hour: '2-digit', minute: '2-digit' });
+      const priceParts = [];
+      if (e.entry) priceParts.push('E: ' + e.entry);
+      if (e.sl) priceParts.push('SL: ' + e.sl);
+      if (e.tp) priceParts.push('TP: ' + e.tp);
+      const priceStr = priceParts.length ? ' · ' + priceParts.join(' / ') : '';
+      return `
+        <div class="journal-entry">
+          <div class="journal-entry-info">
+            <div class="journal-entry-title">${e.instrument || '—'} · ${dirLabel} · ${e.lots} lots</div>
+            <div class="journal-entry-sub">${dateStr} ${timeStr}${priceStr}${e.note ? ' · ' + e.note : ''}</div>
+          </div>
+          <div class="journal-pnl" style="color:${pnlColor};">${pnlVal >= 0 ? '+' : ''}${pnlVal.toFixed(2)}</div>
+          <button class="journal-delete" data-id="${e.id}">✕</button>
+        </div>`;
+    }).join('');
+
+    journalListEl.querySelectorAll('.journal-delete').forEach(btn => {
+      btn.onclick = () => {
+        const id = btn.getAttribute('data-id');
+        const t2 = i18n[currentLang];
+        if (confirm(t2.jDeleteConfirm)) {
+          const updated = loadJournal().filter(e => String(e.id) !== String(id));
+          saveJournalData(updated);
+          renderJournal();
+        }
+      };
+    });
+  }
+
+  // ---------- Export Excel (CSV) — génération réelle, pas simulée ----------
+  document.getElementById('exportCsvBtn').onclick = () => {
+    if (!requirePro()) return;
+    const entries = loadJournal();
+    if (entries.length === 0) {
+      alert(i18n[currentLang].exportEmptyError);
+      return;
+    }
+    try {
+      const headers = ['Date', 'Heure', 'Instrument', 'Direction', 'Lots', 'Entrée', 'SL', 'TP', 'P/L', 'Note'];
+      const rows = entries.map(e => {
+        const d = new Date(e.date);
+        return [
+          d.toLocaleDateString('fr-FR'),
+          e.time || d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+          e.instrument || '',
+          e.direction || '',
+          e.lots || '',
+          e.entry || '',
+          e.sl || '',
+          e.tp || '',
+          e.pnl || '0',
+          (e.note || '').replace(/[",\n]/g, ' ')
+        ];
+      });
+      const csv = [headers, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+      const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'tradesizer-journal-' + new Date().toISOString().slice(0, 10) + '.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      // Le fichier a réellement été généré et téléchargé à ce stade —
+      // ce message ne s'affiche que si le code au-dessus n'a pas levé d'erreur.
+    } catch (err) {
+      alert(i18n[currentLang].exportFailedError);
+    }
+  };
+
+  // ---------- Export PDF — via l'impression native du navigateur ----------
+  // (fonctionne réellement, y compris hors-ligne ; pas de librairie tierce)
+  document.getElementById('exportPdfBtn').onclick = () => {
+    if (!requirePro()) return;
+    const entries = loadJournal();
+    if (entries.length === 0) {
+      alert(i18n[currentLang].exportEmptyError);
+      return;
+    }
+    try {
+      const t = i18n[currentLang];
+      const rows = entries.map(e => {
+        const d = new Date(e.date);
+        return `<tr>
+          <td>${d.toLocaleDateString()}</td>
+          <td>${e.instrument || ''}</td>
+          <td>${e.direction === 'buy' ? t.buy : t.sell}</td>
+          <td>${e.lots || ''}</td>
+          <td>${e.entry || '—'}</td>
+          <td>${e.sl || '—'}</td>
+          <td>${e.tp || '—'}</td>
+          <td>${e.pnl || '0'}</td>
+          <td>${e.note || ''}</td>
+        </tr>`;
+      }).join('');
+      document.getElementById('printArea').innerHTML = `
+        <h2>TradeSizer — Journal de trading</h2>
+        <p>Exporté le ${new Date().toLocaleDateString()}</p>
+        <table>
+          <thead><tr><th>Date</th><th>Instrument</th><th>Sens</th><th>Lots</th><th>Entrée</th><th>SL</th><th>TP</th><th>P/L</th><th>Note</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+        <p style="margin-top:16px;font-size:10px;">${t.calcDisclaimer}</p>`;
+      window.print();
+    } catch (err) {
+      alert(i18n[currentLang].exportFailedError);
+    }
+  };
+
+  function addJournalEntry(entry) {
+    const entries = loadJournal();
+    entries.push({ id: Date.now(), date: new Date().toISOString(), ...entry });
+    saveJournalData(entries);
+    renderJournal();
+  }
+
+  document.getElementById('jAddBtn').onclick = () => {
+    const instrument = document.getElementById('jInstrument').value.trim().toUpperCase();
+    const direction2 = document.getElementById('jDirection').value;
+    const entry = document.getElementById('jEntry').value;
+    const sl = document.getElementById('jSl').value;
+    const tp = document.getElementById('jTp').value;
+    const lots = document.getElementById('jLots').value;
+    const pnl = document.getElementById('jPnl').value;
+    const time = document.getElementById('jTime').value;
+    const note = document.getElementById('jNote').value.trim();
+    if (!instrument || !lots) return;
+    addJournalEntry({ instrument, direction: direction2, entry, sl, tp, lots, pnl: pnl || '0', time, note });
+    document.getElementById('jInstrument').value = '';
+    document.getElementById('jEntry').value = '';
+    document.getElementById('jSl').value = '';
+    document.getElementById('jTp').value = '';
+    document.getElementById('jLots').value = '';
+    document.getElementById('jPnl').value = '';
+    document.getElementById('jTime').value = '';
+    document.getElementById('jNote').value = '';
+  };
+
+  document.getElementById('saveToJournalBtn').onclick = () => {
+    if (!lastResult) return;
+    document.getElementById('jInstrument').value = lastResult.instrument;
+    document.getElementById('jDirection').value = lastResult.direction;
+    document.getElementById('jLots').value = lastResult.lots;
+    switchTab('journal');
+  };
+
+  // ---------- Tabs ----------
+  const tabCalcBtn = document.getElementById('tabCalcBtn');
+  const tabJournalBtn = document.getElementById('tabJournalBtn');
+  const tabConvertBtn = document.getElementById('tabConvertBtn');
+  const tabProBtn = document.getElementById('tabProBtn');
+  const tabCompareBtn = document.getElementById('tabCompareBtn');
+  const viewCalc = document.getElementById('viewCalc');
+  const viewJournal = document.getElementById('viewJournal');
+  const viewConvert = document.getElementById('viewConvert');
+  const viewPro = document.getElementById('viewPro');
+  const viewCompare = document.getElementById('viewCompare');
+  const tabSettingsBtn = document.getElementById('tabSettingsBtn');
+  const tabStatsBtn = document.getElementById('tabStatsBtn');
+  const tabAccountBtn = document.getElementById('tabAccountBtn');
+  const viewSettings = document.getElementById('viewSettings');
+
+  function switchTab(name) {
+    tabCalcBtn.classList.toggle('active', name === 'calc');
+    tabJournalBtn.classList.toggle('active', name === 'journal');
+    tabConvertBtn.classList.toggle('active', name === 'convert');
+    tabProBtn.classList.toggle('active', name === 'pro');
+    tabCompareBtn.classList.toggle('active', name === 'compare');
+    tabSettingsBtn.classList.toggle('active', name === 'settings');
+    tabStatsBtn?.classList.toggle('active', name === 'stats');
+    tabAccountBtn?.classList.toggle('active', name === 'account');
+    viewCalc.classList.toggle('active', name === 'calc');
+    viewJournal.classList.toggle('active', name === 'journal' || name === 'stats');
+    viewConvert.classList.toggle('active', name === 'convert');
+    viewPro.classList.toggle('active', name === 'pro');
+    viewCompare.classList.toggle('active', name === 'compare');
+    viewSettings.classList.toggle('active', name === 'settings' || name === 'account');
+    if (name === 'journal' || name === 'stats') renderJournal();
+    if (name === 'pro') renderProPage();
+    if (name === 'compare') renderComparePage();
+  }
+
+  tabCalcBtn.onclick = () => switchTab('calc');
+  tabJournalBtn.onclick = () => switchTab('journal');
+  tabConvertBtn.onclick = () => switchTab('convert');
+  tabProBtn.onclick = () => switchTab('pro');
+  tabCompareBtn.onclick = () => switchTab('compare');
+  tabSettingsBtn.onclick = () => switchTab('settings');
+  tabStatsBtn?.addEventListener('click', () => switchTab('stats'));
+  tabAccountBtn?.addEventListener('click', () => switchTab('account'));
+
+  // ==================================================================
+  // ---------- ABONNEMENT FEDAPAY + SUPABASE -------------------------
+  // ==================================================================
+  const FEDAPAY_PAYMENT_LINKS = {
+    monthly: 'https://me.fedapay.com/xrQdqnu4',
+    quarterly: 'https://me.fedapay.com/Dsv4okSY',
+    annual: 'https://me.fedapay.com/FXT30sZ9'
+  };
+  const PREMIUM_FEATURES = [
+    'featJournalUnlimited', 'featExports', 'featStats',
+    'featGoals', 'featReports',
+    'featHistory', 'featThemes', 'featSupport'
+  ];
+  let subStatusCache = { plan: 'free', status: 'none', verified: false, userId: null };
+  function subscriptionIsCurrentlyActive(data) {
+    if (!data || data.status !== 'active') return false;
+    const end = normalizeSubscriptionDate(data.period_end);
+    return !end || end > new Date();
+  }
+  function isPro() {
+    return subStatusCache.verified === true && subscriptionIsCurrentlyActive(subStatusCache);
+  }
+  function updateProBadge() {
+    document.getElementById('proBadge').style.display = isPro() ? 'inline-block' : 'none';
+  }
+  function normalizeSubscriptionDate(value) {
+    if (!value) return null;
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+  function getSubscriptionEmail() {
+    return currentSupabaseUser?.email || '';
+  }
+  function setAuthMessage(message, isError = false) {
+    const el = document.getElementById('authStatusText');
+    el.textContent = message;
+    el.style.color = isError ? '#b91c1c' : '';
+  }
+  function renderAccountState() {
+    const form = document.getElementById('authForm');
+    const panel = document.getElementById('authUserPanel');
+    const email = document.getElementById('authUserEmail');
+    if (!currentSupabaseUser) {
+      form.style.display = 'block';
+      panel.style.display = 'none';
+      setAuthMessage('Connecte-toi pour vérifier ton abonnement et utiliser Pro sur le site et l’APK.');
+      return;
+    }
+    form.style.display = 'none';
+    panel.style.display = 'block';
+    email.textContent = `Compte connecté : ${currentSupabaseUser.email}`;
+    setAuthMessage('Compte connecté. Le statut Pro est lu depuis Supabase, jamais depuis le navigateur.');
+  }
+  async function fetchSubscriptionStatus() {
+    if (!currentSupabaseUser || !supabaseClient) {
+      subStatusCache = { plan: 'free', status: 'none', verified: false, userId: null, backendNotConfigured: !supabaseClient };
+      updateProBadge();
+      renderProPage();
+      return false;
+    }
+    try {
+      const { data, error } = await supabaseClient
+        .from('subscriptions')
+        .select('user_id, email, status, plan, amount, currency, period_start, period_end, fedapay_transaction_id')
+        .eq('user_id', currentSupabaseUser.id)
+        .maybeSingle();
+      if (error) throw error;
+      subStatusCache = data
+        ? { ...data, userId: currentSupabaseUser.id, verified: true }
+        : { plan: 'free', status: 'none', verified: true, userId: currentSupabaseUser.id };
+      updateProBadge();
+      renderProPage();
+      return isPro();
+    } catch (error) {
+      console.error('Supabase subscription lookup failed:', error);
+      subStatusCache = { plan: 'free', status: 'none', verified: false, userId: currentSupabaseUser.id, offlineError: true };
+      updateProBadge();
+      renderProPage();
+      return false;
+    }
+  }
+  async function registerAccount() {
+    if (!supabaseClient) return alert('Supabase n’est pas configuré.');
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+    if (!email || password.length < 6) return alert('Entre un email valide et un mot de passe d’au moins 6 caractères.');
+    const { data, error } = await supabaseClient.auth.signUp({ email, password });
+    if (error) return setAuthMessage(error.message || 'Création du compte impossible.', true);
+    if (!data.session) setAuthMessage('Compte créé. Vérifie ton email si la confirmation est activée dans Supabase.');
+  }
+  async function loginAccount() {
+    if (!supabaseClient) return alert('Supabase n’est pas configuré.');
+    const email = document.getElementById('authEmail').value.trim();
+    const password = document.getElementById('authPassword').value;
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (error) setAuthMessage(error.message || 'Connexion impossible.', true);
+  }
+  async function resetPassword() {
+    if (!supabaseClient) return alert('Supabase n’est pas configuré.');
+    const email = document.getElementById('authEmail').value.trim();
+    if (!email) return alert('Entre ton email pour recevoir le lien de réinitialisation.');
+    const redirectTo = `${window.location.origin}${window.location.pathname}`;
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo });
+    if (error) setAuthMessage(error.message || 'Envoi impossible.', true);
+    else alert('Un lien de réinitialisation a été envoyé à ton adresse email.');
+  }
+  function requireAuthenticatedUser() {
+    if (currentSupabaseUser) return true;
+    alert('Connecte-toi d’abord à ton compte TradeSizer.');
+    return false;
+  }
+  function requestSubscription(plan) {
+    if (!requireAuthenticatedUser()) return;
+    const url = FEDAPAY_PAYMENT_LINKS[plan];
+    if (!url) return alert('Le lien FedaPay de cette offre n’est pas configuré.');
+    localStorage.setItem('tradesizer_pending_plan', plan);
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+  async function checkSubscriptionFromForm() {
+    if (!requireAuthenticatedUser()) return;
+    await fetchSubscriptionStatus();
+    if (isPro()) alert('Ton abonnement TradeSizer Pro est actif.');
+    else alert('Aucun abonnement actif n’a encore été confirmé pour ce compte.');
+  }
+  const upsellModal = document.getElementById('upsellModal');
+  document.getElementById('registerBtn').onclick = registerAccount;
+  document.getElementById('loginBtn').onclick = loginAccount;
+  document.getElementById('resetPasswordBtn').onclick = resetPassword;
+  document.getElementById('logoutBtn').onclick = async () => { if (supabaseClient) await supabaseClient.auth.signOut(); };
+  document.getElementById('checkSubscriptionBtn').onclick = checkSubscriptionFromForm;
+  document.getElementById('restorePurchaseBtn').onclick = checkSubscriptionFromForm;
+  document.getElementById('planMonthlyBtn').onclick = () => requestSubscription('monthly');
+  document.getElementById('planQuarterlyBtn').onclick = () => requestSubscription('quarterly');
+  document.getElementById('planAnnualBtn').onclick = () => requestSubscription('annual');
+  async function handleSupabaseSession(session) {
+    currentSupabaseUser = session?.user || null;
+    renderAccountState();
+    if (currentSupabaseUser) await fetchSubscriptionStatus();
+    else {
+      subStatusCache = { plan: 'free', status: 'none', verified: false, userId: null };
+      updateProBadge();
+      renderProPage();
+    }
+  }
+  if (supabaseClient) {
+    supabaseClient.auth.getSession().then(({ data }) => handleSupabaseSession(data.session));
+    const { data } = supabaseClient.auth.onAuthStateChange((_event, session) => handleSupabaseSession(session));
+    supabaseAuthSubscription = data.subscription;
+  } else {
+    renderAccountState();
+  }
+  // ---------- Modal d'upsell ----------
+  document.getElementById('upsellClose').onclick = () => upsellModal.classList.remove('open');
+  document.getElementById('upsellDismiss').onclick = () => upsellModal.classList.remove('open');
+  document.getElementById('upsellCta').onclick = () => {
+    upsellModal.classList.remove('open');
+    switchTab('pro');
+  };
+
+  // Appelle cette fonction avant d'exécuter une action Premium.
+  // Retourne true si l'accès est autorisé, false si la modal a été affichée.
+  function requirePro() {
+    if (isPro()) return true;
+    upsellModal.classList.add('open');
+    return false;
+  }
+
+  // ---------- Rendu de la page Abonnement ----------
+  function renderProPage() {
+    const t = i18n[currentLang];
+    const sub = subStatusCache;
+
+    const featuresHtml = PREMIUM_FEATURES.map(k => `<li>✅ <span>${t[k]}</span></li>`).join('');
+    document.getElementById('premiumFeaturesList').innerHTML = featuresHtml;
+    document.getElementById('premiumFeaturesListAnnual').innerHTML = featuresHtml;
+    document.getElementById('premiumFeaturesListQuarterly').innerHTML = featuresHtml;
+
+    const statusBanner = document.getElementById('subStatusBanner');
+    if (sub.backendNotConfigured) {
+      statusBanner.innerHTML = `<div class="sub-admin-warning">ℹ️ Configure Supabase pour vérifier les abonnements.</div>`;
+    } else if (sub.offlineError) {
+      statusBanner.innerHTML = `<div class="sub-admin-warning">⚠️ ${t.needsInternet}</div>`;
+    } else if (sub.verified && sub.status === 'active') {
+      const end = normalizeSubscriptionDate(sub.period_end);
+      const start = normalizeSubscriptionDate(sub.period_start);
+      statusBanner.innerHTML = `<div class="sub-admin-warning" style="background:#ecfdf5;border-color:#86efac;color:#166534;">✅ Abonnement TradeSizer Pro actif — ${sub.plan || 'Pro'} — du ${start ? start.toLocaleDateString() : 'maintenant'} au ${end ? end.toLocaleDateString() : 'indéterminé'} — ${getSubscriptionEmail()}</div>`;
+    } else {
+      statusBanner.innerHTML = '';
+    }
+
+    const trialBanner = document.getElementById('trialBanner');
+    const manageSubCard = document.getElementById('manageSubCard');
+    const subStatusText = document.getElementById('subStatusText');
+    trialBanner.style.display = 'none';
+    if (isPro()) {
+      manageSubCard.style.display = 'block';
+      const end = normalizeSubscriptionDate(sub.period_end);
+      subStatusText.textContent = `Plan ${sub.plan || 'Pro'} — Actif jusqu’au ${end ? end.toLocaleDateString() : 'date inconnue'}.`;
+    } else {
+      manageSubCard.style.display = currentSupabaseUser ? 'block' : 'none';
+      subStatusText.textContent = (sub.period_end) && normalizeSubscriptionDate(sub.period_end) <= new Date()
+        ? 'Ton abonnement TradeSizer Pro a expiré.'
+        : 'Connecte-toi puis vérifie ton abonnement après confirmation FedaPay.';
+    }
+  }
+
+  // ---------- Rendu de la page Comparer les offres ----------
+  const COMPARE_ROWS = [
+    ['featCalc', true, true],
+    ['featConvert', true, true],
+    ['featJournalUnlimited', false, true],
+    ['featCoach', false, true],
+    ['featCloud', false, true],
+    ['featExports', false, true],
+    ['featStats', false, true],
+    ['featBackup', false, true],
+    ['featGoals', false, true],
+    ['featReports', false, true],
+    ['featHistory', false, true],
+    ['featThemes', false, true],
+    ['featSupport', false, true],
+  ];
+
+  function renderComparePage() {
+    const t = i18n[currentLang];
+    const body = document.getElementById('compareTableBody');
+    body.innerHTML = COMPARE_ROWS.map(([key, free, pro]) => `
+      <tr>
+        <td>${t[key]}</td>
+        <td>${free ? '<span class="compare-yes">✓</span>' : '<span class="compare-no">—</span>'}</td>
+        <td>${pro ? '<span class="compare-yes">✓</span>' : '<span class="compare-no">—</span>'}</td>
+      </tr>
+    `).join('');
+  }
+
+  // ---------- Verrouillage des fonctionnalités Premium existantes ----------
+  // Le journal reste utilisable en gratuit jusqu'à 10 entrées ; au-delà,
+  // la modal Premium s'affiche (journal "illimité" = fonctionnalité Pro).
+  const originalJAddBtnHandler = document.getElementById('jAddBtn').onclick;
+  document.getElementById('jAddBtn').onclick = () => {
+    const entries = loadJournal();
+    if (entries.length >= 10 && !isPro()) {
+      requirePro();
+      return;
+    }
+    originalJAddBtnHandler();
+  };
+
+  // Détecte l'absence de connexion pour les fonctionnalités qui en ont besoin
+  function requireOnline() {
+    if (navigator.onLine === false) {
+      alert(i18n[currentLang].needsInternet);
+      return false;
+    }
+    return true;
+  }
+
+  // ---------- Modal Confidentialité / Conditions ----------
+  const legalModal = document.getElementById('legalModal');
+  document.getElementById('legalModalClose').onclick = () => legalModal.classList.remove('open');
+
+  function openLegal(kind) {
+    const t = i18n[currentLang];
+    document.getElementById('legalModalTitle').textContent = kind === 'privacy' ? t.privacyBtn : t.termsBtn;
+    document.getElementById('legalModalBody').textContent = kind === 'privacy' ? t.privacyText : t.termsText;
+    legalModal.classList.add('open');
+  }
+  document.getElementById('openPrivacyBtn').onclick = () => openLegal('privacy');
+  document.getElementById('openTermsBtn').onclick = () => openLegal('terms');
+
+  // ---------- IA Coach (verrouillé Pro) ----------
+  const coachModal = document.getElementById('coachModal');
+  document.getElementById('coachModalClose').onclick = () => coachModal.classList.remove('open');
+  document.getElementById('openCoachBtn').onclick = () => {
+    alert('IA Coach — Bientôt disponible.');
+  };
+    // ---------- Suppression des données locales ----------
+  // ---------- Synchronisation Cloud ----------
+  // Ne prétend JAMAIS avoir synchronisé quoi que ce soit tant que le
+  // backend n'est pas réellement connecté et n'a pas confirmé le succès.
+  document.getElementById('cloudSyncBtn').onclick = () => {
+    alert('Synchronisation Cloud — Bientôt disponible.');
+  };
+
+  document.getElementById('deleteAccountBtn').onclick = () => {
+    const t = i18n[currentLang];
+    if (!confirm(t.deleteAccountConfirm)) return;
+    alert(t.deleteAccountUnavailable);
+  };
+
+  document.getElementById('deleteDataBtn').onclick = () => {
+    const t = i18n[currentLang];
+    if (confirm(t.deleteDataConfirm)) {
+      try {
+        localStorage.removeItem(JOURNAL_KEY);
+        localStorage.removeItem('tradesizer_device_id');
+      } catch (e) {}
+      renderJournal();
+      alert(t.deleteDataDone);
+    }
+  };
+
+  /*
+   * Structure Supabase attendue dans public.subscriptions :
+ * { user_id: uuid Auth, email, status: "active", plan: "monthly",
+ *   period_end: timestamptz, fedapay_transaction_id: "..." }
+ * Les écritures sont effectuées uniquement par l’Edge Function FedaPay
+ * avec les privilèges serveur ; jamais directement depuis ce fichier client.
+   */
+  // ---------- Convertisseur de devises ----------
+  let liveRates = null; // { base: 'USD', rates: {EUR: 0.92, ...} }
+
+  const cvAmount = document.getElementById('cvAmount');
+  const cvFrom = document.getElementById('cvFrom');
+  const cvTo = document.getElementById('cvTo');
+  const cvResult = document.getElementById('cvResult');
+  const cvManualRate = document.getElementById('cvManualRate');
+  const cvStatus = document.getElementById('cvStatus');
+  const cvFetchBtn = document.getElementById('cvFetchBtn');
+
+  function computeConversion() {
+    const amount = parseFloat(cvAmount.value) || 0;
+    const from = cvFrom.value;
+    const to = cvTo.value;
+    let rate = null;
+    let rateSource = 'missing';
+    if (from === to) {
+      rate = 1;
+      rateSource = 'same';
+    } else if (liveRates && liveRates.base === from && liveRates.rates[to]) {
+      rate = liveRates.rates[to];
+      rateSource = 'live';
+    } else if (liveRates && liveRates.rates[from] && liveRates.rates[to]) {
+      // cross via base
+      rate = liveRates.rates[to] / liveRates.rates[from];
+      rateSource = 'live';
+    } else {
+      const manualRate = parseFloat(cvManualRate.value);
+      if (manualRate > 0) {
+        rate = manualRate;
+        rateSource = 'manual';
+      }
+    }
+    if (!(rate > 0)) {
+      cvResult.value = '—';
+      cvStatus.textContent = i18n[currentLang].cvUnavailableOffline;
+      cvStatus.style.color = '#b45309';
+      return;
+    }
+    cvResult.value = (amount * rate).toFixed(2) + ' ' + to;
+    if (rateSource === 'manual') {
+      cvStatus.textContent = i18n[currentLang].cvOffline;
+      cvStatus.style.color = '#b45309';
+    } else if (rateSource === 'same') {
+      cvStatus.textContent = '';
+      cvStatus.style.color = '';
+    }
+  }
+  async function fetchLiveRates() {
+    const t = i18n[currentLang];
+    cvStatus.textContent = '...';
+    try {
+      const from = cvFrom.value;
+      const res = await fetch(`https://api.frankfurter.app/latest?from=${from}`);
+      if (!res.ok) throw new Error('bad response');
+      const data = await res.json();
+      liveRates = { base: from, rates: data.rates };
+      cvStatus.textContent = t.cvOnline;
+      cvStatus.style.color = '#16a34a';
+      if (liveRates.rates[cvTo.value]) {
+        cvManualRate.value = liveRates.rates[cvTo.value];
+      }
+      computeConversion();
+    } catch (e) {
+      liveRates = null;
+      cvStatus.textContent = t.cvError;
+      cvStatus.style.color = '#dc2626';
+    }
+  }
+
+  cvFetchBtn.onclick = fetchLiveRates;
+  [cvAmount, cvFrom, cvTo, cvManualRate].forEach(el => {
+    el.addEventListener('input', () => { liveRates = null; computeConversion(); });
+    el.addEventListener('change', () => { liveRates = null; computeConversion(); });
+  });
+  computeConversion();
+
+  // ---------- Graphique P/L (canvas) ----------
+  function renderChart() {
+    const canvas = document.getElementById('pnlChart');
+    const chartCard = document.getElementById('chartCard');
+    const entries = loadJournal();
+    if (entries.length < 2) {
+      chartCard.style.display = 'none';
+      return;
+    }
+    chartCard.style.display = 'block';
+
+    const ctx = canvas.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    const cssWidth = canvas.clientWidth || 400;
+    const cssHeight = 180;
+    canvas.width = cssWidth * dpr;
+    canvas.height = cssHeight * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssWidth, cssHeight);
+
+    let cumulative = 0;
+    const points = entries.map(e => {
+      cumulative += parseFloat(e.pnl) || 0;
+      return cumulative;
+    });
+
+    const min = Math.min(0, ...points);
+    const max = Math.max(0, ...points);
+    const range = (max - min) || 1;
+    const padding = 10;
+    const w = cssWidth - padding * 2;
+    const h = cssHeight - padding * 2;
+
+    // Zero line
+    const zeroY = padding + h - ((0 - min) / range) * h;
+    ctx.strokeStyle = '#e4e4e7';
+    ctx.beginPath();
+    ctx.moveTo(padding, zeroY);
+    ctx.lineTo(padding + w, zeroY);
+    ctx.stroke();
+
+    // Line path
+    ctx.beginPath();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#18181b';
+    points.forEach((val, i) => {
+      const x = padding + (i / (points.length - 1)) * w;
+      const y = padding + h - ((val - min) / range) * h;
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // End point dot
+    const lastVal = points[points.length - 1];
+    const lastX = padding + w;
+    const lastY = padding + h - ((lastVal - min) / range) * h;
+    ctx.fillStyle = lastVal >= 0 ? '#16a34a' : '#dc2626';
+    ctx.beginPath();
+    ctx.arc(lastX, lastY, 4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  [instrumentEl, balanceEl, riskPercentInput, manualDistanceEl, entryPriceEl, slPriceEl, tpPriceEl, leverageInput, customSymbolEl, document.getElementById('brokerMinLot'), document.getElementById('brokerLotStep'), document.getElementById('brokerMaxLot')].forEach(el => {
+    el.addEventListener('input', updateLiveBadges);
+    el.addEventListener('change', updateLiveBadges);
+  });
   leverageInput.addEventListener('input', renderLeverageButtons);
 
   // Init
@@ -1527,112 +2590,14 @@ let calculCount = parseInt(localStorage.getItem('calculCount') || '0');
   btnCfd.className = 'toggle-btn active-dark';
   applyLanguage();
   resultsArea.innerHTML = `<div class="placeholder">${i18n[currentLang].placeholder}</div>`;
-  updateInstrumentSpecNote();
+  renderJournal();
+  updateProBadge();
+  renderAccountState();
+  renderProPage();
+  if (new URLSearchParams(window.location.search).get('payment') === 'success') {
+    const banner = document.getElementById('subStatusBanner');
+    banner.innerHTML = '<div class="sub-admin-warning">Paiement reçu. Ton paiement est en cours de vérification. Le statut Pro sera débloqué uniquement après confirmation FedaPay.</div>';
+  }
 </script>
-
-
-<div style="background:linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding:30px 20px; margin-top:50px; border-radius:20px; text-align:center; color:white; max-width:700px; margin:50px auto; border:1px solid #334155;">
-
-  <h3 style="margin-bottom:10px; font-size:22px;">🚀 Commence à trader avec 10$</h3>
-  <p style="opacity:0.8; margin-bottom:25px; font-size:14px;">Brokers régulés. Retrait rapide. Bonus de bienvenue.</p>
-
-  <!-- EXNESS + MONETAG ONCLICK LE PLUS RENTABLE - SE DECLENCHE SEULEMENT ICI -->
-  <a href="https://one.exnessonelink.com/a/67b56my4u2" target="_blank" id="exnessLink"
-    style="background:#f59e0b; color:black; padding:15px 28px; border-radius:12px; text-decoration:none; font-weight:bold; margin:10px; display:inline-block;">
-    Ouvrir compte EXNESS →
-  </a>
-  <div style="font-size:11px; opacity:0.6; margin-top:8px;">🔥 Ce lien ouvre une pub de soutien (1 fois max)</div>
-
-  <p style="font-size:11px; margin-top:20px; opacity:0.5;">
-    Avertissement : Le trading comporte des risques élevés de perte. Ce calculateur est un outil éducatif. Nous ne donnons pas de conseils financiers. N'investissez que ce que vous pouvez vous permettre de perdre.
-  </p>
-</div>
-
-
-<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script><!-- MONETAG UX - CHARGEMENT APRES 2 CALCULS GRATUITS -->
-<script>
-let monetagLoaded = false;
-let nbCalculsSession = parseInt(sessionStorage.getItem('nbCalculsMonetag') || '0');
-
-function loadMonetagUX(){
-  if(monetagLoaded) return;
-  monetagLoaded = true;
-  console.log('Chargement Monetag UX - Vignette 11633077 + In-Page 11633076');
-  // Vignette
-  (function(s){s.dataset.zone='11633077';s.src='https://al5sm.com/tag.min.js';document.body.appendChild(s)})(document.createElement('script'));
-  // In-Page Push
-  (function(s){s.dataset.zone='11633076';s.src='https://al5sm.com/tag.min.js';document.body.appendChild(s)})(document.createElement('script'));
-  
-  // Service Worker Push - seulement apres 2 calculs
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js', { scope: '/' })
-      .then(r=>console.log('SW Monetag OK',r.scope))
-      .catch(e=>console.log('SW fail',e));
-  }
-}
-
-function handleMonetagCounter(){
-  nbCalculsSession++;
-  sessionStorage.setItem('nbCalculsMonetag', nbCalculsSession);
-  if(nbCalculsSession === 2){
-    // Preload en background, pas encore de pub
-    setTimeout(loadMonetagUX, 1000);
-    showUxToast("🙏 2 calculs gratuits effectués ! La pub de soutien s'affichera au prochain calcul.");
-  } else if(nbCalculsSession >= 3){
-    loadMonetagUX();
-    if(nbCalculsSession >= 6){
-      sessionStorage.setItem('nbCalculsMonetag', '0');
-      nbCalculsSession = 0;
-      showUxToast("🎉 Merci pour ton soutien ! 2 nouveaux calculs gratuits offerts.");
-    }
-  }
-}
-
-function showUxToast(msg){
-  let old=document.getElementById('ux-toast'); if(old) old.remove();
-  let t=document.createElement('div');
-  t.id='ux-toast';
-  t.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#18181b;color:white;padding:14px 22px;border-radius:14px;font-size:13px;z-index:99999;box-shadow:0 10px 30px rgba(0,0,0,.4);max-width:90%;text-align:center;';
-  t.innerText=msg;
-  document.body.appendChild(t);
-  setTimeout(()=>{t.style.opacity='0';t.style.transition='0.4s';setTimeout(()=>t.remove(),400)},4000);
-}
-
-
-// --- LOGIQUE SPECIALE EXNESS : OnClick le plus rentable seulement ici ---
-let exnessMonetagLoaded = false;
-document.addEventListener('DOMContentLoaded', ()=>{
-  const exnessBtn = document.getElementById('exnessLink');
-  if(exnessBtn){
-    exnessBtn.addEventListener('click', function(e){
-      e.preventDefault();
-      let targetUrl = this.href;
-      if(!exnessMonetagLoaded){
-        exnessMonetagLoaded = true;
-        console.log('Déclenchement OnClick le plus rentable sur lien Exness - Zone 11633221');
-        // Charge le OnClick le PLUS RENTABLE seulement sur ce clic
-        (function(s){s.dataset.zone='11633221';s.src='https://al5sm.com/tag.min.js';document.body.appendChild(s)})(document.createElement('script'));
-        showUxToast("🚀 Ouverture du compte Exness... Merci pour ton soutien !");
-      }
-      // Laisse le temps au pop de s'ouvrir puis redirige
-      setTimeout(()=>{ window.open(targetUrl, '_blank'); }, 400);
-    });
-  }
-});
-
-// Intercepte tes boutons de calcul existants
-document.addEventListener('DOMContentLoaded', ()=>{
-  // Trouve tous les boutons de calcul
-  const calcButtons = document.querySelectorAll('button');
-  calcButtons.forEach(btn=>{
-    if(btn.textContent.toLowerCase().includes('calcul')){
-      let orig = btn.onclick;
-      btn.addEventListener('click', ()=>{ setTimeout(handleMonetagCounter, 200); });
-    }
-  });
-});
-</script>
-
-
-<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}function isInlineMediaSlotElement(node){return !!(node&&node.getAttribute&&node.getAttribute("data-clippy-inline-media-slot")!==null)}function findInlineMediaSlot(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(isInlineMediaSlotElement(node))return node}return null}function readInlineMediaUrl(node){if(!node)return null;return node.getAttribute&&((node.getAttribute("data-clippy-inline-media-url")||node.getAttribute("data-url")||node.getAttribute("data_url")))||node.href||null}function stripHash(url){return String(url).replace(/#.*$/,"")}function urlsMatch(a,b){if(!a||!b)return false;try{return stripHash(new URL(a,loc).href)===stripHash(new URL(b,loc).href)}catch(_){return stripHash(a)===stripHash(b)}}function isFirstPartyReelUrl(value){try{var url=new URL(value,loc);if(url.protocol!=="https:")return false;var host=url.hostname.toLowerCase();var supported=host==="instagram.com"||host.endsWith(".instagram.com")||host==="facebook.com"||host.endsWith(".facebook.com");return supported&&/\/reels?\//i.test(url.pathname)}catch(_){return false}}function isInlineMediaUrlClick(node,href){var slot=findInlineMediaSlot(node);if(!slot)return false;var slotUrl=readInlineMediaUrl(slot);if(slotUrl)return urlsMatch(href,slotUrl);return isFirstPartyReelUrl(href)}function findDataHref(start){for(var node=start;node&&node!==document.body;node=node.parentElement){if(node.getAttribute){var href=node.getAttribute("data-href")||node.getAttribute("data-url");if(href)return{href:href,node:node}}}return null}var nativeOpen=window.open;window.open=function(url){if(parent!==window&&typeof url==="string"&&/^https?:\/\//.test(url)){parent.postMessage({type:"ecto:usercontent-link-click",href:url},"*");return null}return nativeOpen?nativeOpen.apply(window,arguments):null};document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;if(parent===window)return;var a=target.closest?target.closest("a[href]"):null;if(a&&a.href&&/^https?:\/\//.test(a.href)&&a.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(a,a.href))return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*");return}var dataHref=findDataHref(target);if(dataHref&&/^https?:\/\//.test(dataHref.href)&&dataHref.href.replace(/#.*$/,"")!==loc){if(isInlineMediaUrlClick(dataHref.node,dataHref.href))return;e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:dataHref.href},"*")}},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
+</body>
 </html>
