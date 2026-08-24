@@ -2190,8 +2190,9 @@
     return subStatusCache.verified === true && subscriptionIsCurrentlyActive(subStatusCache);
   }
   const FREE_AD_ACTIVITY_KEY = 'tradesizer_free_ad_activity_v1';
-  const FREE_AD_ZONE = '11633221';
-  const FREE_AD_SCRIPT = 'https://al5sm.com/tag.min.js';
+  // Tag Monetag activé uniquement dans un emplacement Free éligible.
+  const FREE_AD_ZONE = '272385';
+  const FREE_AD_SCRIPT = 'https://quge5.com/88/tag.min.js';
   let currentFreeAdContext = 'home';
   const freeAdLoadedSlots = new Set();
   function loadFreeAdActivity() {
@@ -2251,7 +2252,9 @@
     host.className = 'free-ad-host';
     const script = document.createElement('script');
     script.dataset.zone = FREE_AD_ZONE;
+    script.dataset.cfasync = 'false';
     script.dataset.tradesizerFreeAd = 'true';
+    script.async = true;
     script.src = FREE_AD_SCRIPT;
     host.appendChild(script);
     slot.append(note, host);
