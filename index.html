@@ -364,6 +364,17 @@
     background: #fff7ed; border: 1px solid #fdba74; color: #9a3412;
     border-radius: 10px; padding: 12px; font-size: 12px; margin-bottom: 16px;
   }
+  .free-ad-slot {
+    display: none;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    text-align: center;
+    color: var(--text-muted, #71717a);
+    font-size: 12px;
+  }
+  .free-ad-note { margin-bottom: 6px; line-height: 1.35; }
+  .free-ad-host { min-height: 30px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
   .playstore-banner {
     background: linear-gradient(135deg,#0f172a,#1e293b); color: white; border-radius: 14px;
     padding: 16px; text-align: center; margin: 16px auto; max-width: 480px;
@@ -674,6 +685,7 @@
   </div>
 
   <div id="resultsArea"></div>
+  <div class="card free-ad-slot" id="adSlotCalculator" aria-label="Publicité"></div>
   <button class="save-journal-btn" id="saveToJournalBtn" data-i18n="saveToJournal">+ Enregistrer ce calcul dans le journal</button>
 
   <div class="card" style="margin-top:16px;">
@@ -683,8 +695,8 @@
     <p class="hint" data-i18n="affiliateHint">TradeSizer peut utiliser un lien d’affiliation Exness. Lorsque vous cliquez sur ce lien, Exness peut utiliser des paramètres de suivi conformément à ses propres politiques.</p>
   </div>
 
-  <!-- Publicité réservée à la formule gratuite, après 2 calculs enregistrés et 2 conversions. -->
-  <div class="card" id="adSlot" style="display:none;text-align:center;color:#a1a1aa;font-size:12px;" aria-label="Publicité">Publicité</div>
+  <!-- Emplacements publicitaires réservés au plan Gratuit. Ils sont activés uniquement après 2 calculs enregistrés ET 2 conversions. -->
+  <div class="card free-ad-slot" id="adSlotHome" aria-label="Publicité"></div>
 
   <p class="footer-note" data-i18n="footerNote"></p>
 
@@ -740,12 +752,15 @@
       <canvas id="pnlChart" width="400" height="180" style="width:100%;height:180px;"></canvas>
     </div>
 
+    <div class="card free-ad-slot" id="adSlotJournal" aria-label="Publicité"></div>
+
     <div class="card">
       <label style="margin-bottom:10px;" data-i18n="exportTitle">Exporter le journal (Pro)</label>
       <div style="display:flex;gap:8px;">
         <button class="toggle-btn" id="exportCsvBtn" style="flex:1;" data-i18n="exportExcelBtn">📊 Export Excel (CSV)</button>
         <button class="toggle-btn" id="exportPdfBtn" style="flex:1;" data-i18n="exportPdfBtn">📄 Export PDF</button>
       </div>
+      <div class="free-ad-slot" id="adSlotExport" aria-label="Publicité"></div>
     </div>
 
     <div id="journalList"></div>
@@ -755,6 +770,10 @@
   <div id="viewConvert" class="view">
     <div class="card">
       <label data-i18n="convertTitle" style="margin-bottom:10px;">Convertisseur de devises</label>
+      <div class="field-row" style="margin-bottom:10px;">
+        <button class="toggle-btn active-dark" id="cvOfflineModeBtn" type="button" style="flex:1;">Mode hors-ligne</button>
+        <button class="toggle-btn" id="cvOnlineModeBtn" type="button" style="flex:1;">Mode Online</button>
+      </div>
 
       <div class="field-row" style="margin-bottom:10px;">
         <input type="number" id="cvAmount" value="100" step="0.01">
@@ -1056,11 +1075,10 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   // Publishable key uniquement : aucune secret key n’est utilisée dans le frontend.
-  const supabaseUrl = 'https://kusomucmcpssojivxsug.supabase.co';
-  const supabaseKey = 'sb_publishable_8LX1_R6IegdkhR4a3MVhng_lJaP1rDn';
-  const { createClient } = window.supabase;
-  const supabase = createClient(supabaseUrl, supabaseKey);
-  const supabaseClient = supabase;
+  const TRADESIZER_SUPABASE_URL = 'https://kusomucmcpssojivxsug.supabase.co';
+  const TRADESIZER_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_8LX1_R6IegdkhR4a3MVhng_lJaP1rDn';
+  // Le SDK expose déjà `window.supabase`; ne pas redéclarer ce nom global dans l’application.
+  const supabaseClient = window.supabase.createClient(TRADESIZER_SUPABASE_URL, TRADESIZER_SUPABASE_PUBLISHABLE_KEY);
   const SUPABASE_CONFIGURED = true;
   const themeToggleBtn = document.getElementById('themeToggleBtn');
   function applyTheme(theme, persist = true) {
@@ -1382,7 +1400,7 @@
       planQuarterlySavings: 'Savings: 3,000 XOF',
       planAnnualSavings: 'Savings: 12,000 XOF',
       planAnnualEquiv: 'About 5,000 XOF/month',
-      planTermsNote: 'Auto-renews. Cancel anytime.',
+      planTermsNote: 'No automatic renewal: a new payment is required to extend the subscription.',
       proPageTitle: '💎 TRADE SIZER PRO',
       proPageSubtitle: 'Take your risk management to the next level.',
       manageSubTitle: 'Manage my subscription',
@@ -1512,6 +1530,7 @@
     document.getElementById('langEn').classList.toggle('active', currentLang === 'en');
     document.title = t.title;
     renderRiskButtons();
+    if (window.__tradesizerFreeAdReady) updateFreeAd();
     renderLeverageButtons();
     renderCurrencyButtons();
     updateLiveBadges();
@@ -1774,8 +1793,8 @@
     const minLot = !isNaN(brokerMin) && brokerMin > 0 ? brokerMin : 0;
     const lotStep = !isNaN(brokerStep) && brokerStep > 0 ? brokerStep : 0.01;
     const maxLot = !isNaN(brokerMax) && brokerMax > 0 ? brokerMax : Infinity;
-    const floorToStep = (value, step) => Math.floor((value + 1e-12) / step) * step;
-    const calculatedLot = floorToStep(theoreticalLot, lotStep);
+    const roundToStep = (value, step) => Math.round((value + 1e-12) / step) * step;
+    const calculatedLot = roundToStep(theoreticalLot, lotStep);
     const belowBrokerMin = minLot > 0 && calculatedLot < minLot;
     const usableLot = Math.min(maxLot, belowBrokerMin ? minLot : calculatedLot);
     const realRiskAmount = usableLot * riskPerLotAccount;
@@ -1815,6 +1834,10 @@
       </div>
       <p class="hint" style="margin:12px 0 0 0;">${exactnessLabel}</p>
     </div>${warningsHtml}<p class="hint" style="text-align:center;margin-top:10px;">${t.calcDisclaimer}</p>`;
+    if (subscriptionStatusResolved && !isPro() && freeAdThresholdReached()) {
+      currentFreeAdContext = 'calculator';
+      updateFreeAd();
+    }
   }
 
   // Le bouton CALCULER déclenche explicitement le calcul complet.
@@ -2106,6 +2129,14 @@
   const viewSettings = document.getElementById('viewSettings');
 
   function switchTab(name) {
+    if (name === 'calc') {
+      const activity = loadFreeAdActivity();
+      currentFreeAdContext = activity.savedCalculations >= 2 && lastResult ? 'calculator' : 'home';
+    } else if (name === 'journal' || name === 'stats') {
+      currentFreeAdContext = 'journal';
+    } else {
+      currentFreeAdContext = 'home';
+    }
     tabCalcBtn.classList.toggle('active', name === 'calc');
     tabJournalBtn.classList.toggle('active', name === 'journal');
     tabConvertBtn.classList.toggle('active', name === 'convert');
@@ -2123,6 +2154,7 @@
     if (name === 'journal' || name === 'stats') renderJournal();
     if (name === 'pro') renderProPage();
     if (name === 'compare') renderComparePage();
+    updateFreeAd();
   }
 
   tabCalcBtn.onclick = () => switchTab('calc');
@@ -2158,7 +2190,10 @@
     return subStatusCache.verified === true && subscriptionIsCurrentlyActive(subStatusCache);
   }
   const FREE_AD_ACTIVITY_KEY = 'tradesizer_free_ad_activity_v1';
-  let freeAdLoaded = false;
+  const FREE_AD_ZONE = '11633221';
+  const FREE_AD_SCRIPT = 'https://al5sm.com/tag.min.js';
+  let currentFreeAdContext = 'home';
+  const freeAdLoadedSlots = new Set();
   function loadFreeAdActivity() {
     try {
       const raw = JSON.parse(localStorage.getItem(FREE_AD_ACTIVITY_KEY) || '{}');
@@ -2189,22 +2224,59 @@
     saveFreeAdActivity(activity);
     updateFreeAd();
   }
-  function updateFreeAd() {
-    const adSlot = document.getElementById('adSlot');
-    if (!adSlot) return;
-    if (!subscriptionStatusResolved || isPro() || !freeAdThresholdReached()) {
-      adSlot.style.display = 'none';
+  function freeAdMessage() {
+    return currentLang === 'en'
+      ? 'You are using the free version of TradeSizer. Upgrade to Pro to remove ads and unlock all features.'
+      : 'Vous utilisez la version gratuite de TradeSizer. Passez en Pro pour supprimer les publicités et débloquer toutes les fonctionnalités.';
+  }
+  function hideFreeAdSlot(slot) {
+    if (!slot) return;
+    slot.style.display = 'none';
+    slot.replaceChildren();
+    freeAdLoadedSlots.delete(slot.id);
+  }
+  function loadFreeAdSlot(slot) {
+    if (!slot) return;
+    slot.style.display = 'block';
+    if (freeAdLoadedSlots.has(slot.id)) {
+      const note = slot.querySelector('.free-ad-note');
+      if (note) note.textContent = freeAdMessage();
       return;
     }
-    adSlot.style.display = 'block';
-    if (freeAdLoaded || adSlot.querySelector('script[data-tradesizer-free-ad="true"]')) return;
+    slot.replaceChildren();
+    const note = document.createElement('div');
+    note.className = 'free-ad-note';
+    note.textContent = freeAdMessage();
+    const host = document.createElement('div');
+    host.className = 'free-ad-host';
     const script = document.createElement('script');
-    script.dataset.zone = '11633221';
+    script.dataset.zone = FREE_AD_ZONE;
     script.dataset.tradesizerFreeAd = 'true';
-    script.src = 'https://al5sm.com/tag.min.js';
-    adSlot.replaceChildren(script);
-    freeAdLoaded = true;
+    script.src = FREE_AD_SCRIPT;
+    host.appendChild(script);
+    slot.append(note, host);
+    freeAdLoadedSlots.add(slot.id);
   }
+  function updateFreeAd() {
+    const slots = {
+      home: document.getElementById('adSlotHome'),
+      calculator: document.getElementById('adSlotCalculator'),
+      journal: document.getElementById('adSlotJournal'),
+      export: document.getElementById('adSlotExport')
+    };
+    const allowed = subscriptionStatusResolved && !isPro() && freeAdThresholdReached();
+    Object.entries(slots).forEach(([context, slot]) => {
+      if (allowed && context === currentFreeAdContext) loadFreeAdSlot(slot);
+      else hideFreeAdSlot(slot);
+    });
+  }
+  function showFreeExportAd() {
+    if (subscriptionStatusResolved && !isPro() && freeAdThresholdReached()) {
+      currentFreeAdContext = 'export';
+      updateFreeAd();
+    }
+  }
+  window.__tradesizerFreeAdReady = true;
   function updateProBadge() {
     document.getElementById('proBadge').style.display = isPro() ? 'inline-block' : 'none';
   }
@@ -2336,8 +2408,22 @@
       updateFreeAd();
     }
   }
+  function hasStoredSupabaseSession() {
+    try {
+      return Object.keys(localStorage).some((key) => /^sb-.+-auth-token$/.test(key));
+    } catch (error) {
+      return true;
+    }
+  }
   if (supabaseClient) {
-    supabaseClient.auth.getSession().then(({ data }) => handleSupabaseSession(data.session));
+    const sessionLookup = supabaseClient.auth.getSession();
+    const sessionTimeout = new Promise((_, reject) => setTimeout(() => reject(new Error('Supabase session lookup timeout')), 4000));
+    Promise.race([sessionLookup, sessionTimeout])
+      .then(({ data }) => handleSupabaseSession(data?.session || null))
+      .catch((error) => {
+        console.warn('Supabase session lookup failed or timed out:', error);
+        if (!hasStoredSupabaseSession()) handleSupabaseSession(null);
+      });
     const { data } = supabaseClient.auth.onAuthStateChange((_event, session) => handleSupabaseSession(session));
     supabaseAuthSubscription = data.subscription;
   } else {
@@ -2355,6 +2441,7 @@
   // Retourne true si l'accès est autorisé, false si la modal a été affichée.
   function requirePro() {
     if (isPro()) return true;
+    showFreeExportAd();
     upsellModal.classList.add('open');
     return false;
   }
@@ -2511,6 +2598,25 @@
   const cvManualRate = document.getElementById('cvManualRate');
   const cvStatus = document.getElementById('cvStatus');
   const cvFetchBtn = document.getElementById('cvFetchBtn');
+  const cvOfflineModeBtn = document.getElementById('cvOfflineModeBtn');
+  const cvOnlineModeBtn = document.getElementById('cvOnlineModeBtn');
+  let converterMode = 'offline';
+
+  function setConverterMode(mode) {
+    converterMode = mode === 'online' ? 'online' : 'offline';
+    const online = converterMode === 'online';
+    cvOfflineModeBtn.classList.toggle('active-dark', !online);
+    cvOnlineModeBtn.classList.toggle('active-dark', online);
+    if (!online) {
+      liveRates = null;
+      cvStatus.textContent = i18n[currentLang].cvOffline;
+      cvStatus.style.color = '#b45309';
+      computeConversion(false);
+    } else {
+      cvStatus.textContent = i18n[currentLang].cvOnline;
+      cvStatus.style.color = '#16a34a';
+    }
+  }
 
   function computeConversion(countAsAction = false) {
     const amount = parseFloat(cvAmount.value) || 0;
@@ -2556,6 +2662,7 @@
   }
   async function fetchLiveRates() {
     const t = i18n[currentLang];
+    setConverterMode('online');
     cvStatus.textContent = '...';
     try {
       const from = cvFrom.value;
@@ -2576,11 +2683,14 @@
     }
   }
 
+  cvOfflineModeBtn.onclick = () => setConverterMode('offline');
+  cvOnlineModeBtn.onclick = fetchLiveRates;
   cvFetchBtn.onclick = fetchLiveRates;
   [cvAmount, cvFrom, cvTo, cvManualRate].forEach(el => {
     el.addEventListener('input', () => { liveRates = null; computeConversion(false); });
     el.addEventListener('change', () => { liveRates = null; computeConversion(true); });
   });
+  setConverterMode('offline');
   computeConversion();
 
   // ---------- Graphique P/L (canvas) ----------
