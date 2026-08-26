@@ -499,6 +499,48 @@
     .theme-btn { font-size: 11px; padding-inline: 6px; }
     .tab-btn { font-size: 11px; }
   }
+
+  /* --- Menu principal TradeSizer --- */
+  .menu-trigger {
+    display:inline-flex; align-items:center; justify-content:center; gap:7px;
+    min-height:42px; padding:9px 13px; border:1px solid var(--border, #d4d4d8);
+    border-radius:10px; background:var(--surface, #fff); color:var(--text, #18181b);
+    font-size:13px; font-weight:800; cursor:pointer; box-shadow:var(--shadow, 0 1px 3px rgba(0,0,0,.08));
+  }
+  .menu-trigger:focus-visible, .menu-item:focus-visible, .menu-close:focus-visible { outline:3px solid #60a5fa; outline-offset:2px; }
+  .menu-overlay { display:none; position:fixed; inset:0; z-index:900; background:rgba(2,6,23,.45); }
+  .menu-overlay.open { display:block; }
+  .main-menu {
+    position:fixed; top:0; right:0; bottom:0; z-index:901; width:min(390px, 92vw);
+    padding:18px; overflow-y:auto; background:var(--surface, #fff); color:var(--text, #18181b);
+    box-shadow:-12px 0 35px rgba(2,6,23,.22); transform:translateX(100%); transition:transform .2s ease-out;
+  }
+  .main-menu.open { transform:translateX(0); }
+  .menu-header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px; }
+  .menu-title { margin:0; font-size:18px; font-weight:850; }
+  .menu-close { width:42px; height:42px; border:1px solid var(--border, #d4d4d8); border-radius:10px; background:transparent; color:inherit; cursor:pointer; font-size:20px; }
+  .menu-section { margin:0 0 14px; padding:10px; border:1px solid var(--border, #e4e4e7); border-radius:14px; background:color-mix(in srgb, var(--surface, #fff) 92%, var(--page-bg, #f4f4f5)); }
+  .menu-section-title { display:block; margin:0 0 8px; color:var(--text-muted, #71717a); font-size:11px; font-weight:800; letter-spacing:.04em; text-transform:uppercase; }
+  .menu-items { display:grid; gap:6px; }
+  .menu-item { display:flex; align-items:center; gap:10px; width:100%; min-height:46px; padding:10px 12px; border:1px solid transparent; border-radius:10px; background:transparent; color:inherit; text-align:left; cursor:pointer; font-size:13px; font-weight:750; }
+  .menu-item:hover, .menu-item.active { background:var(--accent, #18181b); color:var(--page-bg, #fff); }
+  .menu-item-icon { width:24px; flex:0 0 24px; text-align:center; font-size:17px; }
+  .menu-item-copy { min-width:0; flex:1; }
+  .menu-item-title { display:block; }
+  .menu-item-meta { display:block; margin-top:2px; font-size:10px; font-weight:500; opacity:.72; }
+  .menu-currency-section .grid2 { margin-top:8px; }
+  .menu-currency-section .toggle-btn { min-height:40px; }
+  .menu-account-state { margin:0 0 10px; color:var(--text-muted, #71717a); font-size:11px; line-height:1.45; }
+  .main-menu .tabbar { display:none; }
+  body.menu-open { overflow:hidden; }
+  html[data-theme="dark"] .menu-trigger, html[data-theme="dark"] .main-menu { color-scheme:dark; }
+  @media (max-width:520px) {
+    .top-row { gap:10px; }
+    .lang-switch { flex-wrap:wrap; justify-content:flex-end; }
+    .menu-trigger { order:-1; }
+    .main-menu { width:min(360px, 94vw); padding:14px; }
+  }
+
 </style>
 <script>
   (() => {
@@ -508,6 +550,15 @@
   })();
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
+
+<style id="calculation-mode-styles">
+  .calculation-mode-panel { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 0 16px; padding:10px 12px; border:1px solid #d4d4d8; border-radius:12px; background:rgba(255,255,255,.72); }
+  .calculation-mode-controls { display:flex; gap:6px; flex-wrap:wrap; }
+  .calculation-mode-btn { border:1px solid #a1a1aa; border-radius:8px; padding:7px 10px; background:transparent; color:inherit; cursor:pointer; font-weight:700; font-size:12px; }
+  .calculation-mode-btn.active { background:#18181b; color:#fff; border-color:#18181b; }
+  .calculation-mode-status { margin:0; font-size:12px; line-height:1.35; color:#52525b; }
+  @media (max-width:520px) { .calculation-mode-panel { align-items:flex-start; flex-direction:column; } }
+</style>
 </head>
 <body>
 <div class="container">
@@ -517,24 +568,58 @@
       <p class="subtitle" data-i18n="subtitle">Détermine ta taille de lot selon ton risque — 100% hors-ligne</p>
     </div>
     <div class="lang-switch">
+      <button class="menu-trigger" id="mainMenuBtn" type="button" aria-controls="mainMenu" aria-expanded="false">☰ <span data-i18n="menuButton">Menu</span></button>
       <button class="lang-btn" id="langFr">FR</button>
       <button class="lang-btn" id="langEn">EN</button>
-      <button class="theme-btn" id="themeToggleBtn" type="button" aria-label="Changer de thème" title="Changer de thème">☾</button>
     </div>
   </div>
 
-  <div class="tabbar" style="flex-wrap:wrap;gap:4px;">
-    <button class="tab-btn active" id="tabCalcBtn" data-i18n="tabCalc">Calculateur</button>
-    <button class="tab-btn" id="tabJournalBtn" data-i18n="tabJournal">Journal</button>
-    <button class="tab-btn" id="tabConvertBtn" data-i18n="tabConvert">Devises</button>
-    <button class="tab-btn" id="tabProBtn" data-i18n="tabPro">💎 Pro</button>
-    <button class="tab-btn" id="tabCompareBtn" data-i18n="tabCompare">Comparer</button>
-    <button class="tab-btn" id="tabSettingsBtn" data-i18n="tabSettings">⚙ Réglages</button>
-    <button class="tab-btn utility-tab" id="tabStatsBtn" type="button">Statistiques</button>
-    <button class="tab-btn utility-tab" id="tabAccountBtn" type="button">Compte</button>
-  </div>
+  <div class="menu-overlay" id="menuOverlay" aria-hidden="true"></div>
+  <aside class="main-menu" id="mainMenu" aria-label="Menu principal" aria-hidden="true">
+    <div class="menu-header">
+      <h2 class="menu-title"><span data-i18n="menuTitle">Menu principal</span></h2>
+      <button class="menu-close" id="menuCloseBtn" type="button" aria-label="Fermer le menu">✕</button>
+    </div>
+    <div class="menu-section">
+      <span class="menu-section-title" data-i18n="menuNavigationTitle">Navigation</span>
+      <div class="menu-items">
+        <button class="menu-item active" id="tabCalcBtn" type="button" data-menu-target="calc"><span class="menu-item-icon">🧮</span><span class="menu-item-copy"><span class="menu-item-title" data-i18n="tabCalc">Calculateur</span><span class="menu-item-meta" data-i18n="menuCalcMeta">Calcul et résultats</span></span></button>
+        <button class="menu-item" id="tabJournalBtn" type="button" data-menu-target="journal"><span class="menu-item-icon">📖</span><span class="menu-item-copy"><span class="menu-item-title" data-i18n="tabJournal">Journal</span><span class="menu-item-meta" data-i18n="menuJournalMeta">Réservé au plan Pro</span></span></button>
+        <button class="menu-item" id="tabConvertBtn" type="button" data-menu-target="convert"><span class="menu-item-icon">💱</span><span class="menu-item-copy"><span class="menu-item-title" data-i18n="tabConvert">Devises</span><span class="menu-item-meta" data-i18n="menuConvertMeta">Convertisseur Online/Offline</span></span></button>
+        <button class="menu-item" id="tabCompareBtn" type="button" data-menu-target="compare"><span class="menu-item-icon">🔄</span><span class="menu-item-copy"><span class="menu-item-title" data-i18n="tabCompare">Comparer</span><span class="menu-item-meta" data-i18n="menuCompareMeta">Comparer Free et Pro</span></span></button>
+        <button class="menu-item" id="tabStatsBtn" type="button" data-menu-target="stats"><span class="menu-item-icon">📊</span><span class="menu-item-copy"><span class="menu-item-title" data-i18n="menuStats">Statistiques</span><span class="menu-item-meta" data-i18n="menuStatsMeta">Statistiques du journal</span></span></button>
+      </div>
+    </div>
+    <div class="menu-section menu-currency-section">
+      <span class="menu-section-title" data-i18n="menuCurrencyTitle">💱 Devise du compte</span>
+      <p class="menu-account-state" data-i18n="menuCurrencyHint">Choisis la devise utilisée par le calculateur. Ton choix est mémorisé.</p>
+      <div class="grid2" id="currencyButtons"></div>
+    </div>
+    <div class="menu-section">
+      <span class="menu-section-title" data-i18n="menuAccountTitle">Compte et abonnement</span>
+      <div class="menu-items">
+        <button class="menu-item" id="tabProBtn" type="button" data-menu-target="pro"><span class="menu-item-icon">💎</span><span class="menu-item-copy"><span class="menu-item-title" data-i18n="menuPro">TradeSizer Pro</span><span class="menu-item-meta" id="menuProStatus" data-i18n="menuProMeta">Tarifs et abonnement</span></span></button>
+        <button class="menu-item" id="tabAccountBtn" type="button" data-menu-target="account"><span class="menu-item-icon">👤</span><span class="menu-item-copy"><span class="menu-item-title" data-i18n="menuAccount">Mon compte</span><span class="menu-item-meta" data-i18n="menuAccountMeta">Connexion et statut</span></span></button>
+        <button class="menu-item" id="menuAuthBtn" type="button"><span class="menu-item-icon">🔐</span><span class="menu-item-copy"><span class="menu-item-title" id="menuAuthLabel" data-i18n="menuLogin">Connexion / Déconnexion</span><span class="menu-item-meta" data-i18n="menuAuthMeta">Gérer ton accès</span></span></button>
+      </div>
+    </div>
+    <div class="menu-section">
+      <span class="menu-section-title" data-i18n="menuSettingsTitle">Réglages</span>
+      <div class="menu-items">
+        <button class="menu-item" id="tabSettingsBtn" type="button" data-menu-target="settings"><span class="menu-item-icon">⚙️</span><span class="menu-item-copy"><span class="menu-item-title" data-i18n="tabSettings">Réglages</span><span class="menu-item-meta" data-i18n="menuSettingsMeta">Apparence et préférences</span></span></button>
+      </div>
+    </div>
+  </aside>
 
   <div id="viewCalc" class="view active">
+    <div class="calculation-mode-panel" id="calculationModePanel" role="group" aria-labelledby="calculationModeLabel">
+      <p class="calculation-mode-status"><strong id="calculationModeLabel" data-i18n="mode_label">Mode de calcul</strong><br><span id="calculationModeStatus"></span></p>
+      <div class="calculation-mode-controls">
+        <button class="calculation-mode-btn" id="calculationModeOfflineBtn" type="button" data-i18n="mode_offline">Hors ligne</button>
+        <button class="calculation-mode-btn" id="calculationModeOnlineBtn" type="button" data-i18n="mode_online">En ligne</button>
+      </div>
+    </div>
+
 
   <!-- Direction -->
   <div class="toggle-row">
@@ -609,10 +694,6 @@
       <p class="hint" data-i18n="symbolHint">La valeur du point est fixée à 1 par action — vérifie le contrat exact chez ton broker.</p>
     </div>
 
-    <div class="field">
-      <label data-i18n="currency">Devise du compte</label>
-      <div class="grid2" id="currencyButtons"></div>
-    </div>
 
     <div class="field">
       <label data-i18n="balance">Solde du compte</label>
@@ -951,7 +1032,11 @@
   </div><!-- /viewCompare -->
 
   <div id="viewSettings" class="view">
-
+    <div class="card">
+      <label style="margin-bottom:10px;" data-i18n="appearanceTitle">🌙 Apparence</label>
+      <p class="hint" style="margin-bottom:10px;" data-i18n="appearanceBody">Choisis le mode clair ou sombre. Ton choix est conservé sur cet appareil.</p>
+      <button class="theme-btn" id="themeToggleBtn" type="button" aria-label="Changer de thème" title="Changer de thème" style="width:100%;min-height:42px;border:1px solid var(--border,#d4d4d8);border-radius:8px;">☾</button>
+    </div>
     <div class="card">
       <label style="margin-bottom:10px;" data-i18n="riskWarningTitle">⚠️ Avertissement sur les risques</label>
       <p class="hint" style="line-height:1.6;" data-i18n="riskWarningBody">
@@ -973,7 +1058,8 @@
     <div class="card">
       <label style="margin-bottom:10px;" data-i18n="cloudSyncTitle">☁️ Synchronisation Cloud</label>
       <p class="hint" style="margin-bottom:10px;" data-i18n="cloudSyncBody">La synchronisation Cloud sera disponible prochainement.</p>
-      <button class="toggle-btn" id="cloudSyncBtn" style="width:100%;" data-i18n="cloudSyncBtn">Synchronisation Cloud — Bientôt disponible</button>
+      <button class="toggle-btn" id="cloudSyncBtn" style="width:100%;" data-i18n="cloudSyncBtn">☁️ Synchroniser mon journal</button>
+      <div id="cloudSyncStatus" class="hint" role="status" aria-live="polite" style="margin-top:8px;"></div>
     </div>
 
     <div class="card" id="contactCard">
@@ -1077,7 +1163,6 @@
   // Publishable key uniquement : aucune secret key n’est utilisée dans le frontend.
   const TRADESIZER_SUPABASE_URL = 'https://kusomucmcpssojivxsug.supabase.co';
   const TRADESIZER_SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_8LX1_R6IegdkhR4a3MVhng_lJaP1rDn';
-  // Le SDK expose déjà `window.supabase`; ne pas redéclarer ce nom global dans l’application.
   const supabaseClient = window.supabase.createClient(TRADESIZER_SUPABASE_URL, TRADESIZER_SUPABASE_PUBLISHABLE_KEY);
   const SUPABASE_CONFIGURED = true;
   const themeToggleBtn = document.getElementById('themeToggleBtn');
@@ -1092,9 +1177,7 @@
     }
   }
   applyTheme(document.documentElement.dataset.theme || 'light', false);
-  themeToggleBtn?.addEventListener('click', () => {
-    applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
-  });
+  themeToggleBtn?.addEventListener('click', () => applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
   let currentSupabaseUser = null;
   let supabaseAuthSubscription = null;
 </script>
@@ -1102,8 +1185,19 @@
   // ---------- i18n ----------
   const i18n = {
     fr: {
+      menuButton: 'Menu', menuTitle: 'Menu principal', menuNavigationTitle: 'Navigation',
+      menuCalcMeta: 'Calcul et résultats', menuJournalMeta: '2 enregistrements Free avec publicité, illimité en Pro',
+      menuConvertMeta: 'Convertisseur Online/Offline', menuCompareMeta: 'Comparer Free et Pro',
+      menuStats: 'Statistiques', menuStatsMeta: 'Statistiques du journal',
+      menuCurrencyTitle: '💱 Devise du compte', menuCurrencyHint: 'Choisis la devise utilisée par le calculateur. Ton choix est mémorisé.',
+      menuAccountTitle: 'Compte et abonnement', menuPro: 'TradeSizer Pro', menuProMeta: 'Tarifs et abonnement',
+      menuAccount: 'Mon compte', menuAccountMeta: 'Connexion et statut', menuLogin: 'Connexion / Déconnexion',
+      menuAuthMeta: 'Gérer ton accès', menuSettingsTitle: 'Réglages', menuSettingsMeta: 'Apparence et préférences',
+      appearanceTitle: '🌙 Apparence', appearanceBody: 'Choisis le mode clair ou sombre. Ton choix est conservé sur cet appareil.',
+
       title: 'Calculateur de taille de position',
-      subtitle: 'Détermine ta taille de lot selon ton risque — 100% hors-ligne',
+      subtitle: 'Détermine ta taille de lot selon ton risque — données locales ou en direct selon le mode choisi',
+      mode_label: 'Mode de calcul', mode_offline: 'Hors ligne', mode_online: 'En ligne',
       buy: '▲ Achat',
       sell: '▼ Vente',
       productType: 'Type de produit',
@@ -1122,7 +1216,7 @@
       slPrice: 'Prix du SL',
       tpPrice: 'Prix du Take Profit (optionnel)',
       leverage: 'Levier',
-      footerNote: "Outil informatif, pas un conseil financier. Vérifie toujours la valeur du pip, le contrat et la marge exacts de ton broker pour chaque instrument. Fonctionne entièrement hors-ligne, aucune donnée n'est envoyée nulle part.",
+      footerNote: "Outil informatif, pas un conseil financier. Vérifie toujours la valeur du pip, le contrat et la marge exacts de ton broker pour chaque instrument. Le mode hors ligne utilise les données locales ; le mode en ligne peut utiliser des données externes lorsque disponibles.",
       resultTitle: 'Taille de position recommandée',
       lots: 'lots',
       riskAmount: 'Montant risqué',
@@ -1184,6 +1278,7 @@
       featHistory: 'Historique illimité',
       featThemes: 'Thèmes Premium',
       featSupport: 'Assistance prioritaire',
+      featNoAds: 'Sans publicité',
       planCurrentBtn: 'Plan actuel',
       planPopular: 'POPULAIRE',
       planMonthlyName: 'Pro Mensuel',
@@ -1263,8 +1358,15 @@
       exportEmptyError: "Aucun trade dans le journal — rien à exporter.",
       exportFailedError: "L'export a échoué. Réessaie.",
       cloudSyncTitle: '☁️ Synchronisation Cloud',
-      cloudSyncBody: 'La synchronisation Cloud sera disponible prochainement.',
-      cloudSyncBtn: 'Synchronisation Cloud — Bientôt disponible',
+      cloudSyncBody: 'Retrouve ton journal sur tes appareils connectés. Les changements hors ligne restent locaux puis sont synchronisés à la reconnexion.',
+      cloudSyncBtn: '☁️ Synchroniser mon journal',
+      cloudSyncFree: '🔒 Synchronisation Cloud réservée à TradeSizer Pro',
+      cloudSyncSuccess: 'Journal synchronisé avec succès',
+      cloudSyncPending: '⏳ Synchronisation en attente',
+      cloudSyncError: '⚠️ Synchronisation impossible',
+      cloudSyncOffline: 'Hors ligne : les changements restent enregistrés localement.',
+      cloudSyncNotConnected: 'Connecte-toi à ton compte Pro pour synchroniser le journal.',
+      cloudSyncUnauthorized: 'La synchronisation Cloud est réservée à TradeSizer Pro.',
       cloudSyncUnavailable: 'Synchronisation Cloud non disponible dans cette version.',
       deleteAccountBody: 'Supprime ton compte et toutes les données associées stockées sur nos serveurs (une fois la synchronisation Cloud active).',
       deleteAccountBtn: 'Supprimer mon compte',
@@ -1295,7 +1397,7 @@
       deleteAccountNote: 'La suppression complète d\'un compte (une fois la synchronisation Cloud disponible) se fera depuis cette même section, après vérification de ton identité par le backend.',
       deleteDataConfirm: 'Supprimer définitivement toutes tes données locales (journal inclus) ? Cette action est irréversible.',
       deleteDataDone: 'Données locales supprimées.',
-      privacyText: "POLITIQUE DE CONFIDENTIALITÉ\n\n1. Données du compte : TradeSizer peut utiliser votre adresse email et votre identifiant utilisateur Supabase Auth pour créer et sécuriser votre compte. Les informations nécessaires à l’authentification et à la vérification de l’abonnement peuvent être traitées par Supabase Auth et PostgreSQL.\n\n2. Données du journal : les trades saisis, statistiques et préférences peuvent être enregistrés localement sur votre appareil.\n\n3. Stockage local : lorsque la synchronisation Cloud n’est pas disponible, le journal reste local sur cet appareil. TradeSizer ne prétend pas synchroniser actuellement les données entre appareils.\n\n4. Supabase : Supabase Auth et PostgreSQL peuvent être utilisés pour le compte et la vérification de l’abonnement.\n\n5. FedaPay : les paiements sont traités par FedaPay. TradeSizer ne stocke pas les informations sensibles de paiement.\n\n6. Abonnement : la vérification peut utiliser l’identifiant utilisateur Supabase Auth, l’email, le plan, le statut, les dates de début et d’expiration ainsi que l’identifiant de transaction lorsque nécessaire.\n\n7. Affiliation : TradeSizer peut utiliser un lien d’affiliation Exness. Lorsque vous cliquez sur ce lien, Exness peut utiliser des paramètres de suivi afin d’attribuer l’inscription ou l’activité à notre lien partenaire, conformément à ses propres politiques. TradeSizer ne prétend pas recevoir les informations personnelles qu’Exness ne lui transmet pas réellement.\n\n8. IA Coach : l’IA Coach est actuellement indiquée comme fonctionnalité à venir et n’est pas encore disponible dans cette version. Elle ne collecte ni n’analyse actuellement vos données.\n\n9. Synchronisation Cloud : la synchronisation Cloud est indiquée comme bientôt disponible et n’est pas actuellement active entre appareils.\n\n10. Suppression : la suppression des données locales efface le journal et les préférences de cet appareil. La suppression du compte Supabase et des données serveur nécessite les mécanismes d’identité et de backend prévus ; aucune suppression serveur non implémentée n’est promise.\n\n11. Contact : pour toute question concernant TradeSizer, son abonnement ou la confidentialité des données, contactez-nous à tradesizer34568@gmail.com.",
+      privacyText: "POLITIQUE DE CONFIDENTIALITÉ\n\n1. Données du compte : TradeSizer peut utiliser votre adresse email et votre identifiant utilisateur Supabase Auth pour créer et sécuriser votre compte. Les informations nécessaires à l’authentification et à la vérification de l’abonnement peuvent être traitées par Supabase Auth et PostgreSQL.\n\n2. Données du journal : les trades saisis peuvent être enregistrés localement sur votre appareil et, pour les utilisateurs Pro connectés, synchronisés dans Supabase `trading_journal`, associée à votre identifiant utilisateur Supabase.\n\n3. Synchronisation Cloud : la RLS limite chaque opération à `auth.uid() = user_id`. La première synchronisation fusionne les données locales et Cloud sans supprimer les données locales ; les changements hors ligne sont mis en file puis envoyés à la reconnexion.\n\n4. Supabase : Supabase Auth et PostgreSQL peuvent être utilisés pour le compte et la vérification de l’abonnement.\n\n5. FedaPay : les paiements sont traités par FedaPay. TradeSizer ne stocke pas les informations sensibles de paiement.\n\n6. Abonnement : la vérification peut utiliser l’identifiant utilisateur Supabase Auth, l’email, le plan, le statut, les dates de début et d’expiration ainsi que l’identifiant de transaction lorsque nécessaire.\n\n7. Affiliation : TradeSizer peut utiliser un lien d’affiliation Exness. Lorsque vous cliquez sur ce lien, Exness peut utiliser des paramètres de suivi afin d’attribuer l’inscription ou l’activité à notre lien partenaire, conformément à ses propres politiques. TradeSizer ne prétend pas recevoir les informations personnelles qu’Exness ne lui transmet pas réellement.\n\n8. IA Coach : l’IA Coach est actuellement indiquée comme fonctionnalité à venir et n’est pas encore disponible dans cette version. Elle ne collecte ni n’analyse actuellement vos données.\n\n9. Synchronisation Cloud : la synchronisation Cloud est indiquée comme bientôt disponible et n’est pas actuellement active entre appareils.\n\n10. Suppression : la suppression des données locales efface le journal et les préférences de cet appareil. La suppression du compte Supabase et des données serveur nécessite les mécanismes d’identité et de backend prévus ; aucune suppression serveur non implémentée n’est promise.\n\n11. Contact : pour toute question concernant TradeSizer, son abonnement ou la confidentialité des données, contactez-nous à tradesizer34568@gmail.com.",
       termsText: "CONDITIONS D’UTILISATION\n\n1. Objet : TradeSizer est un outil éducatif et de calcul. TradeSizer n’est pas un courtier, n’est pas un conseiller financier, ne gère pas les fonds des utilisateurs et ne garantit aucun bénéfice.\n\n2. Limites des calculs : les résultats sont indicatifs et peuvent différer des conditions réelles d’un broker en raison du spread, des commissions, du swap, de la taille du contrat, de la valeur du pip ou du point, du levier, des règles du broker, des arrondis et des taux de conversion. L’utilisateur doit vérifier les spécifications de son broker avant de passer un ordre. TradeSizer ne garantit pas qu’un calcul sera accepté ou exécuté par un broker.\n\n3. Risque : le trading comporte des risques importants de perte en capital. Aucun outil ne garantit des profits. Les performances passées ne garantissent pas les performances futures. L’utilisateur reste seul responsable de ses décisions de trading.\n\n4. Abonnement Pro : les offres sont mensuelles à 6 000 FCFA, trimestrielles à 15 000 FCFA et annuelles à 60 000 FCFA. Le paiement est traité par FedaPay. L’activation intervient uniquement après confirmation du paiement par le système serveur.\n\n5. Fonctionnalités Premium : selon le plan actif, l’abonnement peut débloquer le journal illimité, les exports et les autres fonctionnalités Pro affichées dans l’application. À l’expiration, les fonctionnalités Premium sont verrouillées et les limites du plan gratuit s’appliquent ; les données locales existantes ne sont pas automatiquement supprimées.\n\n6. Prolongation : aucun renouvellement automatique n’est promis dans cette version. Pour prolonger l’abonnement, l’utilisateur doit effectuer un nouveau paiement lorsque cette option est proposée.\n\n7. Affiliation et partenaires : la version actuelle affiche uniquement Exness comme partenaire affilié. Des liens partenaires peuvent utiliser des paramètres de suivi selon les politiques du partenaire.\n\n8. Modifications : TradeSizer peut modifier ses fonctionnalités ou ces conditions. Les changements importants seront signalés de manière claire lorsque cela est nécessaire.\n\n9. Contact : pour toute question concernant TradeSizer, son abonnement ou la confidentialité des données, contactez-nous à tradesizer34568@gmail.com.",
       tabConvert: 'Devises',
       chartTitle: 'Évolution du P/L cumulé',
@@ -1309,7 +1411,8 @@
     },
     en: {
       title: 'Position Size Calculator',
-      subtitle: 'Work out your lot size from your risk — 100% offline',
+      subtitle: 'Work out your lot size from your risk — local or live data according to the selected mode',
+      mode_label: 'Calculation mode', mode_offline: 'Offline', mode_online: 'Online',
       buy: '▲ Buy',
       sell: '▼ Sell',
       productType: 'Product type',
@@ -1390,6 +1493,7 @@
       featHistory: 'Unlimited history',
       featThemes: 'Premium themes',
       featSupport: 'Priority support',
+      featNoAds: 'Ad-free experience',
       planCurrentBtn: 'Current plan',
       planPopular: 'POPULAR',
       planMonthlyName: 'Pro Monthly',
@@ -1464,8 +1568,15 @@
       exportEmptyError: 'No trades in the journal — nothing to export.',
       exportFailedError: 'Export failed. Please try again.',
       cloudSyncTitle: '☁️ Cloud sync',
-      cloudSyncBody: 'Find your journal on all your devices once connected.',
-      cloudSyncBtn: 'Cloud sync — Coming soon',
+      cloudSyncBody: 'Find your journal on connected devices. Offline changes remain local and sync when the connection returns.',
+      cloudSyncBtn: '☁️ Sync my journal',
+      cloudSyncFree: '🔒 Cloud sync is reserved for TradeSizer Pro',
+      cloudSyncSuccess: 'Journal synced successfully',
+      cloudSyncPending: '⏳ Sync pending',
+      cloudSyncError: '⚠️ Sync unavailable',
+      cloudSyncOffline: 'Offline: changes remain saved locally.',
+      cloudSyncNotConnected: 'Sign in to your Pro account to sync the journal.',
+      cloudSyncUnauthorized: 'Cloud sync is reserved for TradeSizer Pro.',
       cloudSyncUnavailable: 'Cloud sync is not available in this version.',
       deleteAccountBody: 'Delete your account and all associated data stored on our servers (once Cloud sync is active).',
       deleteAccountBtn: 'Delete my account',
@@ -1496,7 +1607,7 @@
       deleteAccountNote: 'Full account deletion (once Cloud sync is available) will happen from this same section, after identity verification by the backend.',
       deleteDataConfirm: 'Permanently delete all local data (including your journal)? This cannot be undone.',
       deleteDataDone: 'Local data deleted.',
-      privacyText: "PRIVACY POLICY\n\n1. Account data: TradeSizer may use your email address and Supabase Auth user ID to create and secure your account. Information required for authentication and subscription verification may be processed through Supabase Auth and PostgreSQL.\n\n2. Journal data: trades, statistics and preferences may be stored locally on your device.\n\n3. Local storage: when Cloud sync is unavailable, the journal remains local on this device. TradeSizer does not claim that data is currently synchronized between devices.\n\n4. Supabase: Supabase Auth and PostgreSQL may be used for the account and subscription verification.\n\n5. FedaPay: payments are processed by FedaPay. TradeSizer does not store sensitive payment information.\n\n6. Subscription: verification may use the Supabase Auth user ID, email, plan, status, start and expiration dates, and transaction ID when necessary.\n\n7. Affiliate: TradeSizer may use an Exness affiliate link. When you click it, Exness may use tracking parameters to attribute registration or activity to our partner link under its own policies. TradeSizer does not claim to receive personal information that Exness does not actually provide to it.\n\n8. AI Coach: AI Coach is currently marked as a coming-soon feature and is not available in this version. It does not currently collect or analyze your data.\n\n9. Cloud sync: Cloud sync is marked as coming soon and is not currently active between devices.\n\n10. Deletion: deleting local data removes the journal and preferences from this device. Deleting a Supabase account and server data requires the configured identity and backend mechanisms; no unimplemented server deletion is promised.\n\n11. Contact: for questions about TradeSizer, subscriptions or data privacy, contact tradesizer34568@gmail.com.",
+      privacyText: "PRIVACY POLICY\n\n1. Account data: TradeSizer may use your email address and Supabase Auth user ID to create and secure your account. Information required for authentication and subscription verification may be processed through Supabase Auth and PostgreSQL.\n\n2. Journal data: trades may be stored locally and, for connected Pro users, synchronized in Supabase `trading_journal`, linked to the Supabase user ID.\n\n3. Cloud sync: RLS limits every operation to `auth.uid() = user_id`; first sync merges without deleting local data and offline changes are queued until reconnection.\n\n4. Supabase: Supabase Auth and PostgreSQL may be used for the account and subscription verification.\n\n5. FedaPay: payments are processed by FedaPay. TradeSizer does not store sensitive payment information.\n\n6. Subscription: verification may use the Supabase Auth user ID, email, plan, status, start and expiration dates, and transaction ID when necessary.\n\n7. Affiliate: TradeSizer may use an Exness affiliate link. When you click it, Exness may use tracking parameters to attribute registration or activity to our partner link under its own policies. TradeSizer does not claim to receive personal information that Exness does not actually provide to it.\n\n8. AI Coach: AI Coach is currently marked as a coming-soon feature and is not available in this version. It does not currently collect or analyze your data.\n\n9. Cloud sync: Cloud sync is active for connected Pro users, protected by RLS and queued while offline.\n\n10. Deletion: deleting local data removes the journal and preferences from this device. Deleting a Supabase account and server data requires the configured identity and backend mechanisms; no unimplemented server deletion is promised.\n\n11. Contact: for questions about TradeSizer, subscriptions or data privacy, contact tradesizer34568@gmail.com.",
       termsText: "TERMS OF USE\n\n1. Purpose: TradeSizer is an educational and calculation tool. It is not a broker, is not a financial adviser, does not manage user funds and does not guarantee profits.\n\n2. Calculation limits: results are indicative and may differ from actual broker conditions because of spread, commissions, swap, contract size, pip or point value, leverage, broker rules, rounding and conversion rates. Users must verify their broker’s specifications before placing an order. TradeSizer does not guarantee that a calculation will be accepted or executed by a broker.\n\n3. Risk: trading carries significant risk of capital loss. No tool guarantees profits. Past performance does not guarantee future results. Users remain solely responsible for their trading decisions.\n\n4. Pro subscription: plans are monthly at 6,000 FCFA, quarterly at 15,000 FCFA and annually at 60,000 FCFA. Payments are processed by FedaPay. Activation occurs only after payment confirmation by the server system.\n\n5. Premium features: depending on the active plan, the subscription may unlock unlimited journal access, exports and other Pro features shown in the application. When the subscription expires, Premium features are locked and free-plan limits apply; existing local data is not automatically deleted.\n\n6. Extension: this version does not promise automatic renewal. To extend the subscription, the user must make a new payment when that option is available.\n\n7. Affiliates and partners: the current version displays only Exness as an affiliate partner. Partner links may use tracking parameters under the partner’s policies.\n\n8. Changes: TradeSizer may change its features or these terms. Material changes will be communicated clearly when necessary.\n\n9. Contact: for questions about TradeSizer, subscriptions or data privacy, contact tradesizer34568@gmail.com.",
       tabConvert: 'Currency',
       chartTitle: 'Cumulative P/L over time',
@@ -1534,6 +1645,7 @@
     renderLeverageButtons();
     renderCurrencyButtons();
     updateLiveBadges();
+    if (typeof renderCalculationMode === 'function') renderCalculationMode();
     if (typeof renderJournal === 'function') renderJournal();
     if (typeof updateProBadge === 'function') updateProBadge();
     if (typeof renderProPage === 'function' && viewPro && viewPro.classList.contains('active')) renderProPage();
@@ -1546,7 +1658,7 @@
   // ---------- State ----------
   let direction = 'sell';
   let productType = 'cfd';
-  let currency = 'USD';
+  let currency = localStorage.getItem('tradesizer_account_currency') || 'USD';
   const currencies = ['USD', 'EUR', 'GBP', 'JPY', 'HKD', 'CHF', 'CAD', 'AUD', 'XOF', 'XAF', 'NGN', 'GHS', 'KES', 'TZS', 'UGX', 'ZAR', 'EGP', 'MAD', 'DZD', 'TND', 'ZMW', 'ZWL', 'RWF', 'ETB', 'MUR'];
   const currencyLabels = {
     USD: { fr: 'USD — Dollar américain', en: 'USD — US Dollar' },
@@ -1609,7 +1721,7 @@
       const btn = document.createElement('button');
       btn.className = 'toggle-btn' + (currency === c ? ' active-dark' : '');
       btn.textContent = currencyLabels[c]?.[currentLang] || c;
-      btn.onclick = () => { currency = c; renderCurrencyButtons(); updateLiveBadges(); };
+      btn.onclick = () => { currency = c; localStorage.setItem('tradesizer_account_currency', currency); renderCurrencyButtons(); updateLiveBadges(); };
       currencyButtonsEl.appendChild(btn);
     });
   }
@@ -1716,6 +1828,7 @@
   function runCalculation() {
     const t = i18n[currentLang];
     clearFieldErrors();
+    lastResult = null;
     const bal = parseFloat(balanceEl.value);
     const risk = parseFloat(riskPercentInput.value);
     const manualD = parseFloat(manualDistanceEl.value);
@@ -1834,21 +1947,50 @@
       </div>
       <p class="hint" style="margin:12px 0 0 0;">${exactnessLabel}</p>
     </div>${warningsHtml}<p class="hint" style="text-align:center;margin-top:10px;">${t.calcDisclaimer}</p>`;
-    if (subscriptionStatusResolved && !isPro() && freeAdThresholdReached()) {
-      currentFreeAdContext = 'calculator';
-      updateFreeAd();
-    }
   }
 
   // Le bouton CALCULER déclenche explicitement le calcul complet.
   // On enveloppe dans un try/catch UNIQUEMENT pour éviter qu'une erreur
   // imprévue casse l'app — mais on affiche l'erreur, on ne la masque pas.
-  document.getElementById('calculateBtn').onclick = () => {
-    try {
-      runCalculation();
-    } catch (err) {
-      console.error('Erreur de calcul:', err);
-      resultsArea.innerHTML = `<div class="placeholder" style="border-color:#fca5a5;color:#b91c1c;background:#fef2f2;">⚠️ ${i18n[currentLang].errUnexpected}</div>`;
+  document.getElementById('calculateBtn').onclick = async () => {
+    const button = document.getElementById('calculateBtn');
+    const needsAd = !isProActive() && readFreeQuota('calculations') >= FREE_USAGE_LIMIT;
+    if (needsAd && !isNetworkOnline()) {
+      recordOfflineAdMiss('calculations');
+      writeFreeQuota('calculations', 0);
+      clearQuotaPanel('calculations');
+      await executeCalculation();
+      return;
+    }
+    if (needsAd) {
+      showCalculatorAdPrompt();
+      const unlock = document.getElementById('unlockCalculationsBtn');
+      if (unlock) unlock.onclick = async () => {
+        unlock.disabled = true;
+        unlock.textContent = currentLang === 'en' ? 'Loading ad…' : 'Chargement de la publicité…';
+        await runMonetagOnClick('calculations');
+        writeFreeQuota('calculations', 0);
+        clearQuotaPanel('calculations');
+        await executeCalculation();
+      };
+      return;
+    }
+    await executeCalculation();
+    async function executeCalculation() {
+      button.disabled = true;
+      try {
+        runCalculation();
+        if (lastResult && !isProActive()) {
+          writeFreeQuota('calculations', readFreeQuota('calculations') + 1);
+          syncFreeQuotaUi();
+        }
+      } catch (err) {
+        console.error('Erreur de calcul:', err);
+        resultsArea.innerHTML = `<div class="placeholder" style="border-color:#fca5a5;color:#b91c1c;background:#fef2f2;">⚠️ ${i18n[currentLang].errUnexpected}</div>`;
+      } finally {
+        if (isProActive()) button.removeAttribute('disabled');
+        else syncFreeQuotaUi();
+      }
     }
   };
 
@@ -1980,9 +2122,13 @@
         const id = btn.getAttribute('data-id');
         const t2 = i18n[currentLang];
         if (confirm(t2.jDeleteConfirm)) {
+          const target = loadJournal().find(e => String(e.id) === String(id));
           const updated = loadJournal().filter(e => String(e.id) !== String(id));
           saveJournalData(updated);
+          if (target?.cloud_id) queueJournalOperation({ type: 'delete', cloud_id: target.cloud_id });
+          else if (target) queueJournalOperation({ type: 'delete', local_id: target.id });
           renderJournal();
+          if (isProActive()) syncJournal();
         }
       };
     });
@@ -2072,12 +2218,13 @@
   let pendingCalculationSave = false;
   function addJournalEntry(entry) {
     const entries = loadJournal();
-    entries.push({ id: Date.now(), date: new Date().toISOString(), ...entry });
+    entries.push({ id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()), date: new Date().toISOString(), ...entry });
     saveJournalData(entries);
     renderJournal();
   }
 
-  document.getElementById('jAddBtn').onclick = () => {
+  let pendingJournalSaveEntry = null;
+  function collectJournalEntryFromForm() {
     const instrument = document.getElementById('jInstrument').value.trim().toUpperCase();
     const direction2 = document.getElementById('jDirection').value;
     const entry = document.getElementById('jEntry').value;
@@ -2087,20 +2234,41 @@
     const pnl = document.getElementById('jPnl').value;
     const time = document.getElementById('jTime').value;
     const note = document.getElementById('jNote').value.trim();
-    if (!instrument || !lots) return;
-    addJournalEntry({ instrument, direction: direction2, entry, sl, tp, lots, pnl: pnl || '0', time, note });
-    if (pendingCalculationSave) {
-      pendingCalculationSave = false;
-      recordFreeAdActivity('savedCalculation');
+    if (!instrument || !lots) return null;
+    return { instrument, direction: direction2, entry, sl, tp, lots, pnl: pnl || '0', time, note, syncState: 'pending_sync', updated_at: new Date().toISOString() };
+  }
+  function clearJournalForm() {
+    ['jInstrument', 'jEntry', 'jSl', 'jTp', 'jLots', 'jPnl', 'jTime', 'jNote'].forEach(id => { const field = document.getElementById(id); if (field) field.value = ''; });
+  }
+  async function commitJournalEntry(journalEntry) {
+    const button = document.getElementById('jAddBtn');
+    addJournalEntry(journalEntry);
+    const savedEntry = loadJournal().slice(-1)[0];
+    if (savedEntry) await syncJournalEntry(savedEntry);
+    if (!isProActive()) writeFreeQuota('journal', readFreeQuota('journal') + 1);
+    if (pendingCalculationSave) pendingCalculationSave = false;
+    clearJournalForm();
+    if (button) {
+      button.textContent = i18n[currentLang].jAddBtn;
+      button.disabled = false;
     }
-    document.getElementById('jInstrument').value = '';
-    document.getElementById('jEntry').value = '';
-    document.getElementById('jSl').value = '';
-    document.getElementById('jTp').value = '';
-    document.getElementById('jLots').value = '';
-    document.getElementById('jPnl').value = '';
-    document.getElementById('jTime').value = '';
-    document.getElementById('jNote').value = '';
+    syncFreeQuotaUi();
+  }
+  document.getElementById('jAddBtn').onclick = async () => {
+    const journalEntry = collectJournalEntryFromForm();
+    if (!journalEntry) return;
+    const button = document.getElementById('jAddBtn');
+    if (isProActive()) {
+      button.disabled = true;
+      await commitJournalEntry(journalEntry);
+      return;
+    }
+    if (readFreeQuota('journal') >= FREE_USAGE_LIMIT) {
+      showJournalLimit();
+      return;
+    }
+    pendingJournalSaveEntry = journalEntry;
+    showJournalAdPrompt();
   };
 
   document.getElementById('saveToJournalBtn').onclick = () => {
@@ -2128,10 +2296,26 @@
   const tabAccountBtn = document.getElementById('tabAccountBtn');
   const viewSettings = document.getElementById('viewSettings');
 
+  function setMainMenuOpen(open) {
+    const menu = document.getElementById('mainMenu');
+    const menuButton = document.getElementById('mainMenuBtn');
+    const overlay = document.getElementById('menuOverlay');
+    const isOpen = Boolean(open);
+    if (menu) {
+      menu.classList.toggle('open', isOpen);
+      menu.setAttribute('aria-hidden', String(!isOpen));
+    }
+    if (menuButton) menuButton.setAttribute('aria-expanded', String(isOpen));
+    if (overlay) {
+      overlay.classList.toggle('open', isOpen);
+      overlay.setAttribute('aria-hidden', String(!isOpen));
+    }
+    document.body.classList.toggle('menu-open', isOpen);
+  }
+
   function switchTab(name) {
     if (name === 'calc') {
-      const activity = loadFreeAdActivity();
-      currentFreeAdContext = activity.savedCalculations >= 2 && lastResult ? 'calculator' : 'home';
+      currentFreeAdContext = 'calculator';
     } else if (name === 'journal' || name === 'stats') {
       currentFreeAdContext = 'journal';
     } else {
@@ -2145,6 +2329,8 @@
     tabSettingsBtn.classList.toggle('active', name === 'settings');
     tabStatsBtn?.classList.toggle('active', name === 'stats');
     tabAccountBtn?.classList.toggle('active', name === 'account');
+    document.querySelectorAll('[data-menu-target]').forEach((item) => item.classList.toggle('active', item.dataset.menuTarget === name));
+    setMainMenuOpen(false);
     viewCalc.classList.toggle('active', name === 'calc');
     viewJournal.classList.toggle('active', name === 'journal' || name === 'stats');
     viewConvert.classList.toggle('active', name === 'convert');
@@ -2157,13 +2343,44 @@
     updateFreeAd();
   }
 
+  const mainMenuBtn = document.getElementById('mainMenuBtn');
+  const menuCloseBtn = document.getElementById('menuCloseBtn');
+  const menuOverlay = document.getElementById('menuOverlay');
+  const menuAuthBtn = document.getElementById('menuAuthBtn');
+
+  mainMenuBtn?.addEventListener('click', () => {
+    const menu = document.getElementById('mainMenu');
+    setMainMenuOpen(!menu?.classList.contains('open'));
+  });
+  menuCloseBtn?.addEventListener('click', () => setMainMenuOpen(false));
+  menuOverlay?.addEventListener('click', () => setMainMenuOpen(false));
+
+  document.querySelectorAll('[data-menu-target]').forEach((item) => {
+    item.addEventListener('click', () => setMainMenuOpen(false));
+  });
+
+  menuAuthBtn?.addEventListener('click', async () => {
+    if (!currentSupabaseUser) {
+      switchTab('account');
+      return;
+    }
+    if (!supabaseClient) return;
+    const { error } = await supabaseClient.auth.signOut();
+    if (error) {
+      setAuthMessage(error.message || 'Déconnexion impossible.', true);
+      return;
+    }
+    await handleSupabaseSession(null);
+    setMainMenuOpen(false);
+  });
+
   tabCalcBtn.onclick = () => switchTab('calc');
   tabJournalBtn.onclick = () => switchTab('journal');
   tabConvertBtn.onclick = () => switchTab('convert');
   tabProBtn.onclick = () => switchTab('pro');
   tabCompareBtn.onclick = () => switchTab('compare');
   tabSettingsBtn.onclick = () => switchTab('settings');
-  tabStatsBtn?.addEventListener('click', () => switchTab('stats'));
+  tabStatsBtn?.addEventListener('click', () => { if (requirePro()) switchTab('stats'); });
   tabAccountBtn?.addEventListener('click', () => switchTab('account'));
 
   // ==================================================================
@@ -2177,7 +2394,7 @@
   const PREMIUM_FEATURES = [
     'featJournalUnlimited', 'featExports', 'featStats',
     'featGoals', 'featReports',
-    'featHistory', 'featThemes', 'featSupport'
+    'featHistory', 'featThemes', 'featSupport', 'featNoAds'
   ];
   let subStatusCache = { plan: 'free', status: 'none', verified: false, userId: null };
   let subscriptionStatusResolved = false;
@@ -2186,102 +2403,330 @@
     const end = normalizeSubscriptionDate(data.period_end);
     return !end || end > new Date();
   }
-  function isPro() {
+  function isProActive() {
     return subStatusCache.verified === true && subscriptionIsCurrentlyActive(subStatusCache);
   }
-  const FREE_AD_ACTIVITY_KEY = 'tradesizer_free_ad_activity_v1';
-  // Tag Monetag activé uniquement dans un emplacement Free éligible.
-  const FREE_AD_ZONE = '272385';
-  const FREE_AD_SCRIPT = 'https://quge5.com/88/tag.min.js';
-  let currentFreeAdContext = 'home';
-  const freeAdLoadedSlots = new Set();
-  function loadFreeAdActivity() {
+  // ---------- Quotas Free + Monetag OnClick ----------
+  // Les quotas du Journal et du calculateur sont indépendants.
+  const JOURNAL_FREE_COUNT_KEY = 'journal_free_count';
+  const CALCULATOR_FREE_COUNT_KEY = 'calculator_free_count';
+  const LEGACY_CALCULATIONS_KEY = 'tradesizer_free_calculations_v1';
+  const FREE_CONVERSIONS_KEY = 'tradesizer_free_conversions_v1';
+  const FREE_USAGE_LIMIT = 2;
+  const MONETAG_ONCLICK_ZONE = '11633221';
+  const MONETAG_ONCLICK_SCRIPT = 'https://al5sm.com/tag.min.js';
+
+  function quotaStorageKey(kind) {
+    if (kind === 'journal') return JOURNAL_FREE_COUNT_KEY;
+    if (kind === 'calculations') return CALCULATOR_FREE_COUNT_KEY;
+    return FREE_CONVERSIONS_KEY;
+  }
+  function readFreeQuota(kind) {
+    const key = quotaStorageKey(kind);
     try {
-      const raw = JSON.parse(localStorage.getItem(FREE_AD_ACTIVITY_KEY) || '{}');
-      return {
-        savedCalculations: Number.isFinite(Number(raw.savedCalculations)) ? Number(raw.savedCalculations) : 0,
-        conversions: Number.isFinite(Number(raw.conversions)) ? Number(raw.conversions) : 0,
-        lastConversionSignature: typeof raw.lastConversionSignature === 'string' ? raw.lastConversionSignature : ''
-      };
-    } catch (error) {
-      return { savedCalculations: 0, conversions: 0, lastConversionSignature: '' };
+      let raw = localStorage.getItem(key);
+      if (raw === null && kind === 'calculations') raw = localStorage.getItem(LEGACY_CALCULATIONS_KEY);
+      const value = parseInt(raw || '0', 10);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    } catch (error) { return 0; }
+  }
+  function writeFreeQuota(kind, value) {
+    const key = quotaStorageKey(kind);
+    try { localStorage.setItem(key, String(Math.max(0, value))); } catch (error) { /* stockage local indisponible */ }
+  }
+  function quotaText(kind) {
+    const english = currentLang === 'en';
+    if (kind === 'journal') return english
+      ? 'Free Journal limit reached. You have used your 2 free trade recordings. Upgrade to TradeSizer Pro to record without limits and without ads.'
+      : 'Limite gratuite atteinte. Vous avez utilisé vos 2 enregistrements gratuits. Passez à TradeSizer Pro pour enregistrer vos trades sans limite et sans publicité.';
+    const noun = kind === 'calculations' ? (english ? 'calculations' : 'calculs') : (english ? 'conversions' : 'conversions');
+    return english
+      ? `You have used your ${FREE_USAGE_LIMIT} free ${noun}. Watch an ad to continue.`
+      : `Tu as utilisé tes ${FREE_USAGE_LIMIT} ${noun} gratuits. Regarde une publicité pour continuer.`;
+  }
+  function quotaSuccessText(kind) {
+    const noun = kind === 'calculations' ? (currentLang === 'en' ? 'calculations' : 'calculs') : (currentLang === 'en' ? 'conversions' : 'conversions');
+    return currentLang === 'en' ? `✅ ${FREE_USAGE_LIMIT} more ${noun} unlocked.` : `✅ ${FREE_USAGE_LIMIT} ${noun} supplémentaires débloqués.`;
+  }
+  function quotaPanel(kind) {
+    const id = kind === 'calculations' ? 'freeCalculationLimitPanel' : kind === 'journal' ? 'journalFreeLimitPanel' : 'freeConversionLimitPanel';
+    let panel = document.getElementById(id);
+    if (!panel) {
+      panel = document.createElement('div');
+      panel.id = id;
+      panel.className = 'placeholder';
+      panel.style.cssText = 'background:#fef3c7;border:1px solid #f59e0b;color:#92400e;padding:18px;border-radius:12px;text-align:center;margin:10px 0;';
+      const parent = kind === 'calculations' ? document.getElementById('resultsArea') : kind === 'journal' ? document.getElementById('journalList')?.parentElement : document.getElementById('cvResult')?.parentElement;
+      if (parent) parent.insertBefore(panel, parent.firstChild);
+    }
+    return panel;
+  }
+  function clearQuotaPanel(kind) {
+    const id = kind === 'calculations' ? 'freeCalculationLimitPanel' : kind === 'journal' ? 'journalFreeLimitPanel' : 'freeConversionLimitPanel';
+    const panel = document.getElementById(id);
+    if (panel) { panel.innerHTML = ''; panel.style.display = 'none'; }
+  }
+  function isNetworkOnline() {
+    return navigator.onLine !== false;
+  }
+  function recordOfflineAdMiss(kind) {
+    try {
+      localStorage.setItem(`tradesizer_offline_ad_missed_${kind}`, JSON.stringify({ kind, at: Date.now() }));
+    } catch (err) {
+      console.warn('Impossible d’enregistrer l’absence de publicité hors ligne:', err);
     }
   }
-  function saveFreeAdActivity(activity) {
-    try { localStorage.setItem(FREE_AD_ACTIVITY_KEY, JSON.stringify(activity)); } catch (error) { /* stockage local indisponible */ }
-  }
-  function freeAdThresholdReached() {
-    const activity = loadFreeAdActivity();
-    return activity.savedCalculations >= 2 && activity.conversions >= 2;
-  }
-  function recordFreeAdActivity(type, signature = '') {
-    if (isPro()) return;
-    const activity = loadFreeAdActivity();
-    if (type === 'savedCalculation') activity.savedCalculations += 1;
-    if (type === 'conversion' && signature && activity.lastConversionSignature !== signature) {
-      activity.conversions += 1;
-      activity.lastConversionSignature = signature;
+  function runMonetagOnClick(kind = 'generic') {
+    if (!subscriptionStatusResolved || isProActive()) {
+      return Promise.resolve({ loaded: false, blocked: true, reason: 'pro-or-unresolved' });
     }
-    saveFreeAdActivity(activity);
-    updateFreeAd();
-  }
-  function freeAdMessage() {
-    return currentLang === 'en'
-      ? 'You are using the free version of TradeSizer. Upgrade to Pro to remove ads and unlock all features.'
-      : 'Vous utilisez la version gratuite de TradeSizer. Passez en Pro pour supprimer les publicités et débloquer toutes les fonctionnalités.';
-  }
-  function hideFreeAdSlot(slot) {
-    if (!slot) return;
-    slot.style.display = 'none';
-    slot.replaceChildren();
-    freeAdLoadedSlots.delete(slot.id);
-  }
-  function loadFreeAdSlot(slot) {
-    if (!slot) return;
-    slot.style.display = 'block';
-    if (freeAdLoadedSlots.has(slot.id)) {
-      const note = slot.querySelector('.free-ad-note');
-      if (note) note.textContent = freeAdMessage();
-      return;
+    if (!isNetworkOnline()) {
+      recordOfflineAdMiss(kind);
+      return Promise.resolve({ loaded: false, offline: true });
     }
-    slot.replaceChildren();
-    const note = document.createElement('div');
-    note.className = 'free-ad-note';
-    note.textContent = freeAdMessage();
-    const host = document.createElement('div');
-    host.className = 'free-ad-host';
-    const script = document.createElement('script');
-    script.dataset.zone = FREE_AD_ZONE;
-    script.dataset.cfasync = 'false';
-    script.dataset.tradesizerFreeAd = 'true';
-    script.async = true;
-    script.src = FREE_AD_SCRIPT;
-    host.appendChild(script);
-    slot.append(note, host);
-    freeAdLoadedSlots.add(slot.id);
-  }
-  function updateFreeAd() {
-    const slots = {
-      home: document.getElementById('adSlotHome'),
-      calculator: document.getElementById('adSlotCalculator'),
-      journal: document.getElementById('adSlotJournal'),
-      export: document.getElementById('adSlotExport')
-    };
-    const allowed = subscriptionStatusResolved && !isPro() && freeAdThresholdReached();
-    Object.entries(slots).forEach(([context, slot]) => {
-      if (allowed && context === currentFreeAdContext) loadFreeAdSlot(slot);
-      else hideFreeAdSlot(slot);
+    return new Promise(resolve => {
+      const script = document.createElement('script');
+      script.dataset.zone = MONETAG_ONCLICK_ZONE;
+      script.dataset.tradesizerOnClick = 'true';
+      script.dataset.tradesizerAd = 'true';
+      script.async = true;
+      script.src = MONETAG_ONCLICK_SCRIPT;
+      let settled = false;
+      const finish = result => { if (!settled) { settled = true; resolve(result); } };
+      script.onload = () => setTimeout(() => finish({ loaded: true, offline: false }), 900);
+      script.onerror = () => finish({ loaded: false, offline: false, error: true });
+      if (!subscriptionStatusResolved || isProActive()) return finish({ loaded: false, blocked: true, reason: 'pro-or-unresolved' });
+      document.head.appendChild(script);
+      setTimeout(() => finish({ loaded: false, offline: false, timeout: true }), 2500);
     });
   }
-  function showFreeExportAd() {
-    if (subscriptionStatusResolved && !isPro() && freeAdThresholdReached()) {
-      currentFreeAdContext = 'export';
-      updateFreeAd();
+  function showJournalLimit() {
+    const panel = quotaPanel('journal');
+    if (!panel) return;
+    document.getElementById('jAddBtn')?.setAttribute('disabled', 'disabled');
+    panel.style.display = 'block';
+    panel.innerHTML = `<strong>⚠️ ${currentLang === 'en' ? 'Free Journal limit reached. Upgrade to Pro for unlimited recordings and zero advertising.' : 'Limite du Journal Free atteinte. Passe à Pro pour enregistrer sans limite et sans publicité.'}</strong><br><br><button id="journalUpgradeBtn" class="plan-btn dark" type="button" style="width:100%;padding:14px;">${currentLang === 'en' ? 'Upgrade to Pro' : 'Passer à Pro'}</button>`;
+    document.getElementById('journalUpgradeBtn').onclick = () => switchTab('pro');
+  }
+  function showJournalAdPrompt() {
+    const panel = quotaPanel('journal');
+    if (!panel || isProActive()) return;
+    const remaining = Math.max(0, FREE_USAGE_LIMIT - readFreeQuota('journal'));
+    panel.style.display = 'block';
+    document.getElementById('jAddBtn')?.setAttribute('disabled', 'disabled');
+    panel.innerHTML = `<strong>ℹ️ ${currentLang === 'en' ? `Watch an ad before saving this journal entry. ${remaining} free recording(s) remaining.` : `Regarde une publicité avant d’enregistrer ce trade. ${remaining} enregistrement(s) gratuit(s) restant(s).`}</strong><br><br><button id="unlockJournalEntryBtn" class="plan-btn dark" type="button" style="width:100%;padding:14px;">${currentLang === 'en' ? 'Watch ad and save' : 'Voir la pub et enregistrer'}</button>`;
+    document.getElementById('unlockJournalEntryBtn').onclick = async () => {
+      const unlock = document.getElementById('unlockJournalEntryBtn');
+      if (!unlock || !pendingJournalSaveEntry) return;
+      unlock.disabled = true;
+      unlock.textContent = currentLang === 'en' ? 'Loading ad…' : 'Chargement de la publicité…';
+      const result = await runMonetagOnClick('journal');
+      if (result.blocked) {
+        panel.innerHTML = `<strong>⚠️ ${currentLang === 'en' ? 'The subscription status is still being verified. Please try again.' : 'Le statut de l’abonnement est encore vérifié. Réessaie.'}</strong>`;
+        document.getElementById('jAddBtn')?.removeAttribute('disabled');
+        return;
+      }
+      if (result.offline) {
+        panel.innerHTML = `<strong>ℹ️ ${currentLang === 'en' ? 'Offline mode: no ad was shown, so the journal entry was not saved.' : 'Mode hors ligne : aucune publicité n’a été affichée, le trade n’a donc pas été enregistré.'}</strong>`;
+        document.getElementById('jAddBtn')?.removeAttribute('disabled');
+        return;
+      }
+      if (!result.loaded) {
+        panel.innerHTML = `<strong>⚠️ ${currentLang === 'en' ? 'The ad could not be loaded. The entry was not saved.' : 'La publicité n’a pas pu être chargée. Le trade n’a pas été enregistré.'}</strong>`;
+        document.getElementById('jAddBtn')?.removeAttribute('disabled');
+        return;
+      }
+      const entry = pendingJournalSaveEntry;
+      pendingJournalSaveEntry = null;
+      await commitJournalEntry(entry);
+      panel.innerHTML = `<div style="background:#ecfdf5;border:1px solid #10b981;color:#065f46;padding:14px;border-radius:10px;">${currentLang === 'en' ? '✅ Ad completed. Journal entry saved.' : '✅ Publicité terminée. Trade enregistré dans le journal.'}</div>`;
+    };
+  }
+  function showCalculatorAdPrompt() {
+    const panel = quotaPanel('calculations');
+    if (!panel) return;
+    if (!isNetworkOnline()) {
+      recordOfflineAdMiss('calculations');
+      writeFreeQuota('calculations', 0);
+      document.getElementById('calculateBtn')?.removeAttribute('disabled');
+      panel.style.display = 'block';
+      panel.innerHTML = `<strong>ℹ️ ${currentLang === 'en' ? 'Offline mode: the ad is unavailable. The calculator remains available.' : 'Mode hors ligne : la publicité est indisponible. Le calculateur reste accessible.'}</strong>`;
+      return;
     }
+    document.getElementById('calculateBtn')?.setAttribute('disabled', 'disabled');
+    panel.style.display = 'block';
+    panel.innerHTML = `<strong>⚠️ ${currentLang === 'en' ? 'Two calculations completed. Watch an ad before continuing.' : 'Deux calculs effectués. Regarde une publicité avant de continuer.'}</strong><br><br><button id="unlockCalculationsBtn" class="plan-btn dark" type="button" style="width:100%;padding:14px;">${currentLang === 'en' ? 'Watch ad and continue' : 'Voir la pub et continuer'}</button>`;
+  }
+  function showQuotaLimit(kind) {
+    if (kind === 'journal') return showJournalLimit();
+    const panel = quotaPanel(kind);
+    if (!panel) return;
+    if (kind === 'calculations') return showCalculatorAdPrompt();
+    panel.style.display = 'block';
+    const buttonId = 'unlockConversionsBtn';
+    panel.innerHTML = `<strong>⚠️ ${quotaText(kind)}</strong><br><br><button id="${buttonId}" class="plan-btn dark" type="button" style="width:100%;padding:14px;">${currentLang === 'en' ? 'Watch ad and continue' : 'Voir la pub et continuer'}</button>`;
+    document.getElementById(buttonId).onclick = async () => {
+      const button = document.getElementById(buttonId);
+      if (!button || isProActive()) return;
+      button.disabled = true;
+      button.textContent = currentLang === 'en' ? 'Loading ad…' : 'Chargement de la publicité…';
+      const result = await runMonetagOnClick(kind);
+      if (result.loaded) {
+        writeFreeQuota(kind, 0);
+        panel.innerHTML = `<div style="background:#ecfdf5;border:1px solid #10b981;color:#065f46;padding:14px;border-radius:10px;">${quotaSuccessText(kind)}</div>`;
+      } else if (result.offline) {
+        panel.innerHTML = `<strong>ℹ️ ${currentLang === 'en' ? 'Offline mode: no ad was shown. The quota was not changed.' : 'Mode hors ligne : aucune publicité n’a été affichée. Le quota n’a pas été modifié.'}</strong>`;
+      } else {
+        panel.innerHTML = `<strong>⚠️ ${currentLang === 'en' ? 'The ad could not be loaded. Try again later.' : 'La publicité n’a pas pu être chargée. Réessaie plus tard.'}</strong>`;
+      }
+      syncFreeQuotaUi();
+    };
+  }
+  function syncFreeQuotaUi() {
+    const calculatorButton = document.getElementById('calculateBtn');
+    const journalButton = document.getElementById('jAddBtn');
+    if (isProActive()) {
+      calculatorButton?.removeAttribute('disabled');
+      journalButton?.removeAttribute('disabled');
+      clearQuotaPanel('calculations');
+      clearQuotaPanel('journal');
+      clearQuotaPanel('conversions');
+      return;
+    }
+    if (!subscriptionStatusResolved && currentSupabaseUser) return;
+    if (readFreeQuota('calculations') >= FREE_USAGE_LIMIT) showCalculatorAdPrompt();
+    else {
+      calculatorButton?.removeAttribute('disabled');
+      clearQuotaPanel('calculations');
+    }
+    if (readFreeQuota('journal') >= FREE_USAGE_LIMIT) showJournalLimit();
+    else {
+      journalButton?.removeAttribute('disabled');
+      clearQuotaPanel('journal');
+    }
+  }
+  window.addEventListener('online', () => {
+    ['calculations', 'journal', 'conversions', 'generic'].forEach(kind => {
+      try { localStorage.removeItem(`tradesizer_offline_ad_missed_${kind}`); } catch (err) { console.warn('Nettoyage du marqueur hors ligne impossible:', err); }
+    });
+    syncFreeQuotaUi();
+    updateFreeAd();
+  });
+  window.addEventListener('offline', () => {
+    updateFreeAd();
+  });
+  let freePassiveAdLoaded = false;
+  let freeAdServiceWorkerPromise = null;
+  function freeAdsEligible() {
+    return subscriptionStatusResolved && !isProActive();
+  }
+  function removeFreeAdvertisingArtifacts() {
+    document.querySelectorAll([
+      'script[data-tradesizer-ad="true"]',
+      'script[data-tradesizer-on-click="true"]',
+      'script[data-tradesizer-passive-ad="true"]',
+      'script[src*="quge5.com"]',
+      'script[src*="al5sm.com"]',
+      'iframe[src*="quge5.com"]',
+      'iframe[src*="al5sm.com"]',
+      '.free-ad-slot',
+      '[data-tradesizer-ad-container="true"]'
+    ].join(',')).forEach(node => node.remove());
+    freePassiveAdLoaded = false;
+  }
+  function createFreeAdSlot(id, label = 'Publicité') {
+    const slot = document.createElement('div');
+    slot.id = id;
+    slot.className = 'card free-ad-slot';
+    slot.setAttribute('aria-label', label);
+    slot.dataset.tradesizerAdContainer = 'true';
+    return slot;
+  }
+  function ensureFreeAdSlots() {
+    if (!freeAdsEligible() || !isNetworkOnline()) return;
+    if (!document.getElementById('adSlotCalculator')) {
+      const anchor = document.getElementById('resultsArea');
+      if (anchor?.parentNode) anchor.parentNode.insertBefore(createFreeAdSlot('adSlotCalculator'), anchor.nextSibling);
+    }
+    if (!document.getElementById('adSlotHome')) {
+      const anchor = document.querySelector('.footer-note');
+      if (anchor?.parentNode) anchor.parentNode.insertBefore(createFreeAdSlot('adSlotHome'), anchor);
+    }
+    if (!document.getElementById('adSlotJournal')) {
+      const exportCard = document.getElementById('exportCsvBtn')?.closest('.card');
+      if (exportCard?.parentNode) exportCard.parentNode.insertBefore(createFreeAdSlot('adSlotJournal'), exportCard);
+    }
+    if (!document.getElementById('adSlotExport')) {
+      const exportButton = document.getElementById('exportPdfBtn');
+      const exportCard = exportButton?.closest('.card');
+      if (exportCard) exportCard.appendChild(createFreeAdSlot('adSlotExport'));
+    }
+  }
+  function loadFreePassiveAd() {
+    if (!freeAdsEligible() || !isNetworkOnline() || freePassiveAdLoaded) return;
+    if (document.querySelector('script[data-tradesizer-passive-ad="true"]')) {
+      freePassiveAdLoaded = true;
+      return;
+    }
+    const script = document.createElement('script');
+    script.dataset.zone = '272385';
+    script.dataset.tradesizerPassiveAd = 'true';
+    script.dataset.tradesizerAd = 'true';
+    script.async = true;
+    script.dataset.cfasync = 'false';
+    script.src = 'https://quge5.com/88/tag.min.js';
+    document.head.appendChild(script);
+    freePassiveAdLoaded = true;
+  }
+  function registerFreeAdServiceWorker() {
+    if (!freeAdsEligible() || !isNetworkOnline() || !('serviceWorker' in navigator)) return;
+    if (freeAdServiceWorkerPromise) return freeAdServiceWorkerPromise;
+    freeAdServiceWorkerPromise = navigator.serviceWorker.getRegistrations().then(async registrations => {
+      if (!freeAdsEligible() || !isNetworkOnline()) return null;
+      const existing = registrations.find(registration => {
+        const urls = [registration.active, registration.waiting, registration.installing].filter(Boolean).map(worker => worker.scriptURL);
+        return urls.some(url => url === `${window.location.origin}/sw.js`);
+      });
+      if (existing) return existing;
+      return navigator.serviceWorker.register('/sw.js', { scope: '/' });
+    }).catch(error => {
+      console.warn('Service worker publicitaire Free non enregistré :', error);
+      return null;
+    }).finally(() => { freeAdServiceWorkerPromise = null; });
+    return freeAdServiceWorkerPromise;
+  }
+  function unregisterFreeAdServiceWorker() {
+    if (!('serviceWorker' in navigator)) return Promise.resolve();
+    return navigator.serviceWorker.getRegistrations().then(registrations => Promise.all(
+      registrations.filter(registration => {
+        const urls = [registration.active, registration.waiting, registration.installing].filter(Boolean).map(worker => worker.scriptURL);
+        return urls.some(url => url === `${window.location.origin}/sw.js`);
+      }).map(registration => registration.unregister())
+    )).catch(error => console.warn('Service worker publicitaire non désenregistré :', error));
+  }
+  function disableFreeAdvertising() {
+    removeFreeAdvertisingArtifacts();
+    return unregisterFreeAdServiceWorker();
+  }
+  function updateFreeAd() {
+    if (isProActive()) {
+      removeFreeAdvertisingArtifacts();
+      void unregisterFreeAdServiceWorker();
+      return;
+    }
+    if (!freeAdsEligible() || !isNetworkOnline()) {
+      removeFreeAdvertisingArtifacts();
+      if (!isNetworkOnline()) void unregisterFreeAdServiceWorker();
+      return;
+    }
+    ensureFreeAdSlots();
+    loadFreePassiveAd();
+    void registerFreeAdServiceWorker();
   }
   window.__tradesizerFreeAdReady = true;
   function updateProBadge() {
-    document.getElementById('proBadge').style.display = isPro() ? 'inline-block' : 'none';
+    document.getElementById('proBadge').style.display = isProActive() ? 'inline-block' : 'none';
+    if (typeof syncFreeQuotaUi === 'function') syncFreeQuotaUi();
   }
   function normalizeSubscriptionDate(value) {
     if (!value) return null;
@@ -2297,6 +2742,7 @@
     el.style.color = isError ? '#b91c1c' : '';
   }
   function renderAccountState() {
+    updateMenuAccountStatus();
     const form = document.getElementById('authForm');
     const panel = document.getElementById('authUserPanel');
     const email = document.getElementById('authUserEmail');
@@ -2334,15 +2780,18 @@
       updateProBadge();
       renderProPage();
       updateFreeAd();
-      return isPro();
+      return isProActive();
     } catch (error) {
       console.error('Supabase subscription lookup failed:', error);
-      subStatusCache = { plan: 'free', status: 'none', verified: false, userId: currentSupabaseUser.id, offlineError: true };
+      const previouslyVerifiedPro = subStatusCache.userId === currentSupabaseUser.id && isProActive();
+      subStatusCache = previouslyVerifiedPro
+        ? { ...subStatusCache, offlineError: true }
+        : { plan: 'free', status: 'none', verified: false, userId: currentSupabaseUser.id, offlineError: true };
       subscriptionStatusResolved = true;
       updateProBadge();
       renderProPage();
       updateFreeAd();
-      return false;
+      return isProActive();
     }
   }
   async function registerAccount() {
@@ -2385,7 +2834,7 @@
   async function checkSubscriptionFromForm() {
     if (!requireAuthenticatedUser()) return;
     await fetchSubscriptionStatus();
-    if (isPro()) alert('Ton abonnement TradeSizer Pro est actif.');
+    if (isProActive()) alert('Ton abonnement TradeSizer Pro est actif.');
     else alert('Aucun abonnement actif n’a encore été confirmé pour ce compte.');
   }
   const upsellModal = document.getElementById('upsellModal');
@@ -2399,8 +2848,10 @@
   document.getElementById('planQuarterlyBtn').onclick = () => requestSubscription('quarterly');
   document.getElementById('planAnnualBtn').onclick = () => requestSubscription('annual');
   async function handleSupabaseSession(session) {
+    const previousUserId = currentSupabaseUser?.id || null;
     subscriptionStatusResolved = false;
     currentSupabaseUser = session?.user || null;
+    if (previousUserId !== (currentSupabaseUser?.id || null)) void disableFreeAdvertising();
     renderAccountState();
     if (currentSupabaseUser) await fetchSubscriptionStatus();
     else {
@@ -2430,7 +2881,9 @@
     const { data } = supabaseClient.auth.onAuthStateChange((_event, session) => handleSupabaseSession(session));
     supabaseAuthSubscription = data.subscription;
   } else {
+    subscriptionStatusResolved = true;
     renderAccountState();
+    updateFreeAd();
   }
   // ---------- Modal d'upsell ----------
   document.getElementById('upsellClose').onclick = () => upsellModal.classList.remove('open');
@@ -2443,14 +2896,21 @@
   // Appelle cette fonction avant d'exécuter une action Premium.
   // Retourne true si l'accès est autorisé, false si la modal a été affichée.
   function requirePro() {
-    if (isPro()) return true;
-    showFreeExportAd();
+    if (isProActive()) return true;
     upsellModal.classList.add('open');
     return false;
   }
 
   // ---------- Rendu de la page Abonnement ----------
+  function updateMenuAccountStatus() {
+    const status = document.getElementById('menuProStatus');
+    const authLabel = document.getElementById('menuAuthLabel');
+    if (status) status.textContent = isProActive() ? 'Abonnement actif' : 'Tarifs et abonnement';
+    if (authLabel) authLabel.textContent = currentSupabaseUser ? 'Déconnexion' : 'Connexion';
+  }
+
   function renderProPage() {
+    updateMenuAccountStatus();
     const t = i18n[currentLang];
     const sub = subStatusCache;
 
@@ -2476,7 +2936,7 @@
     const manageSubCard = document.getElementById('manageSubCard');
     const subStatusText = document.getElementById('subStatusText');
     trialBanner.style.display = 'none';
-    if (isPro()) {
+    if (isProActive()) {
       manageSubCard.style.display = 'block';
       const end = normalizeSubscriptionDate(sub.period_end);
       subStatusText.textContent = `Plan ${sub.plan || 'Pro'} — Actif jusqu’au ${end ? end.toLocaleDateString() : 'date inconnue'}.`;
@@ -2503,6 +2963,7 @@
     ['featHistory', false, true],
     ['featThemes', false, true],
     ['featSupport', false, true],
+    ['featNoAds', false, true],
   ];
 
   function renderComparePage() {
@@ -2517,18 +2978,7 @@
     `).join('');
   }
 
-  // ---------- Verrouillage des fonctionnalités Premium existantes ----------
-  // Le journal reste utilisable en gratuit jusqu'à 10 entrées ; au-delà,
-  // la modal Premium s'affiche (journal "illimité" = fonctionnalité Pro).
-  const originalJAddBtnHandler = document.getElementById('jAddBtn').onclick;
-  document.getElementById('jAddBtn').onclick = () => {
-    const entries = loadJournal();
-    if (entries.length >= 10 && !isPro()) {
-      requirePro();
-      return;
-    }
-    originalJAddBtnHandler();
-  };
+  // Le Journal Free permet deux enregistrements avec publicité ; les fonctions illimitées, statistiques et exports restent Pro.
 
   // Détecte l'absence de connexion pour les fonctionnalités qui en ont besoin
   function requireOnline() {
@@ -2558,13 +3008,140 @@
   document.getElementById('openCoachBtn').onclick = () => {
     alert('IA Coach — Bientôt disponible.');
   };
-    // ---------- Suppression des données locales ----------
-  // ---------- Synchronisation Cloud ----------
-  // Ne prétend JAMAIS avoir synchronisé quoi que ce soit tant que le
-  // backend n'est pas réellement connecté et n'a pas confirmé le succès.
-  document.getElementById('cloudSyncBtn').onclick = () => {
-    alert('Synchronisation Cloud — Bientôt disponible.');
-  };
+    // ---------- Synchronisation Cloud sécurisée du journal ----------
+  const JOURNAL_QUEUE_KEY = 'tradesizer_journal_sync_queue_v1';
+  const JOURNAL_SYNC_STATUS_KEY = 'tradesizer_journal_sync_status_v1';
+  let journalSyncBusy = false;
+  function readJournalQueue() {
+    try { return JSON.parse(localStorage.getItem(JOURNAL_QUEUE_KEY) || '[]'); } catch (e) { return []; }
+  }
+  function writeJournalQueue(queue) {
+    try { localStorage.setItem(JOURNAL_QUEUE_KEY, JSON.stringify(queue)); } catch (e) { console.warn('Journal queue storage error', e); }
+  }
+  function setJournalSyncStatus(status) {
+    try { localStorage.setItem(JOURNAL_SYNC_STATUS_KEY, status); } catch (e) {}
+    const el = document.getElementById('cloudSyncStatus');
+    if (el) {
+      const t = i18n[currentLang];
+      el.textContent = status === 'synced' ? '☁️ ' + t.cloudSyncSuccess
+        : status === 'pending' ? t.cloudSyncPending
+        : status === 'offline' ? t.cloudSyncOffline
+        : status === 'error' ? t.cloudSyncError : '';
+      el.dataset.status = status;
+    }
+  }
+  function getCloudSession() {
+    return supabaseClient.auth.getSession().then(({ data, error }) => {
+      if (error) throw error;
+      return data.session;
+    });
+  }
+  function isCloudProSession(session) {
+    return Boolean(session?.user?.id && currentSupabaseUser?.id === session.user.id && isProActive());
+  }
+  function localToCloud(entry, userId) {
+    const row = { user_id: userId, instrument: entry.instrument || null, direction: entry.direction || null,
+      entry_price: entry.entry === '' ? null : (entry.entry == null ? null : Number(entry.entry)),
+      stop_loss: entry.sl === '' ? null : (entry.sl == null ? null : Number(entry.sl)),
+      take_profit: entry.tp === '' ? null : (entry.tp == null ? null : Number(entry.tp)),
+      lot_size: entry.lots === '' ? null : (entry.lots == null ? null : Number(entry.lots)),
+      risk_percent: entry.risk_percent == null ? null : Number(entry.risk_percent),
+      risk_amount: entry.risk_amount == null ? null : Number(entry.risk_amount),
+      profit_loss: entry.pnl === '' ? 0 : Number(entry.pnl || 0), result: entry.result || null,
+      date: entry.date || new Date().toISOString(), notes: entry.note || null };
+    if (typeof entry.cloud_id === 'string' && /^[0-9a-f-]{36}$/i.test(entry.cloud_id)) row.id = entry.cloud_id;
+    return row;
+  }
+  function cloudToLocal(row) {
+    return { id: row.id, cloud_id: row.id, instrument: row.instrument || '', direction: row.direction || 'sell',
+      entry: row.entry_price == null ? '' : String(row.entry_price), sl: row.stop_loss == null ? '' : String(row.stop_loss),
+      tp: row.take_profit == null ? '' : String(row.take_profit), lots: row.lot_size == null ? '' : String(row.lot_size),
+      pnl: row.profit_loss == null ? '0' : String(row.profit_loss), time: '', note: row.notes || '',
+      date: row.date || row.created_at || new Date().toISOString(), updated_at: row.updated_at, syncState: 'synced' };
+  }
+  function sameJournalEntry(a, b) {
+    return (a.cloud_id && a.cloud_id === b.cloud_id) || (a.instrument === b.instrument && a.date === b.date && String(a.lots || '') === String(b.lots || ''));
+  }
+  function queueJournalOperation(operation) {
+    const queue = readJournalQueue();
+    const key = operation.cloud_id || operation.local_id;
+    const filtered = queue.filter(op => (op.cloud_id || op.local_id) !== key);
+    filtered.push(operation);
+    writeJournalQueue(filtered);
+    setJournalSyncStatus('pending');
+  }
+  async function syncJournal() {
+    if (journalSyncBusy) return false;
+    const session = await getCloudSession().catch(() => null);
+    if (!session?.user?.id) { setJournalSyncStatus('error'); alert(i18n[currentLang].cloudSyncNotConnected); return false; }
+    if (!isCloudProSession(session)) { setJournalSyncStatus('error'); alert(i18n[currentLang].cloudSyncUnauthorized); return false; }
+    if (!navigator.onLine) { setJournalSyncStatus('offline'); return false; }
+    journalSyncBusy = true;
+    try {
+      const userId = session.user.id;
+      let queue = readJournalQueue();
+      for (const op of queue) {
+        if (op.type === 'delete' && op.cloud_id) {
+          const { error } = await supabaseClient.from('trading_journal').delete().eq('id', op.cloud_id).eq('user_id', userId);
+          if (error) throw error;
+        } else if (op.type === 'upsert') {
+          const row = localToCloud(op.entry, userId);
+          const { data, error } = await supabaseClient.from('trading_journal').upsert(row, { onConflict: 'id' }).select().single();
+          if (error) throw error;
+          const entries = loadJournal();
+          const local = entries.find(e => String(e.id) === String(op.local_id) || (row.id && e.cloud_id === row.id));
+          if (local) { local.cloud_id = data.id; local.syncState = 'synced'; local.updated_at = data.updated_at; saveJournalData(entries); }
+        }
+      }
+      queue = [];
+      writeJournalQueue(queue);
+      const { data: cloudRows, error: fetchError } = await supabaseClient.from('trading_journal').select('*').eq('user_id', userId).order('date', { ascending: true });
+      if (fetchError) throw fetchError;
+      const localRows = loadJournal();
+      const merged = localRows.slice();
+      (cloudRows || []).forEach(row => {
+        const incoming = cloudToLocal(row);
+        const index = merged.findIndex(e => sameJournalEntry(e, incoming));
+        if (index < 0) merged.push(incoming);
+        else {
+          const local = merged[index];
+          const localTime = Date.parse(local.updated_at || local.date || 0) || 0;
+          const cloudTime = Date.parse(row.updated_at || row.date || 0) || 0;
+          if (cloudTime >= localTime) merged[index] = { ...local, ...incoming };
+          else if (!local.cloud_id) queueJournalOperation({ type: 'upsert', local_id: local.id, entry: local });
+        }
+      });
+      saveJournalData(merged);
+      renderJournal();
+      setJournalSyncStatus('synced');
+      return true;
+    } catch (error) {
+      console.warn('Journal cloud sync failed', error);
+      setJournalSyncStatus('error');
+      return false;
+    } finally { journalSyncBusy = false; }
+  }
+  async function syncJournalEntry(entry) {
+    queueJournalOperation({ type: 'upsert', local_id: entry.id, entry });
+    if (!navigator.onLine) { setJournalSyncStatus('offline'); return false; }
+    return syncJournal();
+  }
+  function renderCloudSyncControl() {
+    const button = document.getElementById('cloudSyncBtn');
+    const t = i18n[currentLang];
+    if (!button) return;
+    if (isProActive()) { button.textContent = t.cloudSyncBtn; button.disabled = false; button.onclick = syncJournal; }
+    else { button.textContent = t.cloudSyncFree; button.disabled = false; button.onclick = () => requirePro(); }
+    const saved = localStorage.getItem(JOURNAL_SYNC_STATUS_KEY);
+    if (saved) setJournalSyncStatus(saved);
+  }
+  window.addEventListener('online', () => { if (isProActive()) syncJournal(); });
+  window.addEventListener('offline', () => setJournalSyncStatus('offline'));
+  supabaseClient.auth.onAuthStateChange(() => setTimeout(renderCloudSyncControl, 0));
+
+
+  // ---------- Suppression des données locales ----------
+  renderCloudSyncControl();
 
   document.getElementById('deleteAccountBtn').onclick = () => {
     const t = i18n[currentLang];
@@ -2578,6 +3155,10 @@
       try {
         localStorage.removeItem(JOURNAL_KEY);
         localStorage.removeItem('tradesizer_device_id');
+        localStorage.removeItem(JOURNAL_FREE_COUNT_KEY);
+        localStorage.removeItem(CALCULATOR_FREE_COUNT_KEY);
+        localStorage.removeItem(LEGACY_CALCULATIONS_KEY);
+        localStorage.removeItem(FREE_CONVERSIONS_KEY);
       } catch (e) {}
       renderJournal();
       alert(t.deleteDataDone);
@@ -2622,6 +3203,10 @@
   }
 
   function computeConversion(countAsAction = false) {
+    if (countAsAction && !isProActive() && readFreeQuota('conversions') >= FREE_USAGE_LIMIT) {
+      showQuotaLimit('conversions');
+      return false;
+    }
     const amount = parseFloat(cvAmount.value) || 0;
     const from = cvFrom.value;
     const to = cvTo.value;
@@ -2651,9 +3236,9 @@
       return;
     }
     cvResult.value = (amount * rate).toFixed(2) + ' ' + to;
-    if (countAsAction) {
-      const signature = [amount, from, to, rate, rateSource].join('|');
-      recordFreeAdActivity('conversion', signature);
+    if (countAsAction && !isProActive()) {
+      writeFreeQuota('conversions', readFreeQuota('conversions') + 1);
+      clearQuotaPanel('conversions');
     }
     if (rateSource === 'manual') {
       cvStatus.textContent = i18n[currentLang].cvOffline;
@@ -2695,6 +3280,47 @@
   });
   setConverterMode('offline');
   computeConversion();
+
+
+  // ---------- Modes de calcul Online / Offline ----------
+  const CALCULATION_MODE_KEY = 'tradesizer_calculation_mode';
+  let calculationMode = 'offline';
+  function calculationModeText() {
+    const en = currentLang === 'en';
+    const online = calculationMode === 'online';
+    const connected = navigator.onLine !== false;
+    if (online && connected) return en ? 'Online: live data may be used when available.' : 'En ligne : les données en direct peuvent être utilisées si disponibles.';
+    if (online && !connected) return en ? 'Connection lost: switched to Offline. No live data is used.' : 'Connexion perdue : passage en mode Hors ligne. Aucune donnée en direct n’est utilisée.';
+    return en ? 'Offline: calculations use local data only; no live data is invented.' : 'Hors ligne : calculs avec les données locales uniquement ; aucun taux en direct n’est inventé.';
+  }
+  function renderCalculationMode() {
+    const offlineBtn = document.getElementById('calculationModeOfflineBtn');
+    const onlineBtn = document.getElementById('calculationModeOnlineBtn');
+    const status = document.getElementById('calculationModeStatus');
+    if (!offlineBtn || !onlineBtn || !status) return;
+    const online = calculationMode === 'online' && navigator.onLine !== false;
+    offlineBtn.classList.toggle('active', !online);
+    onlineBtn.classList.toggle('active', online);
+    offlineBtn.setAttribute('aria-pressed', String(!online));
+    onlineBtn.setAttribute('aria-pressed', String(online));
+    status.textContent = calculationModeText();
+  }
+  function setCalculationMode(mode, persist = true) {
+    const requested = mode === 'online' ? 'online' : 'offline';
+    calculationMode = requested === 'online' && navigator.onLine === false ? 'offline' : requested;
+    if (persist) { try { localStorage.setItem(CALCULATION_MODE_KEY, calculationMode); } catch (err) {} }
+    renderCalculationMode();
+  }
+  function loadCalculationMode() {
+    let saved = 'offline';
+    try { saved = localStorage.getItem(CALCULATION_MODE_KEY) || 'offline'; } catch (err) {}
+    setCalculationMode(saved, false);
+  }
+  document.getElementById('calculationModeOfflineBtn')?.addEventListener('click', () => setCalculationMode('offline'));
+  document.getElementById('calculationModeOnlineBtn')?.addEventListener('click', () => setCalculationMode('online'));
+  window.addEventListener('offline', () => { setCalculationMode('offline'); });
+  window.addEventListener('online', () => { setCalculationMode('online'); });
+  loadCalculationMode();
 
   // ---------- Graphique P/L (canvas) ----------
   function renderChart() {
@@ -2778,6 +3404,9 @@
     const banner = document.getElementById('subStatusBanner');
     banner.innerHTML = '<div class="sub-admin-warning">Paiement reçu. Ton paiement est en cours de vérification. Le statut Pro sera débloqué uniquement après confirmation FedaPay.</div>';
   }
+
+</script>
+<script>
 </script>
 </body>
 </html>
