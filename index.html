@@ -1721,7 +1721,7 @@
       const btn = document.createElement('button');
       btn.className = 'toggle-btn' + (currency === c ? ' active-dark' : '');
       btn.textContent = currencyLabels[c]?.[currentLang] || c;
-      btn.onclick = () => { currency = c; localStorage.setItem('tradesizer_account_currency', currency); renderCurrencyButtons(); updateLiveBadges(); };
+      btn.onclick = () => { registerUserInteraction(); currency = c; localStorage.setItem('tradesizer_account_currency', currency); renderCurrencyButtons(); updateLiveBadges(); };
       currencyButtonsEl.appendChild(btn);
     });
   }
@@ -1953,6 +1953,7 @@
   // On enveloppe dans un try/catch UNIQUEMENT pour éviter qu'une erreur
   // imprévue casse l'app — mais on affiche l'erreur, on ne la masque pas.
   document.getElementById('calculateBtn').onclick = async () => {
+    registerUserInteraction();
     const button = document.getElementById('calculateBtn');
     const needsAd = !isProActive() && readFreeQuota('calculations') >= FREE_USAGE_LIMIT;
     if (needsAd && !isNetworkOnline()) {
@@ -2255,6 +2256,7 @@
     syncFreeQuotaUi();
   }
   document.getElementById('jAddBtn').onclick = async () => {
+    registerUserInteraction();
     const journalEntry = collectJournalEntryFromForm();
     if (!journalEntry) return;
     const button = document.getElementById('jAddBtn');
@@ -2272,6 +2274,7 @@
   };
 
   document.getElementById('saveToJournalBtn').onclick = () => {
+    registerUserInteraction();
     if (!lastResult) return;
     pendingCalculationSave = true;
     document.getElementById('jInstrument').value = lastResult.instrument;
@@ -2375,12 +2378,12 @@
   });
 
   tabCalcBtn.onclick = () => switchTab('calc');
-  tabJournalBtn.onclick = () => switchTab('journal');
+  tabJournalBtn.onclick = () => { registerUserInteraction(); switchTab('journal'); };
   tabConvertBtn.onclick = () => switchTab('convert');
   tabProBtn.onclick = () => switchTab('pro');
-  tabCompareBtn.onclick = () => switchTab('compare');
-  tabSettingsBtn.onclick = () => switchTab('settings');
-  tabStatsBtn?.addEventListener('click', () => { if (requirePro()) switchTab('stats'); });
+  tabCompareBtn.onclick = () => { registerUserInteraction(); switchTab('compare'); };
+  tabSettingsBtn.onclick = () => { registerUserInteraction(); switchTab('settings'); };
+  tabStatsBtn?.addEventListener('click', () => { registerUserInteraction(); if (requirePro()) switchTab('stats'); });
   tabAccountBtn?.addEventListener('click', () => switchTab('account'));
 
   // ==================================================================
@@ -2500,6 +2503,64 @@
       setTimeout(() => finish({ loaded: false, offline: false, timeout: true }), 2500);
     });
   }
+  // ---------- Compteur global d'interactions Free (publicité moins intrusive) ----------
+  // Système additif et indépendant des quotas existants (calculs / journal) :
+  // il ne remplace ni ne modifie leur fonctionnement, il ajoute une opportunité
+  // publicitaire supplémentaire, discrète, toutes les 3 interactions fonctionnelles.
+  const AD_INTERACTION_COUNT_KEY = 'tradesizer_ad_interaction_count';
+  const AD_INTERACTION_THRESHOLD = 3;
+  const AD_INTERACTION_MIN_GAP_MS = 1200; // délai de sécurité anti double-déclenchement
+  let adOpportunityInFlight = false;
+  let lastAdOpportunityAt = 0;
+
+  function readInteractionCount() {
+    try {
+      const raw = localStorage.getItem(AD_INTERACTION_COUNT_KEY);
+      const value = parseInt(raw || '0', 10);
+      return Number.isFinite(value) && value >= 0 ? value : 0;
+    } catch (error) { return 0; }
+  }
+  function writeInteractionCount(value) {
+    try { localStorage.setItem(AD_INTERACTION_COUNT_KEY, String(Math.max(0, value))); } catch (error) { /* stockage local indisponible */ }
+  }
+
+  // Logique centrale UNIQUE de déclenchement pour le compteur d'interactions.
+  // Ne bloque jamais l'utilisateur : hors ligne, échec de chargement ou abonné Pro
+  // => on continue normalement, sans erreur visible.
+  async function triggerAdOpportunity() {
+    if (isProActive()) return;
+    if (adOpportunityInFlight) return; // jamais deux publicités simultanées
+    const now = Date.now();
+    if (now - lastAdOpportunityAt < AD_INTERACTION_MIN_GAP_MS) return; // délai de sécurité
+    adOpportunityInFlight = true;
+    lastAdOpportunityAt = now;
+    try {
+      if (!isNetworkOnline()) {
+        recordOfflineAdMiss('interaction');
+        return;
+      }
+      await runMonetagOnClick('interaction');
+    } catch (error) {
+      console.warn('Opportunité publicitaire (interactions) ignorée :', error);
+    } finally {
+      adOpportunityInFlight = false;
+    }
+  }
+
+  // Fonction centrale à appeler depuis chaque interaction fonctionnelle réelle (FREE uniquement).
+  // Ne jamais appeler depuis des clics sur la publicité, des éléments décoratifs,
+  // ou des événements déclenchés automatiquement par du code.
+  function registerUserInteraction() {
+    if (isProActive()) return;
+    const count = readInteractionCount() + 1;
+    if (count >= AD_INTERACTION_THRESHOLD) {
+      writeInteractionCount(0);
+      void triggerAdOpportunity();
+    } else {
+      writeInteractionCount(count);
+    }
+  }
+
   function showJournalLimit() {
     const panel = quotaPanel('journal');
     if (!panel) return;
